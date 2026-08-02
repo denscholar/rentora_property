@@ -1,4 +1,5 @@
 from django.db import models
+import secrets
 import uuid
 import random
 from django.utils import timezone
@@ -134,7 +135,8 @@ class CustomUser(AbstractUser):
     # GENERATE EMAIL OTP
     # ==========================================
     def generate_email_otp(self):
-        otp = str(random.randint(100000, 999999))
+        # otp = str(random.randint(100000, 999999))
+        otp = str(secrets.randbelow(900000) + 100000)
 
         self.email_otp = otp
         self.email_otp_expires_at = timezone.now() + timedelta(minutes=EMAIL_OTP_EXPIRY_MINUTES)
@@ -171,6 +173,14 @@ class UserProfile(models.Model):
         upload_to="profiles/",
         blank=True,
         null=True,
+    )
+    date_of_birth = models.DateField(
+        blank=True,
+        null=True,
+    )
+    country = models.CharField(
+        max_length=100,
+        default="Nigeria",
     )
 
     gender = models.CharField(

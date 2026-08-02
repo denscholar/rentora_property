@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Rent",
+        "code": "RNT",
+        "allow_viewing_booking": true
+    },
+    {
+        "name": "Lease",
+        "code": "LSE",
+        "allow_viewing_booking": true
+    },
+    {
+        "name": "Sale",
+        "code": "SAL",
+        "allow_viewing_booking": true
+    },
+    {
+        "name": "Short Stay",
+        "code": "STS",
+        "allow_viewing_booking": true
+    }
+]

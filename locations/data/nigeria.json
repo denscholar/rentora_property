@@ -1,0 +1,35 @@
+{
+  "country": {
+    "name": "Nigeria",
+    "code": "NG"
+  },
+  "states": [
+    {
+      "name": "Federal Capital Territory",
+      "code": "FCT",
+      "lgas": [
+        {
+          "name": "Abuja Municipal Area Council",
+          "code": "AMAC",
+          "areas": [
+            {
+              "name": "Wuse",
+              "latitude": 9.0765,
+              "longitude": 7.3986
+            },
+            {
+              "name": "Wuse II",
+              "latitude": 9.0783,
+              "longitude": 7.4712
+            },
+            {
+              "name": "Maitama",
+              "latitude": 9.0828,
+              "longitude": 7.4934
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+[
+  {"name": "Apartment", "code": "APT", "icon": "apartment"},
+  {"name": "Mini Flat", "code": "MFL", "icon": "home"},
+  {"name": "Self Contain", "code": "SCN", "icon": "house"},
+  {"name": "Studio", "code": "STD", "icon": "studio"},
+  {"name": "Duplex", "code": "DPX", "icon": "villa"},
+  {"name": "Terrace", "code": "TER", "icon": "villa"},
+  {"name": "Detached House", "code": "DTH", "icon": "house"},
+  {"name": "Semi Detached House", "code": "SDH", "icon": "house"},
+  {"name": "Office", "code": "OFF", "icon": "business"},
+  {"name": "Warehouse", "code": "WHS", "icon": "warehouse"},
+  {"name": "Shop", "code": "SHP", "icon": "store"},
+  {"name": "Land", "code": "LND", "icon": "land"}
+]

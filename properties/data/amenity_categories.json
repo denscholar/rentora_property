@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Security",
+        "code": "SEC"
+    },
+    {
+        "name": "Utilities",
+        "code": "UTL"
+    },
+    {
+        "name": "Interior",
+        "code": "INT"
+    },
+    {
+        "name": "Exterior",
+        "code": "EXT"
+    },
+    {
+        "name": "Recreation",
+        "code": "REC"
+    },
+    {
+        "name": "Technology",
+        "code": "TEC"
+    }
+]

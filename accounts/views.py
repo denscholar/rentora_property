@@ -19,8 +19,14 @@ from drf_spectacular.utils import (
 )
 
 
-from accounts.selectors.user_selectors import get_user_by_email
-from accounts.serializers import AuthUserSerializer, LoginSerializer, RegisterSerializer, ResendEmailOTPSerializer, VerifyEmailOTPSerializer
+from accounts.selectors.user import get_user_by_email
+from accounts.serializers import (
+    AuthUserSerializer,
+    LoginSerializer,
+    RegisterSerializer,
+    ResendEmailOTPSerializer,
+    VerifyEmailOTPSerializer,
+)
 from accounts.services.registration import register_user
 from accounts.services.otp import (
     validate_email_otp,
@@ -28,6 +34,19 @@ from accounts.services.otp import (
     generate_email_otp,
 )
 from accounts.services.email import send_email_otp
+from core.api.responses import error_response, success_response
+from core.constants.response_codes import (
+    ACCOUNT_ALREADY_VERIFIED,
+    EMAIL_VERIFIED,
+    INVALID_OTP,
+    LOGIN_FAILED,
+    LOGIN_SUCCESSFUL,
+    LOGOUT_SUCCESSFUL,
+    OTP_RESENT,
+    REGISTRATION_SUCCESS_OTP_SENT,
+    USER_NOT_FOUND,
+    VALIDATION_ERROR,
+)
 
 
 # ==========================================
@@ -78,30 +97,23 @@ class RegisterAPIView(APIView):
         serializer = RegisterSerializer(data=request.data)
 
         if not serializer.is_valid():
-            return Response(
-                {
-                    "success": False,
-                    "code": "VALIDATION_ERROR",
-                    "message": "Registration failed.",
-                    "errors": serializer.errors,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+            return error_response(
+                message="Registration failed",
+                code=VALIDATION_ERROR,
+                errors=serializer.errors,
             )
 
         user = register_user(serializer.validated_data)
 
-        return Response(
-            {
-                "success": True,
-                "code": "REGISTRATION_SUCCESS_OTP_SENT",
-                "message": "Registration successful. OTP has been sent to your email for verification.",
-                "data": {
-                    "email": user.email,
-                    "role": user.role,
-                    "is_verified": user.is_verified,
-                },
+        return success_response(
+            message="Registration successful. OTP has been sent to your email.",
+            code=REGISTRATION_SUCCESS_OTP_SENT,
+            data={
+                "email": user.email,
+                "role": user.role,
+                "is_verified": user.is_verified,
             },
-            status=status.HTTP_201_CREATED,
+            status_code=status.HTTP_201_CREATED,
         )
 
 
@@ -112,13 +124,13 @@ class RegisterAPIView(APIView):
     tags=["Authentication"],
     summary="Verify Email OTP",
     description="""
-Verify the OTP sent to the user's registered email address.
+        Verify the OTP sent to the user's registered email address.
 
-When successful:
-- Account becomes verified.
-- OTP is cleared.
-- Verification timestamp is saved.
-""",
+        When successful:
+        - Account becomes verified.
+        - OTP is cleared.
+        - Verification timestamp is saved.
+        """,
     request=VerifyEmailOTPSerializer,
     responses={
         200: OpenApiResponse(
@@ -144,14 +156,11 @@ class VerifyEmailOTPAPIView(APIView):
         serializer = VerifyEmailOTPSerializer(data=request.data)
 
         if not serializer.is_valid():
-            return Response(
-                {
-                    "success": False,
-                    "code": "VALIDATION_ERROR",
-                    "message": "Invalid request data.",
-                    "errors": serializer.errors,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+            return error_response(
+                message="Invalid request data",
+                code=VALIDATION_ERROR,
+                errors=serializer.errors,
+                status_code=status.HTTP_400_BAD_REQUEST,
             )
 
         email = serializer.validated_data["email"]
@@ -160,44 +169,33 @@ class VerifyEmailOTPAPIView(APIView):
         user = get_user_by_email(email)
 
         if not user:
-            return Response(
-                {
-                    "success": False,
-                    "code": "USER_NOT_FOUND",
-                    "message": "No account found with this email.",
-                },
-                status=status.HTTP_404_NOT_FOUND,
+            return error_response(
+                message="No account found with this email.",
+                code=USER_NOT_FOUND,
+                errors=serializer.errors,
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
         if user.is_verified:
-            return Response(
-                {
-                    "success": True,
-                    "code": "ACCOUNT_ALREADY_VERIFIED",
-                    "message": "Account is already verified.",
-                },
-                status=status.HTTP_200_OK,
+            return success_response(
+                message="Account is already verified.",
+                code=ACCOUNT_ALREADY_VERIFIED,
+                status_code=status.HTTP_200_OK,
             )
 
         if not validate_email_otp(user, otp):
-            return Response(
-                {
-                    "success": False,
-                    "code": "INVALID_OR_EXPIRED_OTP",
-                    "message": "Invalid or expired OTP.",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+            return error_response(
+                message="Invalid or expired OTP.",
+                code=INVALID_OTP,
+                status_code=status.HTTP_400_BAD_REQUEST,
             )
 
         mark_email_verified(user)
 
-        return Response(
-            {
-                "success": True,
-                "code": "EMAIL_VERIFIED",
-                "message": "Email verified successfully.",
-            },
-            status=status.HTTP_200_OK,
+        return success_response(
+            message="Email verified successfully.",
+            code=EMAIL_VERIFIED,
+            status_code=status.HTTP_200_OK,
         )
 
 
@@ -225,14 +223,11 @@ class ResendEmailOTPAPIView(APIView):
         serializer = ResendEmailOTPSerializer(data=request.data)
 
         if not serializer.is_valid():
-            return Response(
-                {
-                    "success": False,
-                    "code": "VALIDATION_ERROR",
-                    "message": "Invalid request data.",
-                    "errors": serializer.errors,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+            return error_response(
+                message="Invalid request data.",
+                code=VALIDATION_ERROR,
+                errors=serializer.errors,
+                status_code=status.HTTP_400_BAD_REQUEST,
             )
 
         email = serializer.validated_data["email"]
@@ -240,37 +235,30 @@ class ResendEmailOTPAPIView(APIView):
         user = get_user_by_email(email)
 
         if not user:
-            return Response(
-                {
-                    "success": False,
-                    "code": "USER_NOT_FOUND",
-                    "message": "No account found with this email.",
-                },
+            return error_response(
+                message="No account found with this email.",
+                code=USER_NOT_FOUND,
+                errors=serializer.errors,
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         if user.is_verified:
-            return Response(
-                {
-                    "success": False,
-                    "code": "ACCOUNT_ALREADY_VERIFIED",
-                    "message": "Account is already verified.",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+            return error_response(
+                message="Account already verified",
+                code=ACCOUNT_ALREADY_VERIFIED,
+                errors=serializer.errors,
+                status_code=status.HTTP_400_BAD_REQUEST,
             )
 
         otp = generate_email_otp(user)
         send_email_otp(user, otp)
 
-        return Response(
-            {
-                "success": True,
-                "code": "OTP_RESENT",
-                "message": "A new OTP has been sent to your email.",
-            },
-            status=status.HTTP_200_OK,
+        return success_response(
+            message="A new OTP has been sent to your email.",
+            code=OTP_RESENT,
+            data={},
+            status_code=status.HTTP_200_OK,
         )
-
 
 
 # =====================================================
@@ -293,14 +281,11 @@ class LoginAPIView(APIView):
         serializer = LoginSerializer(data=request.data)
 
         if not serializer.is_valid():
-            return Response(
-                {
-                    "success": False,
-                    "code": "VALIDATION_ERROR",
-                    "message": "Login failed.",
-                    "errors": serializer.errors,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+            return error_response(
+                message=str(e),
+                code=VALIDATION_ERROR,
+                errors=serializer.errors,
+                status_code=status.HTTP_400_BAD_REQUEST,
             )
 
         try:
@@ -313,23 +298,20 @@ class LoginAPIView(APIView):
             login_user(request, user)
 
         except ValidationError as e:
-            return Response(
-                {
-                    "success": False,
-                    "code": "LOGIN_FAILED",
-                    "message": str(e),
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+            return error_response(
+                message=str(e),
+                code=LOGIN_FAILED,
+                errors=serializer.errors,
             )
 
-        return Response(
-            {
-                "success": True,
-                "code": "LOGIN_SUCCESSFUL",
-                "message": "Login successful.",
+        return success_response(
+            message="Login Successfully",
+            code=LOGIN_SUCCESSFUL,
+            data={
+                "message": "Login successfully",
                 "data": AuthUserSerializer(user).data,
             },
-            status=status.HTTP_200_OK,
+            status_code=status.HTTP_200_OK,
         )
 
 
@@ -348,11 +330,8 @@ class LogoutAPIView(APIView):
     def post(self, request):
         logout_user(request)
 
-        return Response(
-            {
-                "success": True,
-                "code": "LOGOUT_SUCCESSFUL",
-                "message": "Logout successful.",
-            },
-            status=status.HTTP_200_OK,
+        return success_response(
+            message="Logout successfully",
+            code=LOGOUT_SUCCESSFUL,
+            status_code=status.HTTP_200_OK,
         )

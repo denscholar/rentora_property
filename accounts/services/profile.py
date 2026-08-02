@@ -1,81 +1,152 @@
 from django.db import transaction
 
 from accounts.models import CustomUser
-from accounts.selectors.profile_selector import (
-    get_agent_profile,
-    get_landlord_profile,
-    get_user_profile,
-)
+from accounts.selectors.profile import ProfileSelector
 
 
-# ==========================================
-# GET PROFILE COMPLETION
-# ==========================================
-def calculate_profile_completion(user):
-    """
-    Calculates profile completion percentage.
+class ProfileService:
 
-    Total Score = 100
-    """
+    # ==========================================
+    # GET COMPLETE PROFILE
+    # ==========================================
+    @staticmethod
+    def get_complete_profile(user):
+        profile = ProfileSelector.get_user_profile(user)
 
-    profile = get_user_profile(user)
+        payload = {
+            "user": user,
+            "profile": profile,
+            "profile_completion": ProfileService.calculate_profile_completion(user),
+        }
 
-    score = 0
+        if user.role == CustomUser.Role.AGENT:
+            payload["agent_profile"] = (
+                ProfileSelector.get_agent_profile(user)
+            )
 
-    if user.first_name:
-        score += 10
+        elif user.role == CustomUser.Role.LANDLORD:
+            payload["landlord_profile"] = (
+                ProfileSelector.get_landlord_profile(user)
+            )
 
-    if user.last_name:
-        score += 10
+        return payload
 
-    if user.email:
-        score += 10
+    # ==========================================
+    # UPDATE PROFILE
+    # ==========================================
+    @staticmethod
+    @transaction.atomic
+    def update_profile(user, validated_data):
 
-    if user.phone_number:
-        score += 10
+        profile = ProfileSelector.get_user_profile(user)
 
-    if user.is_verified:
-        score += 10
+        user.first_name = validated_data.get(
+            "first_name",
+            user.first_name,
+        )
 
-    if profile.profile_picture:
-        score += 10
+        user.last_name = validated_data.get(
+            "last_name",
+            user.last_name,
+        )
 
-    if profile.gender:
-        score += 10
+        user.phone_number = validated_data.get(
+            "phone_number",
+            user.phone_number,
+        )
 
-    if profile.address:
-        score += 10
+        user.save(
+            update_fields=[
+                "first_name",
+                "last_name",
+                "phone_number",
+                "updated_at",
+            ]
+        )
 
-    if profile.city:
-        score += 10
+        profile.gender = validated_data.get(
+            "gender",
+            profile.gender,
+        )
 
-    if profile.state:
-        score += 10
+        profile.date_of_birth = validated_data.get(
+            "date_of_birth",
+            profile.date_of_birth,
+        )
 
-    return score
+        profile.bio = validated_data.get(
+            "bio",
+            profile.bio,
+        )
 
+        profile.address = validated_data.get(
+            "address",
+            profile.address,
+        )
 
-# ==========================================
-# GET COMPLETE PROFILE
-# ==========================================
-def get_complete_profile(user):
-    """
-    Returns the complete profile payload
-    based on the user's role.
-    """
+        profile.city = validated_data.get(
+            "city",
+            profile.city,
+        )
 
-    profile = get_user_profile(user)
+        profile.state = validated_data.get(
+            "state",
+            profile.state,
+        )
 
-    payload = {
-        "user": user,
-        "profile": profile,
-        "profile_completion": calculate_profile_completion(user),
-    }
+        profile.country = validated_data.get(
+            "country",
+            profile.country,
+        )
 
-    if user.role == CustomUser.Role.AGENT:
-        payload["agent_profile"] = get_agent_profile(user)
+        profile.save()
 
-    elif user.role == CustomUser.Role.LANDLORD:
-        payload["landlord_profile"] = get_landlord_profile(user)
+        return ProfileService.get_complete_profile(user)
 
-    return payload
+    # ==========================================
+    # UPDATE PROFILE PHOTO
+    # ==========================================
+    @staticmethod
+    def update_profile_photo(user, image):
+
+        profile = ProfileSelector.get_user_profile(user)
+
+        profile.profile_picture = image
+
+        profile.save(
+            update_fields=[
+                "profile_picture",
+                "updated_at",
+            ]
+        )
+
+        return profile
+
+    # ==========================================
+    # PROFILE COMPLETION
+    # ==========================================
+    @staticmethod
+    def calculate_profile_completion(user):
+
+        profile = ProfileSelector.get_user_profile(user)
+
+        score = 0
+
+        checks = [
+            user.first_name,
+            user.last_name,
+            user.email,
+            user.phone_number,
+            user.is_verified,
+            profile.profile_picture,
+            profile.gender,
+            profile.date_of_birth,
+            profile.address,
+            profile.city,
+            profile.state,
+            profile.country,
+        ]
+
+        completed = sum(bool(item) for item in checks)
+
+        return round((completed / len(checks)) * 100)
