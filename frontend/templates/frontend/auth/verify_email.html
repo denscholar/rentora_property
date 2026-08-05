@@ -1,0 +1,130 @@
+{% extends "frontend/base.html" %} {% load static %} {% block title %} Verify
+Your Email | Rentora {% endblock %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'frontend/css/auth.css' %}" />
+{% endblock %} {% block content %}
+<section class="auth-page">
+  <div class="auth-visual">
+    <img
+      src="{% static 'frontend/images/otp-image.png' %}"
+      alt="Modern Nigerian residential property"
+    />
+
+    <div class="auth-visual-overlay">
+      <div class="auth-visual-copy">
+        <h1>Verify your email to complete registration.</h1>
+
+        <p>
+          We sent a six-digit verification code to your registered email
+          address.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-form-panel">
+    <div class="auth-form-wrapper otp-form-wrapper">
+      <div class="auth-form-header">
+        <span class="eyebrow">Email verification</span>
+
+        <h1>Enter your verification code</h1>
+
+        <p>
+          Enter the six-digit code sent to
+          <strong id="verification-email-display"></strong>.
+        </p>
+      </div>
+
+      <form class="auth-form" id="verify-email-form" novalidate>
+        {% csrf_token %}
+
+        <div class="form-general-error" hidden></div>
+
+        <input id="verification-email" name="email" type="hidden" />
+
+        <div class="otp-input-group" aria-label="Verification code">
+          <input
+            class="otp-input"
+            type="text"
+            inputmode="numeric"
+            maxlength="1"
+            autocomplete="one-time-code"
+            aria-label="OTP digit 1"
+          />
+
+          <input
+            class="otp-input"
+            type="text"
+            inputmode="numeric"
+            maxlength="1"
+            aria-label="OTP digit 2"
+          />
+
+          <input
+            class="otp-input"
+            type="text"
+            inputmode="numeric"
+            maxlength="1"
+            aria-label="OTP digit 3"
+          />
+
+          <input
+            class="otp-input"
+            type="text"
+            inputmode="numeric"
+            maxlength="1"
+            aria-label="OTP digit 4"
+          />
+
+          <input
+            class="otp-input"
+            type="text"
+            inputmode="numeric"
+            maxlength="1"
+            aria-label="OTP digit 5"
+          />
+
+          <input
+            class="otp-input"
+            type="text"
+            inputmode="numeric"
+            maxlength="1"
+            aria-label="OTP digit 6"
+          />
+        </div>
+
+        <span class="field-error otp-field-error" data-error-for="otp"></span>
+
+        <button
+          class="button button-primary auth-submit-button"
+          id="verify-email-submit"
+          type="submit"
+        >
+          Verify email
+        </button>
+      </form>
+
+      <div class="otp-resend-area">
+        <p>Didn't receive the code?</p>
+
+        <button
+          class="resend-otp-button"
+          id="resend-otp-button"
+          type="button"
+          disabled
+        >
+          Resend code in
+          <span id="resend-countdown">60</span>s
+        </button>
+      </div>
+
+      <p class="auth-alternative">
+        Entered the wrong email?
+
+        <a href="{% url 'frontend:register' %}"> Register again </a>
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %} {% block extra_js %}
+<script src="{% static 'frontend/js/verify_email.js' %}" defer></script>
+{% endblock %}

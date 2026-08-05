@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Newly Built",
+    "code": "newly_built",
+    "description": "A newly constructed property that has not previously been occupied.",
+    "display_order": 1,
+    "is_active": true
+  },
+  {
+    "name": "Newly Renovated",
+    "code": "newly_renovated",
+    "description": "An existing property that has recently undergone significant renovation.",
+    "display_order": 2,
+    "is_active": true
+  },
+  {
+    "name": "Fairly Used",
+    "code": "fairly_used",
+    "description": "A previously occupied property in reasonably good condition.",
+    "display_order": 3,
+    "is_active": true
+  },
+  {
+    "name": "Old",
+    "code": "old",
+    "description": "An older property that remains usable but may show signs of age.",
+    "display_order": 4,
+    "is_active": true
+  },
+  {
+    "name": "Needs Renovation",
+    "code": "needs_renovation",
+    "description": "A property requiring repairs or renovation before normal occupancy.",
+    "display_order": 5,
+    "is_active": true
+  },
+  {
+    "name": "Off Plan",
+    "code": "off_plan",
+    "description": "A property being marketed before construction has been completed.",
+    "display_order": 6,
+    "is_active": true
+  }
+]

@@ -2,7 +2,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+import os
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -27,6 +27,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # apps
     "accounts.apps.AccountsConfig",
+    "core",
+    "locations",
+    "properties",
+    "frontend",
     # third party packages
     "rest_framework",
     "drf_spectacular",
@@ -49,7 +53,7 @@ ROOT_URLCONF = "api.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -67,13 +71,24 @@ WSGI_APPLICATION = "api.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "rentoraPropertyDB",
+        "USER": "postgres",
+        "PASSWORD": "sunshine",
+        "HOST": "localhost",
+        "PORT": 5432,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -109,7 +124,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+
+MEDIA_URL = "/media/"
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -126,6 +146,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
+    "EXCEPTION_HANDLER": ("core.exceptions.custom_exception_handler"),
 }
 
 
@@ -180,37 +201,37 @@ SPECTACULAR_SETTINGS = {
     # TAGS
     # ==========================================
     "TAGS": [
-        {
-            "name": "Authentication",
-            "description": "Authentication and Account APIs",
-        },
-        {
-            "name": "Users",
-            "description": "User Profile APIs",
-        },
-        {
-            "name": "Properties",
-            "description": "Property APIs",
-        },
-        {
-            "name": "Bookings",
-            "description": "Viewing Booking APIs",
-        },
-        {
-            "name": "Payments",
-            "description": "Payment APIs",
-        },
-        {
-            "name": "Wallet",
-            "description": "Wallet APIs",
-        },
-        {
-            "name": "KYC",
-            "description": "Identity Verification APIs",
-        },
-        {
-            "name": "Admin",
-            "description": "Administrative APIs",
-        },
+        # {
+        #     "name": "Authentication",
+        #     "description": "Authentication and Account APIs",
+        # },
+        # {
+        #     "name": "Users",
+        #     "description": "User Profile APIs",
+        # },
+        # {
+        #     "name": "Properties",
+        #     "description": "Property APIs",
+        # },
+        # {
+        #     "name": "Bookings",
+        #     "description": "Viewing Booking APIs",
+        # },
+        # {
+        #     "name": "Payments",
+        #     "description": "Payment APIs",
+        # },
+        # {
+        #     "name": "Wallet",
+        #     "description": "Wallet APIs",
+        # },
+        # {
+        #     "name": "KYC",
+        #     "description": "Identity Verification APIs",
+        # },
+        # {
+        #     "name": "Admin",
+        #     "description": "Administrative APIs",
+        # },
     ],
 }

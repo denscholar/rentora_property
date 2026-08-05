@@ -1,0 +1,126 @@
+{% extends "frontend/dashboard_base.html" %} {% load static %} {% block title %}
+My Property Submissions | Artishelta {% endblock %} {% block page_title %} My
+Property Submissions {% endblock %} {% block page_description %} Create, manage
+and track your property submissions. {% endblock %} {% block dashboard_content %}
+
+<section class="submission-page-header">
+  <div>
+    <span class="submission-total" id="submission-total">
+      Loading submissions...
+    </span>
+
+    <h2>Manage your submitted properties</h2>
+
+    <p>
+      Continue editing drafts or track properties currently going through
+      review.
+    </p>
+  </div>
+
+  <a href="#" class="button button-primary" id="add-property-button">
+    + Add property
+  </a>
+</section>
+
+<nav
+  class="submission-filter-tabs"
+  id="submission-filter-tabs"
+  aria-label="Filter property submissions"
+>
+  <button
+    type="button"
+    class="submission-filter-button active"
+    data-submission-status=""
+  >
+    All
+  </button>
+
+  <button
+    type="button"
+    class="submission-filter-button"
+    data-submission-status="draft"
+  >
+    Drafts
+  </button>
+
+  <button
+    type="button"
+    class="submission-filter-button"
+    data-submission-status="submitted"
+  >
+    Submitted
+  </button>
+
+  <button
+    type="button"
+    class="submission-filter-button"
+    data-submission-status="under_review"
+  >
+    Under review
+  </button>
+
+  <button
+    type="button"
+    class="submission-filter-button"
+    data-submission-status="approved"
+  >
+    Approved
+  </button>
+
+  <button
+    type="button"
+    class="submission-filter-button"
+    data-submission-status="rejected"
+  >
+    Rejected
+  </button>
+</nav>
+
+<div class="submission-page-message" id="submission-page-message" hidden></div>
+
+<section class="submission-loading-state" id="submission-loading-state">
+  <div class="submission-loading-spinner"></div>
+
+  <p>Loading your property submissions...</p>
+</section>
+
+<section class="submission-list" id="submission-list" hidden></section>
+
+<section class="submission-empty-state" id="submission-empty-state" hidden>
+  <div class="submission-empty-icon">⌂</div>
+
+  <h2 id="submission-empty-title">You haven’t submitted any properties yet</h2>
+
+  <p id="submission-empty-description">
+    Create your first property draft and complete it at your own pace.
+  </p>
+
+  <a href="#" class="button button-primary" id="empty-add-property-button">
+    Add your first property
+  </a>
+</section>
+
+<section class="submission-error-state" id="submission-error-state" hidden>
+  <div class="submission-empty-icon">!</div>
+
+  <h2>We couldn’t load your submissions</h2>
+
+  <p id="submission-error-message">
+    Please check your connection and try again.
+  </p>
+
+  <button
+    type="button"
+    class="button button-primary"
+    id="retry-submissions-button"
+  >
+    Try again
+  </button>
+</section>
+
+{% endblock %} {% block extra_js %}
+<script
+  src="{% static 'frontend/js/dashboard/submission-list.js' %}"
+  defer
+></script>
+{% endblock %}

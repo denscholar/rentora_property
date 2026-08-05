@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Unfurnished",
+    "code": "unfurnished",
+    "description": "The property does not include furniture.",
+    "display_order": 1,
+    "is_active": true
+  },
+  {
+    "name": "Semi Furnished",
+    "code": "semi_furnished",
+    "description": "The property includes some furniture or essential fittings.",
+    "display_order": 2,
+    "is_active": true
+  },
+  {
+    "name": "Fully Furnished",
+    "code": "fully_furnished",
+    "description": "The property includes furniture and is ready for occupation.",
+    "display_order": 3,
+    "is_active": true
+  },
+  {
+    "name": "Serviced",
+    "code": "serviced",
+    "description": "The property includes furnishing and ongoing facility services.",
+    "display_order": 4,
+    "is_active": true
+  }
+]

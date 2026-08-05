@@ -1,0 +1,35 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta
+      name="description"
+      content="Rentora helps tenants discover verified properties and compare trusted agents."
+    />
+
+    <title>{% block title %} Rentora {% endblock %}</title>
+    <script
+      src="https://kit.fontawesome.com/66521023b5.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <link rel="stylesheet" href="{% static 'frontend/css/landing.css' %}" />
+
+    {% block extra_css %} {% endblock %}
+  </head>
+
+  <body>
+    {% block content %} {% endblock %}
+
+    <script src="{% static 'frontend/js/api.js' %}" defer></script>
+    <script src="{% static 'frontend/js/logout.js' %}" defer></script>
+    <script src="{% static 'frontend/js/landing.js' %}" defer></script>
+
+    {% block extra_js %} {% endblock %}
+  </body>
+</html>

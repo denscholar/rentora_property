@@ -1,0 +1,27 @@
+[
+  {"category": "SEC", "name": "CCTV", "icon": "camera"},
+  {"category": "SEC", "name": "Security Guards", "icon": "shield"},
+  {"category": "SEC", "name": "Electric Fence", "icon": "bolt"},
+
+  {"category": "UTL", "name": "Generator", "icon": "generator"},
+  {"category": "UTL", "name": "Borehole", "icon": "water"},
+  {"category": "UTL", "name": "Water Tank", "icon": "water"},
+  {"category": "UTL", "name": "Prepaid Meter", "icon": "meter"},
+
+  {"category": "INT", "name": "POP Ceiling", "icon": "home"},
+  {"category": "INT", "name": "Fitted Kitchen", "icon": "kitchen"},
+  {"category": "INT", "name": "Wardrobe", "icon": "wardrobe"},
+  {"category": "INT", "name": "Balcony", "icon": "balcony"},
+
+  {"category": "EXT", "name": "Parking Space", "icon": "car"},
+  {"category": "EXT", "name": "Tarred Road", "icon": "road"},
+  {"category": "EXT", "name": "Fenced Compound", "icon": "fence"},
+
+  {"category": "REC", "name": "Swimming Pool", "icon": "pool"},
+  {"category": "REC", "name": "Gym", "icon": "fitness"},
+  {"category": "REC", "name": "Children Playground", "icon": "playground"},
+
+  {"category": "TEC", "name": "Fiber Internet", "icon": "wifi"},
+  {"category": "TEC", "name": "Intercom", "icon": "phone"},
+  {"category": "TEC", "name": "Smart Home", "icon": "smart-home"}
+]

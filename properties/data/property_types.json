@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Apartment",
+    "code": "APT",
+    "icon": "/static/frontend/images/icons/property-types/apartment.png"
+  },
+  {
+    "name": "Mini Flat",
+    "code": "MFL",
+    "icon": "/static/frontend/images/icons/property-types/mini-flat.png"
+  },
+  {
+    "name": "Self Contain",
+    "code": "SCN",
+    "icon": "/static/frontend/images/icons/property-types/self-contain.png"
+  },
+  {
+    "name": "Studio",
+    "code": "STD",
+    "icon": "/static/frontend/images/icons/property-types/studio.png"
+  },
+  {
+    "name": "Duplex",
+    "code": "DPX",
+    "icon": "/static/frontend/images/icons/property-types/duplex.png"
+  },
+  {
+    "name": "Terrace",
+    "code": "TER",
+    "icon": "/static/frontend/images/icons/property-types/terrace.png"
+  },
+  {
+    "name": "Detached House",
+    "code": "DTH",
+    "icon": "/static/frontend/images/icons/property-types/detached-house.png"
+  },
+  {
+    "name": "Semi Detached House",
+    "code": "SDH",
+    "icon": "/static/frontend/images/icons/property-types/semi-detached-house.png"
+  },
+  {
+    "name": "Office",
+    "code": "OFF",
+    "icon": "/static/frontend/images/icons/property-types/office.png"
+  },
+  {
+    "name": "Warehouse",
+    "code": "WHS",
+    "icon": "/static/frontend/images/icons/property-types/warehouse.png"
+  },
+  {
+    "name": "Shop",
+    "code": "SHP",
+    "icon": "/static/frontend/images/icons/property-types/shop.png"
+  },
+  {
+    "name": "Land",
+    "code": "LND",
+    "icon": "/static/frontend/images/icons/property-types/land.png"
+  }
+]

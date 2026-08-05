@@ -1,0 +1,233 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{% block title %} Dashboard | Artishelta {% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'frontend/css/landing.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'frontend/css/dashboard.css' %}" />
+
+    {% block extra_css %} {% endblock %}
+  </head>
+
+  <body class="dashboard-body">
+    <div class="dashboard-layout">
+      <!-- ============================================= -->
+      <!-- SIDEBAR -->
+      <!-- ============================================= -->
+      <aside class="dashboard-sidebar" id="dashboard-sidebar">
+        <div class="dashboard-sidebar-header">
+          <a href="{% url 'frontend:landing-page' %}" class="dashboard-brand">
+            <span class="brand-mark">A</span>
+            <span>Artishelta</span>
+          </a>
+
+          <button
+            type="button"
+            class="dashboard-sidebar-close"
+            id="dashboard-sidebar-close"
+            aria-label="Close dashboard menu"
+          >
+            &times;
+          </button>
+        </div>
+
+        <div class="dashboard-user-summary">
+          <div class="dashboard-user-avatar">
+            {{ request.user.first_name|first|upper }}
+          </div>
+
+          <div>
+            <strong>
+              {{ request.user.get_full_name|default:request.user.email }}
+            </strong>
+
+            <span> {{ request.user.get_role_display }} </span>
+          </div>
+        </div>
+
+        <nav class="dashboard-navigation">
+          <a
+            href="{% url 'frontend:dashboard' %}"
+            class="dashboard-nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+          >
+            <span class="dashboard-nav-icon">⌂</span>
+            <span>Dashboard</span>
+          </a>
+
+          {% if request.user.role == "agent" %}
+          
+          <a href="{% url 'frontend:property-submission-create' %}"
+            class="dashboard-nav-link {% if request.resolver_match.url_name == 'property-submission-create' %}active{% endif %}"
+          >
+            <span class="dashboard-nav-icon">＋</span>
+            <span>Add property</span>
+          </a>
+
+          <a
+            href="{% url 'frontend:property-submission-list' %}"
+            class="dashboard-nav-link {% if request.resolver_match.url_name == 'property-submission-list' %}active{% endif %}"
+          >
+            <span class="dashboard-nav-icon">▣</span>
+            <span>My submissions</span>
+          </a>
+
+          <a href="#" class="dashboard-nav-link">
+            <span class="dashboard-nav-icon">⌂</span>
+            <span>My properties</span>
+          </a>
+
+          <a href="#" class="dashboard-nav-link">
+            <span class="dashboard-nav-icon">◷</span>
+            <span>Viewings</span>
+          </a>
+
+          {% elif request.user.role == "landlord" %}
+          <a href="{% url 'frontend:property-submission-create' %}"
+            class="dashboard-nav-link {% if request.resolver_match.url_name == 'property-submission-create' %}active{% endif %}"
+          >
+            <span class="dashboard-nav-icon">＋</span>
+            <span>Add property</span>
+          </a>
+
+          <a
+            href="{% url 'frontend:property-submission-list' %}"
+            class="dashboard-nav-link {% if request.resolver_match.url_name == 'property-submission-list' %}active{% endif %}"
+          >
+            <span class="dashboard-nav-icon">▣</span>
+            <span>My submissions</span>
+          </a>
+
+          <a href="#" class="dashboard-nav-link">
+            <span class="dashboard-nav-icon">⌂</span>
+            <span>My properties</span>
+          </a>
+
+          <a href="#" class="dashboard-nav-link">
+            <span class="dashboard-nav-icon">◷</span>
+            <span>Viewings</span>
+          </a>
+
+          {% else %}
+          <a href="#" class="dashboard-nav-link">
+            <span class="dashboard-nav-icon">⌕</span>
+            <span>Explore properties</span>
+          </a>
+
+          <a href="#" class="dashboard-nav-link">
+            <span class="dashboard-nav-icon">♡</span>
+            <span>Saved properties</span>
+          </a>
+
+          <a href="#" class="dashboard-nav-link">
+            <span class="dashboard-nav-icon">◷</span>
+            <span>My viewings</span>
+          </a>
+          {% endif %}
+
+          <a href="#" class="dashboard-nav-link">
+            <span class="dashboard-nav-icon">○</span>
+            <span>Profile</span>
+          </a>
+
+          <a href="#" class="dashboard-nav-link">
+            <span class="dashboard-nav-icon">⚙</span>
+            <span>Settings</span>
+          </a>
+        </nav>
+
+        <div class="dashboard-sidebar-footer">
+          <button
+            type="button"
+            class="dashboard-logout-button"
+            data-logout-button
+          >
+            <span>↪</span>
+            <span>Log out</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Mobile overlay -->
+      <div
+        class="dashboard-sidebar-overlay"
+        id="dashboard-sidebar-overlay"
+      ></div>
+
+      <!-- ============================================= -->
+      <!-- MAIN CONTENT -->
+      <!-- ============================================= -->
+      <div class="dashboard-main">
+        <header class="dashboard-topbar">
+          <div class="dashboard-topbar-left">
+            <button
+              type="button"
+              class="dashboard-menu-button"
+              id="dashboard-menu-button"
+              aria-label="Open dashboard menu"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+
+            <div>
+              <h1>{% block page_title %} Dashboard {% endblock %}</h1>
+
+              <p>
+                {% block page_description %} Manage your Artishelta account. {% endblock %}
+              </p>
+            </div>
+          </div>
+
+          <div class="dashboard-topbar-actions">
+            <button
+              type="button"
+              class="dashboard-notification-button"
+              aria-label="Notifications"
+            >
+              ♢
+              <span class="dashboard-notification-dot"></span>
+            </button>
+
+            {% if request.user.role == "agent" or request.user.role == "landlord" %}
+            {% comment %} <a href="#" class="button button-primary dashboard-create-button">
+              Add property
+            </a> {% endcomment %}
+            {% endif %}
+
+            <div class="dashboard-topbar-user">
+              <span class="dashboard-topbar-avatar">
+                {% comment %} {{ request.user.first_name|first|upper }} {% endcomment %}
+              </span>
+
+              <div>
+                <strong> {{ request.user.first_name }} </strong>
+
+                <span> {{ request.user.get_role_display }} </span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="dashboard-content">
+          {% block dashboard_content %} {% endblock %}
+        </main>
+      </div>
+    </div>
+
+    <script src="{% static 'frontend/js/api.js' %}" defer></script>
+
+    <script src="{% static 'frontend/js/logout.js' %}" defer></script>
+
+    <script src="{% static 'frontend/js/dashboard.js' %}" defer></script>
+
+    {% block extra_js %} {% endblock %}
+  </body>
+</html>

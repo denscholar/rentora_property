@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from accounts.models import CustomUser
+from accounts.models import AgentProfile, CustomUser, LandlordProfile, UserProfile
 
 
 # ==========================================
@@ -51,7 +51,6 @@ class ResendEmailOTPSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 
-
 # ==========================================
 # LOGIN SERIALIZER
 # ==========================================
@@ -63,6 +62,25 @@ class LoginSerializer(serializers.Serializer):
 # ==========================================
 # LOGGED IN USER SERIALIZER
 # ==========================================
+# class AuthUserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = CustomUser
+#         fields = [
+#             "id",
+#             "slug",
+#             "first_name",
+#             "last_name",
+#             "email",
+#             "phone_number",
+#             "role",
+#             "is_verified",
+#         ]
+
+
+
+# =====================================================
+# AUTH USER SERIALIZER
+# =====================================================
 class AuthUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -76,3 +94,76 @@ class AuthUserSerializer(serializers.ModelSerializer):
             "role",
             "is_verified",
         ]
+
+
+# =====================================================
+# USER PROFILE SERIALIZER
+# =====================================================
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = [
+            "profile_picture",
+            "date_of_birth",
+            "gender",
+            "bio",
+            "address",
+            "city",
+            "state",
+            "country",
+        ]
+
+
+# =====================================================
+# AGENT PROFILE SERIALIZER
+# =====================================================
+class AgentProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AgentProfile
+        fields = [
+            "agency_name",
+            "business_address",
+            "years_of_experience",
+            "verification_status",
+            "rating_average",
+            "completed_viewings",
+            "cancelled_viewings",
+            "no_show_count",
+        ]
+
+
+# =====================================================
+# LANDLORD PROFILE SERIALIZER
+# =====================================================
+class LandlordProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LandlordProfile
+        fields = [
+            "landlord_type",
+            "business_name",
+            "verification_status",
+            "total_properties",
+        ]
+
+
+# =====================================================
+# UPDATE PROFILE SERIALIZER
+# =====================================================
+class UpdateProfileSerializer(serializers.Serializer):
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+    phone_number = serializers.CharField(required=False)
+    date_of_birth = serializers.DateField(required=False)
+    gender = serializers.CharField(required=False)
+    bio = serializers.CharField(required=False, allow_blank=True)
+    address = serializers.CharField(required=False, allow_blank=True)
+    city = serializers.CharField(required=False, allow_blank=True)
+    state = serializers.CharField(required=False, allow_blank=True)
+    country = serializers.CharField(required=False, allow_blank=True)
+
+
+# =====================================================
+# PROFILE PHOTO SERIALIZER
+# =====================================================
+class ProfilePhotoSerializer(serializers.Serializer):
+    profile_picture = serializers.ImageField()

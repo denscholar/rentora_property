@@ -1,0 +1,195 @@
+{% extends "frontend/base.html" %} {% load static %} {% block title %} Create
+Rentora Account {% endblock %} 
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'frontend/css/auth.css' %}" />
+{% endblock %} {% block content %}
+<section class="auth-page">
+  <div class="auth-visual">
+    <img
+      src="{% static 'frontend/images/register_image.png' %}"
+      alt="Modern Nigerian residential property"
+    />
+
+    <div class="auth-visual-overlay">
+      <div class="auth-visual-copy">
+        <h1>Join a more trusted Nigerian property marketplace.</h1>
+
+        <p>
+          Find verified homes, submit properties and connect with trusted agents
+          through Rentora.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-form-panel">
+    <div class="auth-form-wrapper">
+      <a href="{% url 'frontend:landing-page' %}" class="auth-back-link">
+        <span class="back-icon">
+          <i class="fa-solid fa-arrow-left"></i>
+        </span>
+
+        <span class="auth-back-link-text">Back to Home</span>
+      </a>
+      <div class="auth-form-header">
+        <span class="eyebrow">Create account</span>
+
+        <h1>Get started with Rentora</h1>
+
+        <p>Choose your account type and enter your details.</p>
+      </div>
+
+      <form class="auth-form" id="registration-form" novalidate>
+        {% csrf_token %}
+
+        <div class="form-general-error" hidden></div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="first-name">First name</label>
+
+            <input
+              id="first-name"
+              name="first_name"
+              type="text"
+              autocomplete="given-name"
+              required
+            />
+
+            <span class="field-error" data-error-for="first_name"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="last-name">Last name</label>
+
+            <input
+              id="last-name"
+              name="last_name"
+              type="text"
+              autocomplete="family-name"
+              required
+            />
+
+            <span class="field-error" data-error-for="last_name"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email address</label>
+
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+            />
+
+            <span class="field-error" data-error-for="email"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="phone-number">Phone number</label>
+
+            <input
+              id="phone-number"
+              name="phone_number"
+              type="tel"
+              inputmode="numeric"
+              autocomplete="tel"
+              placeholder="08012345678"
+              maxlength="15"
+              required
+            />
+
+            <span class="field-error" data-error-for="phone_number"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="role">Registering as</label>
+
+          <select id="role" name="role" required>
+            <option value="">Select account type</option>
+            <option value="tenant">Tenant</option>
+            <option value="agent">Property agent</option>
+            <option value="landlord">Landlord</option>
+          </select>
+
+          <span class="field-error" data-error-for="role"></span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Password</label>
+
+            <div class="password-field-wrapper">
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="new-password"
+                minlength="8"
+                required
+              />
+
+              <button
+                class="password-toggle"
+                type="button"
+                data-password-toggle="password"
+              >
+                Show
+              </button>
+            </div>
+
+            <span class="field-error" data-error-for="password"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="confirm-password"> Confirm password </label>
+
+            <div class="password-field-wrapper">
+              <input
+                id="confirm-password"
+                name="confirm_password"
+                type="password"
+                autocomplete="new-password"
+                minlength="8"
+                required
+              />
+
+              <button
+                class="password-toggle"
+                type="button"
+                data-password-toggle="confirm-password"
+              >
+                Show
+              </button>
+            </div>
+
+            <span class="field-error" data-error-for="confirm_password"></span>
+          </div>
+        </div>
+
+        <button
+          class="button button-primary auth-submit-button"
+          id="registration-submit"
+          type="submit"
+        >
+          Create account
+        </button>
+      </form>
+
+      <p class="auth-alternative">
+        Already have an account?
+
+        <a href="{% url 'frontend:login' %}"> Log in </a>
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %} {% block extra_js %}
+<script src="{% static 'frontend/js/register.js' %}" defer></script>
+{% endblock %}
