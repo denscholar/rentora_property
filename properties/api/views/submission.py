@@ -191,7 +191,7 @@ class PropertySubmissionDetailAPIView(APIView):
         try:
             return get_user_submission(
                 user=request.user,
-                submission_uuid=submission_uuid,
+                uuid=submission_uuid,
             )
 
         except PropertySubmission.DoesNotExist:
@@ -356,7 +356,7 @@ class SubmitPropertySubmissionAPIView(APIView):
         try:
             submission = get_user_submission(
                 user=request.user,
-                submission_uuid=submission_uuid,
+                uuid=submission_uuid,
             )
 
         except PropertySubmission.DoesNotExist:
@@ -426,7 +426,7 @@ class ArchivePropertySubmissionAPIView(APIView):
         try:
             submission = get_user_submission(
                 user=request.user,
-                submission_uuid=submission_uuid,
+                uuid=submission_uuid,
             )
 
         except PropertySubmission.DoesNotExist:

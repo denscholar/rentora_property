@@ -1,4 +1,5 @@
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiResponse, extend_schema
+from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
@@ -11,8 +12,16 @@ from properties.models import (
     PropertyPurpose,
     PropertyType,
 )
-from properties.api.serializers.lookups import AmenityCategoryLookupSerializer, AmenityLookupSerializer, FurnishingStatusLookupSerializer, PropertyConditionLookupSerializer, PropertyPurposeLookupSerializer, PropertyTypeLookupSerializer
-
+from properties.api.serializers.lookups import (
+    AmenityCategoryLookupSerializer,
+    AmenityLookupSerializer,
+    FurnishingStatusLookupSerializer,
+    PaymentFrequencySerializer,
+    PropertyConditionLookupSerializer,
+    PropertyPurposeLookupSerializer,
+    PropertyTypeLookupSerializer,
+)
+from properties.models.property.submission import PaymentFrequency
 
 
 class BaseLookupAPIView(APIView):
@@ -136,3 +145,43 @@ class AmenityLookupAPIView(BaseLookupAPIView):
     )
     def get(self, request):
         return super().get(request)
+
+
+
+
+class PaymentFrequencyListAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        tags=["Property Lookups"],
+        summary="List payment frequencies",
+        description=(
+            "Retrieve the payment-frequency choices supported "
+            "for property submissions."
+        ),
+        responses={
+            200: PaymentFrequencySerializer(many=True),
+            500: OpenApiResponse(
+                description="Unable to retrieve payment frequencies.",
+            ),
+        },
+    )
+    def get(self, request):
+        frequencies = [
+            {
+                "value": value,
+                "label": label,
+            }
+            for value, label in PaymentFrequency.choices
+        ]
+
+        serializer = PaymentFrequencySerializer(
+            frequencies,
+            many=True,
+        )
+
+        return success_response(
+            message="Payment frequencies retrieved successfully.",
+            data=serializer.data,
+            status_code=status.HTTP_200_OK,
+        )

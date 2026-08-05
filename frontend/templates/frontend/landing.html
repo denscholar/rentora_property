@@ -1,0 +1,691 @@
+{% extends "frontend/base.html" %} {% load static %} {% block title %} Rentora |
+Find Verified Properties {% endblock %} {% block content %}
+
+<header class="site-header">
+  <div class="container navigation">
+    <a href="{% url 'frontend:landing-page' %}" class="brand">
+      <span class="brand-mark">R</span>
+      <span>Rentora</span>
+    </a>
+
+    <!-- Desktop navigation -->
+    <nav class="navigation-links">
+      <a href="#how-it-works">How it works</a>
+      <a href="#why-rentora">Why Rentora</a>
+      <a href="#agents">For agents</a>
+      <a href="#landlords">For landlords</a>
+    </nav>
+
+    <div class="navigation-actions">
+      {% if request.user.is_authenticated %}
+      <a href="{% url 'frontend:dashboard' %}" class="text-link"> Dashboard </a>
+
+      <button
+        type="button"
+        class="button button-secondary logout-button"
+        data-logout-button
+      >
+        Log out
+      </button>
+      {% else %}
+      <a href="{% url 'frontend:login' %}" class="text-link"> Log in </a>
+
+      <a href="{% url 'frontend:register' %}" class="button button-primary">
+        Create account
+      </a>
+      {% endif %}
+    </div>
+
+    <!-- Mobile menu trigger -->
+    <button
+      class="mobile-menu-button"
+      id="mobile-menu-button"
+      type="button"
+      aria-label="Open navigation menu"
+      aria-controls="mobile-navigation"
+      aria-expanded="false"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile overlay -->
+<div
+  class="mobile-menu-overlay"
+  id="mobile-menu-overlay"
+  aria-hidden="true"
+></div>
+
+<!-- Mobile drawer -->
+<aside
+  class="mobile-navigation"
+  id="mobile-navigation"
+  aria-hidden="true"
+  aria-label="Mobile navigation"
+>
+  <div class="mobile-navigation-header">
+    <a href="{% url 'frontend:landing-page' %}" class="brand">
+      <span class="brand-mark">R</span>
+      <span>Rentora</span>
+    </a>
+
+    <button
+      class="mobile-menu-close"
+      id="mobile-menu-close"
+      type="button"
+      aria-label="Close navigation menu"
+    >
+      &times;
+    </button>
+  </div>
+
+  <nav class="mobile-navigation-links">
+    <a href="#how-it-works">How it works</a>
+    <a href="#why-rentora">Why Rentora</a>
+    <a href="#agents">For agents</a>
+    <a href="#landlords">For landlords</a>
+  </nav>
+
+  <div class="mobile-navigation-actions">
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'frontend:dashboard' %}" class="button button-primary">
+      Dashboard
+    </a>
+
+    <button
+      type="button"
+      class="button button-secondary logout-button"
+      data-logout-button
+    >
+      Log out
+    </button>
+    {% else %}
+    <a href="{% url 'frontend:login' %}" class="button button-secondary">
+      Log in
+    </a>
+
+    <a href="{% url 'frontend:register' %}" class="button button-primary">
+      Create account
+    </a>
+    {% endif %}
+  </div>
+</aside>
+
+<main>
+  <!-- ============================================= -->
+  <!-- HERO -->
+  <!-- ============================================= -->
+  <section class="hero-section">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <span class="eyebrow"> A smarter property marketplace </span>
+
+        <h1>Find the right property. Choose the right agent.</h1>
+
+        <p class="hero-description">
+          Rentora brings verified properties and trusted agents together in one
+          marketplace. Compare agents, inspection fees and service quality
+          before making a decision.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#" class="button button-primary button-large">
+            Find a property
+          </a>
+
+          <a href="#agents" class="button button-secondary button-large">
+            List a property
+          </a>
+        </div>
+
+        <div class="hero-trust">
+          <div>
+            <strong>Verified</strong>
+            <span>property information</span>
+          </div>
+
+          <div>
+            <strong>Transparent</strong>
+            <span>agent comparison</span>
+          </div>
+
+          <div>
+            <strong>Secure</strong>
+            <span>inspection process</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="property-preview-card">
+          <div class="property-preview-image">
+            <span class="verified-badge">Verified property</span>
+
+            <div class="property-image">
+              <img
+                src="{% static 'frontend/images/hero-property.png' %}"
+                alt="Modern Nigerian property in Lagos"
+              />
+            </div>
+          </div>
+
+          <div class="property-preview-content">
+            <span class="property-location"> Wuse 2, Abuja </span>
+
+            <h2>Modern 3 Bedroom Apartment</h2>
+
+            <p class="property-price">
+              ₦4,500,000
+              <span>/ year</span>
+            </p>
+
+            <div class="property-features">
+              <span>3 beds</span>
+              <span>3 baths</span>
+              <span>2 parking spaces</span>
+            </div>
+
+            <div class="agent-comparison">
+              <div>
+                <strong>3 agents available</strong>
+                <span> Compare inspection fees and ratings </span>
+              </div>
+
+              <button type="button">Compare</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================= -->
+  <!-- TRUST STRIP -->
+  <!-- ============================================= -->
+  <section class="trust-strip">
+    <div class="container trust-strip-grid">
+      <p>
+        Designed for tenants, agents and landlords who want a more trusted
+        property experience.
+      </p>
+
+      <div class="trust-items">
+        <span>Verified listings</span>
+        <span>Agent comparison</span>
+        <span>Secure inspections</span>
+        <span>Transparent pricing</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- FEATURED PROPERTIES -->
+  <!-- ===================================================== -->
+  <section class="section featured-properties-section">
+    <div class="container">
+      <div class="featured-properties-header">
+        <div>
+          <span class="eyebrow">Featured properties</span>
+          <h2>Explore homes across Nigeria</h2>
+          <p>
+            Discover verified properties from popular neighbourhoods and compare
+            the agents marketing them.
+          </p>
+        </div>
+
+        <div class="featured-slider-controls">
+          <button
+            type="button"
+            id="featured-prev"
+            aria-label="Previous featured property"
+          >
+            &#8592;
+          </button>
+
+          <button
+            type="button"
+            id="featured-next"
+            aria-label="Next featured property"
+          >
+            &#8594;
+          </button>
+        </div>
+      </div>
+
+      <div class="featured-slider-viewport">
+        <div class="featured-slider-track" id="featured-slider-track">
+          <article class="featured-property-card">
+            <div class="featured-property-image">
+              <img
+                src="{% static 'frontend/images/feature1.png' %}"
+                alt="Modern detached duplex in Lekki, Lagos"
+              />
+
+              <span class="featured-status">Verified</span>
+            </div>
+
+            <div class="featured-property-content">
+              <span class="featured-location">Lekki Phase 1, Lagos</span>
+
+              <h3>4 Bedroom Detached Duplex</h3>
+
+              <p class="featured-price">
+                ₦18,000,000
+                <span>/ year</span>
+              </p>
+
+              <div class="featured-property-features">
+                <span>4 beds</span>
+                <span>5 baths</span>
+                <span>3 parking</span>
+              </div>
+
+              <div class="featured-agent-row">
+                <div>
+                  <strong>3 agents available</strong>
+                  <span>Compare fees and ratings</span>
+                </div>
+
+                <a href="#">View</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="featured-property-card">
+            <div class="featured-property-image">
+              <img
+                src="{% static 'frontend/images/feature2.png' %}"
+                alt="Luxury apartment in Maitama, Abuja"
+              />
+
+              <span class="featured-status">Verified</span>
+            </div>
+
+            <div class="featured-property-content">
+              <span class="featured-location">Maitama, Abuja</span>
+
+              <h3>3 Bedroom Luxury Apartment</h3>
+
+              <p class="featured-price">
+                ₦12,500,000
+                <span>/ year</span>
+              </p>
+
+              <div class="featured-property-features">
+                <span>3 beds</span>
+                <span>4 baths</span>
+                <span>2 parking</span>
+              </div>
+
+              <div class="featured-agent-row">
+                <div>
+                  <strong>2 agents available</strong>
+                  <span>Compare fees and ratings</span>
+                </div>
+
+                <a href="#">View</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="featured-property-card">
+            <div class="featured-property-image">
+              <img
+                src="{% static 'frontend/images/feature3.png' %}"
+                alt="Serviced apartment in Port Harcourt"
+              />
+
+              <span class="featured-status">Verified</span>
+            </div>
+
+            <div class="featured-property-content">
+              <span class="featured-location">Old GRA, Port Harcourt</span>
+
+              <h3>2 Bedroom Serviced Apartment</h3>
+
+              <p class="featured-price">
+                ₦6,800,000
+                <span>/ year</span>
+              </p>
+
+              <div class="featured-property-features">
+                <span>2 beds</span>
+                <span>3 baths</span>
+                <span>1 parking</span>
+              </div>
+
+              <div class="featured-agent-row">
+                <div>
+                  <strong>4 agents available</strong>
+                  <span>Compare fees and ratings</span>
+                </div>
+
+                <a href="#">View</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="featured-property-card">
+            <div class="featured-property-image">
+              <img
+                src="{% static 'frontend/images/feature4.png' %}"
+                alt="Family bungalow in Bodija, Ibadan"
+              />
+
+              <span class="featured-status">Verified</span>
+            </div>
+
+            <div class="featured-property-content">
+              <span class="featured-location">Bodija, Ibadan</span>
+
+              <h3>3 Bedroom Family Bungalow</h3>
+
+              <p class="featured-price">
+                ₦4,200,000
+                <span>/ year</span>
+              </p>
+
+              <div class="featured-property-features">
+                <span>3 beds</span>
+                <span>3 baths</span>
+                <span>2 parking</span>
+              </div>
+
+              <div class="featured-agent-row">
+                <div>
+                  <strong>2 agents available</strong>
+                  <span>Compare fees and ratings</span>
+                </div>
+
+                <a href="#">View</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div
+        class="featured-slider-dots"
+        id="featured-slider-dots"
+        aria-label="Featured property slider navigation"
+      ></div>
+    </div>
+  </section>
+
+  <!-- ============================================= -->
+  <!-- HOW IT WORKS -->
+  <!-- ============================================= -->
+  <section class="section" id="how-it-works">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">How Rentora works</span>
+
+        <h2>A clearer way to find and inspect properties</h2>
+
+        <p>
+          Rentora removes duplicate listings and helps tenants compare agents
+          attached to the same property.
+        </p>
+      </div>
+
+      <div class="steps-grid">
+        <article class="step-card">
+          <span class="step-number">01</span>
+
+          <h3>Search verified properties</h3>
+
+          <p>
+            Browse properties using location, price, property type, furnishing
+            status and amenities.
+          </p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-number">02</span>
+
+          <h3>Compare available agents</h3>
+
+          <p>
+            Review inspection fees, ratings, availability and service history
+            before selecting an agent.
+          </p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-number">03</span>
+
+          <h3>Book your inspection</h3>
+
+          <p>
+            Choose a suitable date and complete the inspection process through a
+            structured and secure workflow.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================= -->
+  <!-- WHY RENTORA -->
+  <!-- ============================================= -->
+  <section class="section section-soft" id="why-rentora">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Why Rentora</span>
+
+        <h2>One property. Multiple trusted agents.</h2>
+
+        <p>
+          Instead of displaying the same property repeatedly, Rentora groups
+          agents under one verified property.
+        </p>
+      </div>
+
+      <div class="benefits-grid">
+        <article class="benefit-card">
+          <div class="benefit-icon">✓</div>
+
+          <h3>Fewer duplicate listings</h3>
+
+          <p>
+            A physical property appears once while legitimate agents compete
+            through separate agent listings.
+          </p>
+        </article>
+
+        <article class="benefit-card">
+          <div class="benefit-icon">↔</div>
+
+          <h3>Transparent comparison</h3>
+
+          <p>
+            Tenants can compare inspection fees, responsiveness and ratings
+            before choosing an agent.
+          </p>
+        </article>
+
+        <article class="benefit-card">
+          <div class="benefit-icon">⌂</div>
+
+          <h3>Better property information</h3>
+
+          <p>
+            Property submissions pass through moderation before becoming public
+            marketplace records.
+          </p>
+        </article>
+
+        <article class="benefit-card">
+          <div class="benefit-icon">◎</div>
+
+          <h3>Structured inspection workflow</h3>
+
+          <p>
+            From selecting an agent to completing a viewing, every step is
+            easier to follow.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================= -->
+  <!-- AGENTS -->
+  <!-- ============================================= -->
+  <section class="section" id="agents">
+    <div class="container split-section">
+      <div class="split-copy">
+        <span class="eyebrow">For property agents</span>
+
+        <h2>Build trust and win more serious clients</h2>
+
+        <p>
+          Rentora gives professional agents tools to submit properties, manage
+          listings and compete based on service quality rather than duplicate
+          advertisements.
+        </p>
+
+        <ul class="feature-list">
+          <li>Create and manage property submissions</li>
+          <li>Set your own inspection fee</li>
+          <li>Manage availability</li>
+          <li>Build ratings and service history</li>
+        </ul>
+
+        <a href="#" class="button button-primary"> Join as an agent </a>
+      </div>
+
+      <div class="dashboard-preview">
+        <div class="preview-header">
+          <div>
+            <span>Agent dashboard</span>
+            <strong>Good evening, Grace</strong>
+          </div>
+
+          <span class="status-pill">Verified</span>
+        </div>
+
+        <div class="metric-grid">
+          <div>
+            <span>Active listings</span>
+            <strong>12</strong>
+          </div>
+
+          <div>
+            <span>Pending review</span>
+            <strong>3</strong>
+          </div>
+
+          <div>
+            <span>Viewings</span>
+            <strong>28</strong>
+          </div>
+        </div>
+
+        <div class="submission-preview">
+          <span>Latest submission</span>
+
+          <strong> 3 Bedroom Apartment, Wuse 2 </strong>
+
+          <small> Status: Under review </small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================= -->
+  <!-- LANDLORDS -->
+  <!-- ============================================= -->
+  <section class="section section-dark" id="landlords">
+    <div class="container landlord-grid">
+      <div>
+        <span class="eyebrow eyebrow-light"> For landlords </span>
+
+        <h2>Take control of how your property is represented</h2>
+
+        <p>
+          Submit properties, claim existing records and work with trusted agents
+          while maintaining one reliable source of property information.
+        </p>
+      </div>
+
+      <div class="landlord-actions">
+        <a href="#" class="button button-light"> Create landlord account </a>
+
+        <a href="#how-it-works" class="button button-dark-outline">
+          Learn more
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================= -->
+  <!-- FINAL CTA -->
+  <!-- ============================================= -->
+  <section class="section">
+    <div class="container final-cta">
+      <div>
+        <span class="eyebrow">Get started with Rentora</span>
+
+        <h2>Your next property search should feel simpler.</h2>
+
+        <p>
+          Join tenants, landlords and professional agents building a more
+          trusted property marketplace.
+        </p>
+      </div>
+
+      <div class="final-cta-actions">
+        <a href="#" class="button button-primary button-large">
+          Create account
+        </a>
+
+        <a href="#" class="button button-secondary button-large">
+          Explore properties
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <a href="{% url 'frontend:landing-page' %}" class="brand footer-brand">
+        <span class="brand-mark">R</span>
+        <span>Rentora</span>
+      </a>
+
+      <p>A trusted marketplace for properties, agents and tenants.</p>
+    </div>
+
+    <div>
+      <h3>Platform</h3>
+      <a href="#how-it-works">How it works</a>
+      <a href="#agents">For agents</a>
+      <a href="#landlords">For landlords</a>
+    </div>
+
+    <div>
+      <h3>Company</h3>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+      <a href="#">Support</a>
+    </div>
+
+    <div>
+      <h3>Legal</h3>
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <p>&copy; {% now "Y" %} Rentora. All rights reserved.</p>
+  </div>
+</footer>
+
+{% endblock %}

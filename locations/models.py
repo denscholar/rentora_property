@@ -9,12 +9,6 @@ from core.models import BaseModel, GeoLocationMixin
 # COUNTRY
 # =====================================================
 class Country(BaseModel):
-    # uuid = models.UUIDField(
-    #     default=uuid.uuid4,
-    #     editable=False,
-    #     unique=True,
-    #     db_index=True,
-    # )
 
     slug = models.SlugField(
         max_length=255,
@@ -31,9 +25,6 @@ class Country(BaseModel):
 
     display_order = models.PositiveIntegerField(default=0)
 
-    # created_at = models.DateTimeField(auto_now_add=True)
-
-    # updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["display_order", "name"]

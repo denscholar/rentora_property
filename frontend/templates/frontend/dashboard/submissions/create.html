@@ -1,0 +1,938 @@
+{% extends "frontend/dashboard_base.html" %} {% load static %} {% block title %}
+Add Property | Artishelta {% endblock %} {% block page_title %} Add Property {% endblock %} {% block page_description %} Create a property submission and
+complete it at your own pace. {% endblock %} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{% static 'frontend/css/submission-wizard.css' %}"
+/>
+{% endblock %} {% block dashboard_content %}
+
+<section class="property-wizard" id="property-wizard">
+  <!-- ============================================= -->
+  <!-- WIZARD HEADER -->
+  <!-- ============================================= -->
+  <header class="wizard-header">
+    <div class="wizard-header-copy">
+      <a
+        href="{% url 'frontend:property-submission-list' %}"
+        class="wizard-back-link"
+      >
+        <span>←</span>
+        <span>Back to submissions</span>
+      </a>
+
+      <span class="wizard-step-label" id="wizard-step-label">
+        Step 1 of 6
+      </span>
+
+      <h2 id="wizard-step-title">Tell us about the property</h2>
+
+      <p id="wizard-step-description">
+        Start by selecting the property type and its purpose.
+      </p>
+    </div>
+
+    <div class="wizard-save-status">
+      <span class="wizard-save-indicator" id="wizard-save-indicator"></span>
+
+      <span id="wizard-save-text"> Not saved yet </span>
+    </div>
+  </header>
+
+  <!-- ============================================= -->
+  <!-- PROGRESS -->
+  <!-- ============================================= -->
+  <div class="wizard-progress">
+    <div class="wizard-progress-meta">
+      <span id="wizard-progress-label"> Basic information </span>
+
+      <strong id="wizard-progress-percentage"> 17% </strong>
+    </div>
+
+    <div class="wizard-progress-track">
+      <div
+        class="wizard-progress-bar"
+        id="wizard-progress-bar"
+        style="width: 17%"
+      ></div>
+    </div>
+
+    <div class="wizard-progress-steps">
+      <button
+        type="button"
+        class="wizard-progress-step active"
+        data-progress-step="1"
+      >
+        <span>1</span>
+        <small>Basic</small>
+      </button>
+
+      <button
+        type="button"
+        class="wizard-progress-step"
+        data-progress-step="2"
+        disabled
+      >
+        <span>2</span>
+        <small>Location</small>
+      </button>
+
+      <button
+        type="button"
+        class="wizard-progress-step"
+        data-progress-step="3"
+        disabled
+      >
+        <span>3</span>
+        <small>Details</small>
+      </button>
+
+      <button
+        type="button"
+        class="wizard-progress-step"
+        data-progress-step="4"
+        disabled
+      >
+        <span>4</span>
+        <small>Pricing</small>
+      </button>
+
+      <button
+        type="button"
+        class="wizard-progress-step"
+        data-progress-step="5"
+        disabled
+      >
+        <span>5</span>
+        <small>Amenities</small>
+      </button>
+
+      <button
+        type="button"
+        class="wizard-progress-step"
+        data-progress-step="6"
+        disabled
+      >
+        <span>6</span>
+        <small>Review</small>
+      </button>
+    </div>
+  </div>
+
+  <div class="wizard-general-message" id="wizard-general-message" hidden></div>
+
+  <!-- ============================================= -->
+  <!-- LOADING STATE -->
+  <!-- ============================================= -->
+  <section class="wizard-loading-state" id="wizard-loading-state">
+    <div class="wizard-spinner"></div>
+
+    <p>Loading property options...</p>
+  </section>
+
+  <!-- ============================================= -->
+  <!-- FORM -->
+  <!-- ============================================= -->
+  <form class="wizard-form" id="property-wizard-form" novalidate hidden>
+    {% csrf_token %}
+
+    <!-- =========================================== -->
+    <!-- STEP 1 -->
+    <!-- =========================================== -->
+    <section class="wizard-step active" data-wizard-step="1">
+      <div class="wizard-section-heading">
+        <span class="wizard-section-number">01</span>
+
+        <div>
+          <h3>What type of property is this?</h3>
+
+          <p>Choose the option that best describes the property.</p>
+        </div>
+      </div>
+
+      <div class="wizard-option-grid" id="property-type-options"></div>
+
+      <span class="wizard-field-error" data-error-for="property_type"></span>
+
+      <div class="wizard-divider"></div>
+
+      <div class="wizard-section-heading">
+        <span class="wizard-section-number">02</span>
+
+        <div>
+          <h3>What is the property for?</h3>
+
+          <p>
+            Select whether the property is available for rent, sale or another
+            supported purpose.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="wizard-option-grid wizard-purpose-grid"
+        id="property-purpose-options"
+      ></div>
+
+      <span class="wizard-field-error" data-error-for="purpose"></span>
+
+      <div class="wizard-divider"></div>
+
+      <div class="wizard-form-grid">
+        <div class="wizard-form-group wizard-form-group-full">
+          <label for="property-title"> Property title </label>
+
+          <input
+            id="property-title"
+            name="title"
+            type="text"
+            maxlength="255"
+            placeholder="Example: Modern 3 Bedroom Apartment in Wuse 2"
+          />
+
+          <small>
+            Write a clear title that helps reviewers understand the property.
+          </small>
+
+          <span class="wizard-field-error" data-error-for="title"></span>
+        </div>
+
+        <div class="wizard-form-group wizard-form-group-full">
+          <label for="property-description"> Description </label>
+
+          <textarea
+            id="property-description"
+            name="description"
+            rows="6"
+            maxlength="3000"
+            placeholder="Describe the property, its condition, surroundings and important features."
+          ></textarea>
+
+          <div class="wizard-character-row">
+            <small> You can improve this description later. </small>
+
+            <small id="description-character-count"> 0 / 3000 </small>
+          </div>
+
+          <span class="wizard-field-error" data-error-for="description"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- STEP 2: LOCATION -->
+    <!-- =========================================== -->
+    <section class="wizard-step" data-wizard-step="2">
+      <div class="wizard-section-heading">
+        <span class="wizard-section-number">01</span>
+
+        <div>
+          <h3>Where is the property located?</h3>
+
+          <p>
+            Select the property location from the available country, state, LGA
+            and area options.
+          </p>
+        </div>
+      </div>
+
+      <div class="wizard-form-grid wizard-location-grid">
+        <div class="wizard-form-group">
+          <label for="property-country"> Country </label>
+
+          <select id="property-country" name="country">
+            <option value="">Select country</option>
+          </select>
+
+          <span class="wizard-field-error" data-error-for="country"></span>
+        </div>
+
+        <div class="wizard-form-group">
+          <label for="property-state"> State </label>
+
+          <select id="property-state" name="state" disabled>
+            <option value="">Select country first</option>
+          </select>
+
+          <span class="wizard-field-error" data-error-for="state"></span>
+        </div>
+
+        <div class="wizard-form-group">
+          <label for="property-lga"> Local Government Area </label>
+
+          <select id="property-lga" name="lga" disabled>
+            <option value="">Select state first</option>
+          </select>
+
+          <span class="wizard-field-error" data-error-for="lga"></span>
+        </div>
+
+        <div class="wizard-form-group">
+          <label for="property-area"> Area or neighbourhood </label>
+
+          <select id="property-area" name="area" disabled>
+            <option value="">Select LGA first</option>
+          </select>
+
+          <span class="wizard-field-error" data-error-for="area"></span>
+        </div>
+      </div>
+
+      <div class="wizard-divider"></div>
+
+      <div class="wizard-section-heading">
+        <span class="wizard-section-number">02</span>
+
+        <div>
+          <h3>Add more location details</h3>
+
+          <p>
+            The precise street address is private and should not be displayed
+            publicly before a confirmed viewing.
+          </p>
+        </div>
+      </div>
+
+      <div class="wizard-form-grid wizard-address-grid">
+        <div class="wizard-form-group wizard-form-group-full">
+          <label for="property-street-address"> Street address </label>
+
+          <input
+            id="property-street-address"
+            name="street_address"
+            type="text"
+            maxlength="255"
+            placeholder="Example: 14 Aminu Kano Crescent"
+          />
+
+          <small>
+            This address is kept private until it is needed for an approved
+            property inspection.
+          </small>
+
+          <span
+            class="wizard-field-error"
+            data-error-for="street_address"
+          ></span>
+        </div>
+
+        <div class="wizard-form-group wizard-form-group-full">
+          <label for="property-landmark"> Nearby landmark </label>
+
+          <input
+            id="property-landmark"
+            name="landmark"
+            type="text"
+            maxlength="255"
+            placeholder="Example: Close to Banex Plaza"
+          />
+
+          <small>
+            Add a recognizable landmark that makes the location easier to
+            identify.
+          </small>
+
+          <span class="wizard-field-error" data-error-for="landmark"></span>
+        </div>
+      </div>
+
+      <details class="wizard-coordinate-section">
+        <summary>
+          Add map coordinates
+          <span>Optional</span>
+        </summary>
+
+        <div class="wizard-coordinate-content">
+          <p>
+            Coordinates can improve duplicate detection and help reviewers
+            confirm the property's location.
+          </p>
+
+          <div class="wizard-form-grid">
+            <div class="wizard-form-group">
+              <label for="property-latitude"> Latitude </label>
+
+              <input
+                id="property-latitude"
+                name="latitude"
+                type="number"
+                step="0.0000001"
+                min="-90"
+                max="90"
+                placeholder="9.0765000"
+              />
+
+              <span class="wizard-field-error" data-error-for="latitude"></span>
+            </div>
+
+            <div class="wizard-form-group">
+              <label for="property-longitude"> Longitude </label>
+
+              <input
+                id="property-longitude"
+                name="longitude"
+                type="number"
+                step="0.0000001"
+                min="-180"
+                max="180"
+                placeholder="7.3986000"
+              />
+
+              <span
+                class="wizard-field-error"
+                data-error-for="longitude"
+              ></span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="wizard-location-button"
+            id="use-current-location-button"
+          >
+            Use my current location
+          </button>
+
+          <p
+            class="wizard-location-message"
+            id="current-location-message"
+            hidden
+          ></p>
+        </div>
+      </details>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- STEP 3: PROPERTY DETAILS -->
+    <!-- =========================================== -->
+    <section class="wizard-step" data-wizard-step="3">
+      <div class="wizard-section-heading">
+        <span class="wizard-section-number">01</span>
+
+        <div>
+          <h3>What is the property condition?</h3>
+
+          <p>
+            Select the option that best describes the current physical condition
+            of the property.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="wizard-option-grid wizard-purpose-grid"
+        id="property-condition-options"
+      ></div>
+
+      <span
+        class="wizard-field-error"
+        data-error-for="property_condition"
+      ></span>
+
+      <div class="wizard-divider"></div>
+
+      <div class="wizard-section-heading">
+        <span class="wizard-section-number">02</span>
+
+        <div>
+          <h3>What is the furnishing status?</h3>
+
+          <p>
+            Tell prospective occupants whether the property includes furniture
+            or essential fittings.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="wizard-option-grid wizard-purpose-grid"
+        id="furnishing-status-options"
+      ></div>
+
+      <span
+        class="wizard-field-error"
+        data-error-for="furnishing_status"
+      ></span>
+
+      <div class="wizard-divider"></div>
+
+      <div class="wizard-section-heading">
+        <span class="wizard-section-number">03</span>
+
+        <div>
+          <h3>Room and parking details</h3>
+
+          <p>
+            Add the number of bedrooms, bathrooms, toilets and available parking
+            spaces.
+          </p>
+        </div>
+      </div>
+
+      <div class="wizard-form-grid wizard-property-detail-grid">
+        <div class="wizard-form-group">
+          <label for="property-bedrooms"> Bedrooms </label>
+
+          <input
+            id="property-bedrooms"
+            name="bedrooms"
+            type="number"
+            min="0"
+            max="100"
+            step="1"
+            value="0"
+          />
+
+          <span class="wizard-field-error" data-error-for="bedrooms"></span>
+        </div>
+
+        <div class="wizard-form-group">
+          <label for="property-bathrooms"> Bathrooms </label>
+
+          <input
+            id="property-bathrooms"
+            name="bathrooms"
+            type="number"
+            min="0"
+            max="100"
+            step="1"
+            value="0"
+          />
+
+          <span class="wizard-field-error" data-error-for="bathrooms"></span>
+        </div>
+
+        <div class="wizard-form-group">
+          <label for="property-toilets"> Toilets </label>
+
+          <input
+            id="property-toilets"
+            name="toilets"
+            type="number"
+            min="0"
+            max="100"
+            step="1"
+            value="0"
+          />
+
+          <span class="wizard-field-error" data-error-for="toilets"></span>
+        </div>
+
+        <div class="wizard-form-group">
+          <label for="property-parking-spaces"> Parking spaces </label>
+
+          <input
+            id="property-parking-spaces"
+            name="parking_spaces"
+            type="number"
+            min="0"
+            max="100"
+            step="1"
+            value="0"
+          />
+
+          <span
+            class="wizard-field-error"
+            data-error-for="parking_spaces"
+          ></span>
+        </div>
+      </div>
+
+      <div class="wizard-divider"></div>
+
+      <div class="wizard-section-heading">
+        <span class="wizard-section-number">04</span>
+
+        <div>
+          <h3>Size and construction details</h3>
+
+          <p>
+            These fields are optional but can help users compare similar
+            properties more accurately.
+          </p>
+        </div>
+      </div>
+
+      <div class="wizard-form-grid wizard-property-detail-grid">
+        <div class="wizard-form-group">
+          <label for="property-year-built"> Year built </label>
+
+          <input
+            id="property-year-built"
+            name="year_built"
+            type="number"
+            min="1800"
+            max="{% now 'Y' %}"
+            step="1"
+            placeholder="Example: 2020"
+          />
+
+          <span class="wizard-field-error" data-error-for="year_built"></span>
+        </div>
+
+        <div class="wizard-form-group">
+          <label for="property-land-size"> Land size </label>
+
+          <div class="wizard-input-suffix">
+            <input
+              id="property-land-size"
+              name="land_size"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="Example: 600"
+            />
+
+            <span>sqm</span>
+          </div>
+
+          <span class="wizard-field-error" data-error-for="land_size"></span>
+        </div>
+
+        <div class="wizard-form-group">
+          <label for="property-building-size"> Building size </label>
+
+          <div class="wizard-input-suffix">
+            <input
+              id="property-building-size"
+              name="building_size"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="Example: 350"
+            />
+
+            <span>sqm</span>
+          </div>
+
+          <span
+            class="wizard-field-error"
+            data-error-for="building_size"
+          ></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- STEP 4: PRICING -->
+    <!-- =========================================== -->
+    <section class="wizard-step" data-wizard-step="4">
+      <div class="wizard-section-heading">
+        <span class="wizard-section-number">01</span>
+
+        <div>
+          <h3>Set the property price</h3>
+
+          <p>
+            Enter the main property price and how frequently it should be paid.
+          </p>
+        </div>
+      </div>
+
+      <div class="wizard-form-grid wizard-pricing-grid">
+        <div class="wizard-form-group">
+          <label for="property-proposed-price"> Proposed price </label>
+
+          <div class="wizard-currency-input">
+            <span>₦</span>
+
+            <input
+              id="property-proposed-price"
+              name="proposed_price"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="Example: 4500000"
+            />
+          </div>
+
+          <span
+            class="wizard-field-error"
+            data-error-for="proposed_price"
+          ></span>
+        </div>
+
+        <div class="wizard-form-group">
+          <label for="property-payment-frequency"> Payment frequency </label>
+
+          <select id="property-payment-frequency" name="payment_frequency">
+            <option value="">Select payment frequency</option>
+          </select>
+
+          <span
+            class="wizard-field-error"
+            data-error-for="payment_frequency"
+          ></span>
+        </div>
+      </div>
+
+      <label class="wizard-switch-row">
+        <span>
+          <strong>Price is negotiable</strong>
+
+          <small>
+            Let prospective tenants or buyers know that you are open to
+            reasonable offers.
+          </small>
+        </span>
+
+        <span class="wizard-switch">
+          <input
+            id="property-is-negotiable"
+            name="is_negotiable"
+            type="checkbox"
+          />
+
+          <span class="wizard-switch-slider"></span>
+        </span>
+      </label>
+
+      <div class="wizard-divider"></div>
+
+      <div class="wizard-section-heading">
+        <span class="wizard-section-number">02</span>
+
+        <div>
+          <h3>Add applicable charges</h3>
+
+          <p>
+            Include the additional charges required before the occupant can move
+            into the property.
+          </p>
+        </div>
+      </div>
+
+      <div class="wizard-form-grid wizard-pricing-grid">
+        <div class="wizard-form-group">
+          <label for="property-service-charge"> Service charge </label>
+
+          <div class="wizard-currency-input">
+            <span>₦</span>
+
+            <input
+              id="property-service-charge"
+              name="service_charge"
+              type="number"
+              min="0"
+              step="0.01"
+              value="0"
+            />
+          </div>
+
+          <span
+            class="wizard-field-error"
+            data-error-for="service_charge"
+          ></span>
+        </div>
+
+        <div class="wizard-form-group">
+          <label for="property-caution-fee"> Caution fee </label>
+
+          <div class="wizard-currency-input">
+            <span>₦</span>
+
+            <input
+              id="property-caution-fee"
+              name="caution_fee"
+              type="number"
+              min="0"
+              step="0.01"
+              value="0"
+            />
+          </div>
+
+          <span class="wizard-field-error" data-error-for="caution_fee"></span>
+        </div>
+
+        <div class="wizard-form-group">
+          <label for="property-legal-fee"> Legal fee </label>
+
+          <div class="wizard-currency-input">
+            <span>₦</span>
+
+            <input
+              id="property-legal-fee"
+              name="legal_fee"
+              type="number"
+              min="0"
+              step="0.01"
+              value="0"
+            />
+          </div>
+
+          <span class="wizard-field-error" data-error-for="legal_fee"></span>
+        </div>
+
+        <div class="wizard-form-group">
+          <label for="property-agency-fee"> Agency fee </label>
+
+          <div class="wizard-currency-input">
+            <span>₦</span>
+
+            <input
+              id="property-agency-fee"
+              name="agency_fee"
+              type="number"
+              min="0"
+              step="0.01"
+              value="0"
+            />
+          </div>
+
+          <span class="wizard-field-error" data-error-for="agency_fee"></span>
+        </div>
+      </div>
+
+      <aside class="wizard-price-summary">
+        <div>
+          <span>Estimated initial cost</span>
+
+          <strong id="property-total-cost"> ₦0.00 </strong>
+        </div>
+
+        <p>
+          This combines the proposed price and all additional charges entered
+          above.
+        </p>
+      </aside>
+
+      <div class="wizard-divider"></div>
+
+      <div class="wizard-section-heading">
+        <span class="wizard-section-number">03</span>
+
+        <div>
+          <h3>Availability and minimum stay</h3>
+
+          <p>
+            Tell users when the property becomes available and, where
+            applicable, the minimum payment periods required.
+          </p>
+        </div>
+      </div>
+
+      <div class="wizard-form-grid wizard-pricing-grid">
+        <div class="wizard-form-group">
+          <label for="property-available-from"> Available from </label>
+
+          <input
+            id="property-available-from"
+            name="available_from"
+            type="date"
+          />
+
+          <span
+            class="wizard-field-error"
+            data-error-for="available_from"
+          ></span>
+        </div>
+
+        <div class="wizard-form-group">
+          <label for="property-minimum-stay"> Minimum stay </label>
+
+          <input
+            id="property-minimum-stay"
+            name="minimum_stay"
+            type="number"
+            min="1"
+            step="1"
+            placeholder="Example: 1"
+          />
+
+          <small> Measured using the selected payment frequency. </small>
+
+          <span class="wizard-field-error" data-error-for="minimum_stay"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- STEP 5 PLACEHOLDER -->
+    <!-- =========================================== -->
+    <section class="wizard-step" data-wizard-step="5">
+      <div class="wizard-coming-soon">
+        <span>05</span>
+
+        <h3>Property amenities</h3>
+
+        <p>
+          Available amenities and important property features will be
+          implemented next.
+        </p>
+      </div>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- FOOTER ACTIONS -->
+    <!-- =========================================== -->
+    <footer class="wizard-actions">
+      <div class="wizard-actions-left">
+        <a
+          href="{% url 'frontend:property-submission-list' %}"
+          class="button button-secondary"
+          id="wizard-cancel-button"
+        >
+          Cancel
+        </a>
+
+        <button
+          type="button"
+          class="button button-secondary"
+          id="wizard-previous-button"
+          hidden
+        >
+          <span>←</span>
+          Previous
+        </button>
+      </div>
+
+      <div class="wizard-actions-right">
+        <button
+          type="button"
+          class="button button-secondary"
+          id="wizard-save-draft-button"
+        >
+          Save draft
+        </button>
+
+        <button
+          type="submit"
+          class="button button-primary wizard-next-button"
+          id="wizard-next-button"
+        >
+          <span id="wizard-next-button-text"> Save and continue </span>
+
+          <span>→</span>
+        </button>
+      </div>
+    </footer>
+  </form>
+
+  <!-- ============================================= -->
+  <!-- ERROR STATE -->
+  <!-- ============================================= -->
+  <section class="wizard-load-error" id="wizard-load-error" hidden>
+    <div class="wizard-load-error-icon">!</div>
+
+    <h3>We couldn’t load the property options</h3>
+
+    <p id="wizard-load-error-message">
+      Please check your connection and try again.
+    </p>
+
+    <button
+      type="button"
+      class="button button-primary"
+      id="wizard-retry-button"
+    >
+      Try again
+    </button>
+  </section>
+</section>
+
+{% endblock %} {% block extra_js %}
+<script
+  src="{% static 'frontend/js/dashboard/submission-wizard.js' %}"
+  defer
+></script>
+{% endblock %}

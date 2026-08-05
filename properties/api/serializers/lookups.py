@@ -87,3 +87,9 @@ class AmenityLookupSerializer(serializers.ModelSerializer):
             "icon",
             "category",
         )
+
+
+
+class PaymentFrequencySerializer(serializers.Serializer):
+    value = serializers.CharField()
+    label = serializers.CharField()

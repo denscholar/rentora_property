@@ -21,42 +21,42 @@ class PropertySubmissionInputSerializer(serializers.Serializer):
     """
 
     property_type = serializers.SlugRelatedField(
-        slug_field="slug",
+        slug_field="uuid",
         queryset=PropertyType.objects.filter(is_active=True),
         required=False,
         allow_null=True,
     )
 
     purpose = serializers.SlugRelatedField(
-        slug_field="slug",
+        slug_field="uuid",
         queryset=PropertyPurpose.objects.filter(is_active=True),
         required=False,
         allow_null=True,
     )
 
     property_condition = serializers.SlugRelatedField(
-        slug_field="slug",
+        slug_field="uuid",
         queryset=PropertyCondition.objects.filter(is_active=True),
         required=False,
         allow_null=True,
     )
 
     furnishing_status = serializers.SlugRelatedField(
-        slug_field="slug",
+        slug_field="uuid",
         queryset=FurnishingStatus.objects.filter(is_active=True),
         required=False,
         allow_null=True,
     )
 
     area = serializers.SlugRelatedField(
-        slug_field="slug",
+        slug_field="uuid",
         queryset=Area.objects.all(),
         required=False,
         allow_null=True,
     )
 
     amenities = serializers.SlugRelatedField(
-        slug_field="slug",
+        slug_field="uuid",
         queryset=Amenity.objects.filter(is_active=True),
         many=True,
         required=False,
@@ -156,12 +156,6 @@ class PropertySubmissionInputSerializer(serializers.Serializer):
         decimal_places=2,
     )
 
-    size_unit = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        max_length=30,
-    )
 
     available_from = serializers.DateField(
         required=False,
@@ -241,22 +235,30 @@ class PropertySubmissionInputSerializer(serializers.Serializer):
 
         return value
 
-    def validate(self, attrs):
-        land_size = attrs.get("land_size")
-        building_size = attrs.get("building_size")
-        size_unit = attrs.get("size_unit")
+    # def validate(self, attrs):
+    #     land_size = attrs.get("land_size")
+    #     building_size = attrs.get("building_size")
 
-        if (land_size is not None or building_size is not None) and not size_unit:
-            raise serializers.ValidationError(
-                {
-                    "size_unit": (
-                        "Size unit is required when land size or "
-                        "building size is provided."
-                    )
-                }
-            )
+    #     size_unit = attrs.get(
+    #         "size_unit",
+    #         getattr(
+    #             self.instance,
+    #             "size_unit",
+    #             "sqm",
+    #         ),
+    #     )
 
-        return attrs
+    #     if (land_size is not None or building_size is not None) and not size_unit:
+    #         raise serializers.ValidationError(
+    #             {
+    #                 "size_unit": (
+    #                     "Size unit is required when land size or "
+    #                     "building size is provided."
+    #                 )
+    #             }
+    #         )
+
+    #     return attrs
 
 
 class CreatePropertySubmissionSerializer(PropertySubmissionInputSerializer):

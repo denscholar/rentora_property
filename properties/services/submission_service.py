@@ -452,14 +452,6 @@ def update_submission_draft(
     # Lock the current database row to prevent concurrent updates.
     submission = (
         PropertySubmission.objects.select_for_update()
-        .select_related(
-            "submitted_by",
-            "property_type",
-            "purpose",
-            "property_condition",
-            "furnishing_status",
-            "area",
-        )
         .get(pk=submission.pk)
     )
 

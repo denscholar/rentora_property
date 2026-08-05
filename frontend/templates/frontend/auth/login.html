@@ -1,0 +1,130 @@
+{% extends "frontend/base.html" %} {% load static %} {% block title %} Log In |
+Rentora {% endblock %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'frontend/css/auth.css' %}" />
+{% endblock %} {% block content %}
+<section class="auth-page auth-login-page">
+  <div class="auth-visual">
+    <img
+      src="{% static 'frontend/images/login-image.png' %}"
+      alt="Nigerian property agent helping clients find a home"
+    />
+
+    <div class="auth-visual-overlay">
+      <div class="auth-visual-copy">
+        <span class="auth-visual-eyebrow"> Welcome back </span>
+
+        <h1>Continue your journey with Rentora.</h1>
+
+        <p>
+          Manage property submissions, compare trusted agents and discover
+          verified homes across Nigeria.
+        </p>
+
+        <div class="auth-trust-items">
+          <span>Verified properties</span>
+          <span>Trusted agents</span>
+          <span>Transparent inspections</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-form-panel">
+    <div class="auth-form-wrapper login-form-wrapper">
+      <a href="{% url 'frontend:landing-page' %}" class="auth-mobile-brand">
+        <span class="brand-mark">R</span>
+        <span>Rentora</span>
+      </a>
+
+      <div
+        class="auth-success-message"
+        id="verification-success-message"
+        hidden
+      >
+        Your email has been verified successfully. You can now log in.
+      </div>
+
+      <div class="auth-form-header">
+        <span class="eyebrow">Account login</span>
+
+        <h1>Welcome back</h1>
+
+        <p>Enter your email and password to continue.</p>
+      </div>
+
+      <form class="auth-form" id="login-form" novalidate>
+        {% csrf_token %}
+
+        <div class="form-general-error" hidden></div>
+
+        <div class="form-group">
+          <label for="login-email"> Email address </label>
+
+          <input
+            id="login-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            placeholder="you@example.com"
+            required
+          />
+
+          <span class="field-error" data-error-for="email"></span>
+        </div>
+
+        <div class="form-group">
+          <div class="form-label-row">
+            <label for="login-password"> Password </label>
+
+            <a href="#" class="forgot-password-link"> Forgot password? </a>
+          </div>
+
+          <div class="password-field-wrapper">
+            <input
+              id="login-password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Enter your password"
+              required
+            />
+
+            <button
+              class="password-toggle"
+              type="button"
+              data-password-toggle="login-password"
+              aria-label="Show password"
+            >
+              Show
+            </button>
+          </div>
+
+          <span class="field-error" data-error-for="password"></span>
+        </div>
+
+        <label class="remember-login">
+          <input type="checkbox" id="remember-login" />
+
+          <span>Keep me signed in on this device</span>
+        </label>
+
+        <button
+          class="button button-primary auth-submit-button"
+          id="login-submit"
+          type="submit"
+        >
+          Log in
+        </button>
+      </form>
+
+      <p class="auth-alternative">
+        Don’t have an account?
+
+        <a href="{% url 'frontend:register' %}"> Create account </a>
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %} {% block extra_js %}
+<script src="{% static 'frontend/js/login.js' %}" defer></script>
+{% endblock %}

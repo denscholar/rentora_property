@@ -5,6 +5,7 @@ from .submission_selector import (
     get_submission_status_counts,
     get_user_submission,
     get_user_submissions,
+    get_submission_queryset,
 )
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "get_submission_status_counts",
     "get_user_submission",
     "get_user_submissions",
+    "get_submission_queryset",
 ]

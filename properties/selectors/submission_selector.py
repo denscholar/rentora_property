@@ -3,6 +3,27 @@ from django.db.models import QuerySet
 from properties.models import PropertySubmission
 
 
+def get_submission_queryset() -> QuerySet:
+    """
+    Returns an optimized base queryset for property submissions.
+    """
+
+    return PropertySubmission.objects.select_related(
+        "submitted_by",
+        "property_type",
+        "purpose",
+        "property_condition",
+        "furnishing_status",
+        "area",
+        "area__lga",
+        "area__lga__state",
+        "area__lga__state__country",
+    ).prefetch_related(
+        "amenities",
+        "amenities__category",
+    )
+
+
 # =====================================================
 # USER SUBMISSION QUERYSET
 # =====================================================
@@ -34,6 +55,21 @@ def get_user_submissions(
         )
         .order_by("-created_at")
     )
+
+
+# def get_user_submissions(*, user) -> QuerySet:
+#     """
+#     Returns non-archived submissions belonging to a user.
+#     """
+
+#     return (
+#         get_submission_queryset()
+#         .filter(
+#             submitted_by=user,
+#             is_archived=False,
+#         )
+#         .order_by("-updated_at")
+#     )
 
 
 # =====================================================

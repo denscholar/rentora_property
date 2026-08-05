@@ -6,7 +6,15 @@ from .views import (
     PropertySubmissionListCreateAPIView,
     SubmitPropertySubmissionAPIView,
 )
-from .views.lookups import AmenityCategoryLookupAPIView, AmenityLookupAPIView, FurnishingStatusLookupAPIView, PropertyConditionLookupAPIView, PropertyPurposeLookupAPIView, PropertyTypeLookupAPIView
+from .views.lookups import (
+    AmenityCategoryLookupAPIView,
+    AmenityLookupAPIView,
+    FurnishingStatusLookupAPIView,
+    PaymentFrequencyListAPIView,
+    PropertyConditionLookupAPIView,
+    PropertyPurposeLookupAPIView,
+    PropertyTypeLookupAPIView,
+)
 
 app_name = "properties"
 
@@ -43,12 +51,12 @@ urlpatterns = [
         name="amenity-lookups",
     ),
     path(
-        "properties/submissions/",
+        "submissions/",
         PropertySubmissionListCreateAPIView.as_view(),
         name="submission-list-create",
     ),
     path(
-        "properties/submissions/<uuid:submission_uuid>/",
+        "submissions/<uuid:submission_uuid>/",
         PropertySubmissionDetailAPIView.as_view(),
         name="submission-detail",
     ),
@@ -61,5 +69,10 @@ urlpatterns = [
         "properties/submissions/<uuid:submission_uuid>/archive/",
         ArchivePropertySubmissionAPIView.as_view(),
         name="submission-archive",
+    ),
+    path(
+        "lookups/payment-frequencies/",
+        PaymentFrequencyListAPIView.as_view(),
+        name="payment-frequency-list",
     ),
 ]

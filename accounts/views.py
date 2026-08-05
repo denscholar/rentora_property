@@ -239,7 +239,7 @@ class ResendEmailOTPAPIView(APIView):
                 message="No account found with this email.",
                 code=USER_NOT_FOUND,
                 errors=serializer.errors,
-                status=status.HTTP_404_NOT_FOUND,
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
         if user.is_verified:
@@ -282,7 +282,7 @@ class LoginAPIView(APIView):
 
         if not serializer.is_valid():
             return error_response(
-                message=str(e),
+                message="Invalid login credentials.",
                 code=VALIDATION_ERROR,
                 errors=serializer.errors,
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -297,20 +297,18 @@ class LoginAPIView(APIView):
 
             login_user(request, user)
 
-        except ValidationError as e:
+        except ValidationError as exc:
             return error_response(
-                message=str(e),
+                message=str(exc),
                 code=LOGIN_FAILED,
-                errors=serializer.errors,
+                errors=None,
+                status_code=status.HTTP_400_BAD_REQUEST,
             )
 
         return success_response(
-            message="Login Successfully",
+            message="Login successful.",
             code=LOGIN_SUCCESSFUL,
-            data={
-                "message": "Login successfully",
-                "data": AuthUserSerializer(user).data,
-            },
+            data=AuthUserSerializer(user).data,
             status_code=status.HTTP_200_OK,
         )
 

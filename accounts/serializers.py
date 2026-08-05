@@ -62,19 +62,19 @@ class LoginSerializer(serializers.Serializer):
 # ==========================================
 # LOGGED IN USER SERIALIZER
 # ==========================================
-class AuthUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = [
-            "id",
-            "slug",
-            "first_name",
-            "last_name",
-            "email",
-            "phone_number",
-            "role",
-            "is_verified",
-        ]
+# class AuthUserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = CustomUser
+#         fields = [
+#             "id",
+#             "slug",
+#             "first_name",
+#             "last_name",
+#             "email",
+#             "phone_number",
+#             "role",
+#             "is_verified",
+#         ]
 
 
 

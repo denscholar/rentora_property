@@ -26,19 +26,27 @@ urlpatterns = [
         ),
         name="swagger-ui",
     ),
+    # Public frontend
     path(
         "",
+        include("frontend.urls"),
+    ),
+    path(
+        "api/accounts/",
         include("accounts.urls"),
     ),
     path(
-        "",
+        "api/properties/",
         include("properties.api.urls"),
     ),
-
+    path(
+        "api/locations/",
+        include("locations.urls"),
+    ),
 ]
 
 
-urlpatterns = [path("api/v1/", include(urlpatterns))]
+# urlpatterns = [path("api/v1/", include(urlpatterns))]
 
 
 if settings.DEBUG:

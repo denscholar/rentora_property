@@ -1,0 +1,197 @@
+{% extends "frontend/dashboard_base.html" %}{% load static %} {% block title %}
+Dashboard | Artishelta {% endblock %} {% block page_title %} Welcome, {{ request.user.first_name }} {% endblock %} {% block page_description %} Here is
+an overview of your account activity. {% endblock %} {% block dashboard_content %}
+
+<section class="dashboard-welcome-card">
+  <div>
+    <span class="dashboard-welcome-label"> Welcome to Artishelta </span>
+
+    {% if request.user.role == "agent" %}
+    <h2>Grow your property business with verified listings.</h2>
+
+    <p>
+      Submit properties, track reviews and manage your listings from one place.
+    </p>
+
+    <a href="#" class="button button-primary"> Submit a property </a>
+
+    {% elif request.user.role == "landlord" %}
+    <h2>Manage your properties with greater transparency.</h2>
+
+    <p>Submit properties, review activity and work with trusted agents.</p>
+
+    <a href="#" class="button button-primary"> Add a property </a>
+
+    {% else %}
+    <h2>Find verified properties and trusted agents.</h2>
+
+    <p>
+      Explore available homes, compare agents and manage your viewing requests.
+    </p>
+
+    <a href="#" class="button button-primary"> Explore properties </a>
+    {% endif %}
+  </div>
+
+  <div class="dashboard-welcome-illustration">
+    <span>⌂</span>
+  </div>
+</section>
+
+<section class="dashboard-stat-grid">
+  {% if request.user.role == "agent" or request.user.role == "landlord" %}
+
+  <article class="dashboard-stat-card">
+    <div class="dashboard-stat-icon">▣</div>
+
+    <div>
+      <span>Total submissions</span>
+      <strong>0</strong>
+    </div>
+  </article>
+
+  <article class="dashboard-stat-card">
+    <div class="dashboard-stat-icon">◷</div>
+
+    <div>
+      <span>Pending review</span>
+      <strong>0</strong>
+    </div>
+  </article>
+
+  <article class="dashboard-stat-card">
+    <div class="dashboard-stat-icon">✓</div>
+
+    <div>
+      <span>Approved properties</span>
+      <strong>0</strong>
+    </div>
+  </article>
+
+  <article class="dashboard-stat-card">
+    <div class="dashboard-stat-icon">◎</div>
+
+    <div>
+      <span>Upcoming viewings</span>
+      <strong>0</strong>
+    </div>
+  </article>
+
+  {% else %}
+
+  <article class="dashboard-stat-card">
+    <div class="dashboard-stat-icon">♡</div>
+
+    <div>
+      <span>Saved properties</span>
+      <strong>0</strong>
+    </div>
+  </article>
+
+  <article class="dashboard-stat-card">
+    <div class="dashboard-stat-icon">◷</div>
+
+    <div>
+      <span>Upcoming viewings</span>
+      <strong>0</strong>
+    </div>
+  </article>
+
+  <article class="dashboard-stat-card">
+    <div class="dashboard-stat-icon">✓</div>
+
+    <div>
+      <span>Completed viewings</span>
+      <strong>0</strong>
+    </div>
+  </article>
+
+  <article class="dashboard-stat-card">
+    <div class="dashboard-stat-icon">⌕</div>
+
+    <div>
+      <span>Recently viewed</span>
+      <strong>0</strong>
+    </div>
+  </article>
+
+  {% endif %}
+</section>
+
+<section class="dashboard-grid">
+  <article class="dashboard-panel">
+    <div class="dashboard-panel-header">
+      <div>
+        <h2>Recent activity</h2>
+        <p>Your latest Artishelta account activity.</p>
+      </div>
+
+      <a href="#">View all</a>
+    </div>
+
+    <div class="dashboard-empty-state">
+      <div class="dashboard-empty-icon">◷</div>
+
+      <h3>No recent activity yet</h3>
+
+      <p>Your latest property and viewing activities will appear here.</p>
+    </div>
+  </article>
+
+  <article class="dashboard-panel dashboard-quick-actions">
+    <div class="dashboard-panel-header">
+      <div>
+        <h2>Quick actions</h2>
+        <p>Continue with the most common tasks.</p>
+      </div>
+    </div>
+
+    {% if request.user.role == "agent" or request.user.role == "landlord" %}
+    <a href="#" class="dashboard-action-card">
+      <span class="dashboard-action-icon">＋</span>
+
+      <div>
+        <strong>Add a property</strong>
+        <span>Create a new property submission.</span>
+      </div>
+
+      <span class="dashboard-action-arrow">→</span>
+    </a>
+
+    <a href="#" class="dashboard-action-card">
+      <span class="dashboard-action-icon">▣</span>
+
+      <div>
+        <strong>View submissions</strong>
+        <span>Track drafts and review statuses.</span>
+      </div>
+
+      <span class="dashboard-action-arrow">→</span>
+    </a>
+    {% else %}
+    <a href="#" class="dashboard-action-card">
+      <span class="dashboard-action-icon">⌕</span>
+
+      <div>
+        <strong>Explore properties</strong>
+        <span>Browse verified homes across Nigeria.</span>
+      </div>
+
+      <span class="dashboard-action-arrow">→</span>
+    </a>
+
+    <a href="#" class="dashboard-action-card">
+      <span class="dashboard-action-icon">♡</span>
+
+      <div>
+        <strong>Saved properties</strong>
+        <span>Review homes you have saved.</span>
+      </div>
+
+      <span class="dashboard-action-arrow">→</span>
+    </a>
+    {% endif %}
+  </article>
+</section>
+
+{% endblock %}
