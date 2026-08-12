@@ -12,6 +12,7 @@ from core.api.responses import (
     error_response,
     success_response,
 )
+from properties.api.pagination import PropertySubmissionPagination
 from properties.api.permissions import CanSubmitProperty
 from properties.models import PropertySubmission
 from properties.selectors import (
@@ -19,8 +20,13 @@ from properties.selectors import (
     get_user_submissions,
 )
 
-from properties.api.serializers.submission.detail import PropertySubmissionDetailSerializer
-from properties.api.serializers.submission.input import CreatePropertySubmissionSerializer, UpdatePropertySubmissionSerializer
+from properties.api.serializers.submission.detail import (
+    PropertySubmissionDetailSerializer,
+)
+from properties.api.serializers.submission.input import (
+    CreatePropertySubmissionSerializer,
+    UpdatePropertySubmissionSerializer,
+)
 from properties.api.serializers.submission.list import PropertySubmissionListSerializer
 from properties.services import (
     archive_submission_draft,
@@ -28,6 +34,7 @@ from properties.services import (
     submit_property_submission,
     update_submission_draft,
 )
+from properties.services.submission_service import PropertySubmissionSubmitError
 
 
 # =====================================================
@@ -65,6 +72,8 @@ class PropertySubmissionListCreateAPIView(APIView):
         CanSubmitProperty,
     ]
 
+    pagination_class = PropertySubmissionPagination
+
     # =================================================
     # LIST USER SUBMISSIONS
     # =================================================
@@ -86,18 +95,72 @@ class PropertySubmissionListCreateAPIView(APIView):
         },
     )
     def get(self, request):
+        # ---------------------------------------------------------
+        # READ QUERY PARAMETERS
+        # ---------------------------------------------------------
+        search = request.query_params.get("search", "").strip()
+
+        requested_status = request.query_params.get("status", "").strip().lower()
+
+        # ---------------------------------------------------------
+        # ALLOWED UI STATUSES
+        # ---------------------------------------------------------
+
+        allowed_statuses = {
+            PropertySubmission.Status.DRAFT,
+            PropertySubmission.Status.UNDER_REVIEW,
+            PropertySubmission.Status.APPROVED,
+            PropertySubmission.Status.REJECTED,
+        }
+
+        if requested_status and requested_status not in allowed_statuses:
+            return error_response(
+                message="Invalid property submission status.",
+                errors={
+                    "status": [
+                        (
+                            "Status must be one of: "
+                            "draft, under_review, approved, rejected."
+                        )
+                    ]
+                },
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # ---------------------------------------------------------
+        # BUILD QUERYSET
+        # ---------------------------------------------------------
         submissions = get_user_submissions(
             user=request.user,
+            status=requested_status or None,
+            search=search or None,
+        )
+
+        paginator = self.pagination_class()
+
+        page = paginator.paginate_queryset(
+            submissions,
+            request,
+            view=self,
         )
 
         serializer = PropertySubmissionListSerializer(
-            submissions,
+            page,
             many=True,
+            context={"request": request},
+        )
+
+        # ---------------------------------------------------------
+        # RETURN PAGINATED RESPONSE
+        # ---------------------------------------------------------
+
+        paginated_data = paginator.get_paginated_data(
+            serializer.data,
         )
 
         return success_response(
             message="Property submissions retrieved successfully.",
-            data=serializer.data,
+            data=paginated_data,
             status_code=status.HTTP_200_OK,
         )
 
@@ -287,9 +350,7 @@ class PropertySubmissionDetailAPIView(APIView):
         # Missing amenities means keep existing selections.
         # An empty list means remove all amenities.
         amenities = (
-            validated_data.pop("amenities")
-            if "amenities" in validated_data
-            else None
+            validated_data.pop("amenities") if "amenities" in validated_data else None
         )
 
         try:
@@ -322,11 +383,6 @@ class PropertySubmissionDetailAPIView(APIView):
 # SUBMIT PROPERTY FOR REVIEW
 # =====================================================
 class SubmitPropertySubmissionAPIView(APIView):
-    """
-    Transitions a completed property submission from DRAFT or
-    MORE_INFORMATION_REQUIRED to SUBMITTED.
-    """
-
     permission_classes = [
         IsAuthenticated,
         CanSubmitProperty,
@@ -336,23 +392,32 @@ class SubmitPropertySubmissionAPIView(APIView):
         tags=["Property Submissions"],
         summary="Submit property for review",
         description=(
-            "Validate the completed property submission and place it "
-            "in the administrative review queue."
+            "Validate and submit a completed property draft for review. "
+            "The submission must contain the required property, location, "
+            "pricing and media information."
         ),
         request=None,
         responses={
             200: PropertySubmissionDetailSerializer,
             400: OpenApiResponse(
                 description=(
-                    "Submission is incomplete or cannot be submitted."
+                    "The submission is incomplete or cannot be submitted "
+                    "in its current status."
                 ),
+            ),
+            401: OpenApiResponse(
+                description="Authentication required.",
             ),
             404: OpenApiResponse(
                 description="Property submission not found.",
             ),
         },
     )
-    def post(self, request, submission_uuid):
+    def post(
+        self,
+        request,
+        submission_uuid,
+    ):
         try:
             submission = get_user_submission(
                 user=request.user,
@@ -362,6 +427,7 @@ class SubmitPropertySubmissionAPIView(APIView):
         except PropertySubmission.DoesNotExist:
             return error_response(
                 message="Property submission not found.",
+                code="PROPERTY_SUBMISSION_NOT_FOUND",
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 
@@ -371,19 +437,28 @@ class SubmitPropertySubmissionAPIView(APIView):
                 user=request.user,
             )
 
-        except DjangoValidationError as exc:
+        except PropertySubmissionSubmitError as exc:
             return error_response(
-                message="Property submission could not be submitted.",
-                errors=format_django_validation_error(exc),
+                message=str(exc),
+                code="PROPERTY_SUBMISSION_INCOMPLETE",
+                errors=getattr(
+                    exc,
+                    "errors",
+                    None,
+                ),
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
 
         serializer = PropertySubmissionDetailSerializer(
             submission,
+            context={
+                "request": request,
+            },
         )
 
         return success_response(
-            message="Property submitted for review successfully.",
+            message=("Property submitted successfully and is now awaiting review."),
+            code="PROPERTY_SUBMISSION_SUBMITTED",
             data=serializer.data,
             status_code=status.HTTP_200_OK,
         )
@@ -406,8 +481,7 @@ class ArchivePropertySubmissionAPIView(APIView):
         tags=["Property Submissions"],
         summary="Archive property submission draft",
         description=(
-            "Archive a draft submission instead of permanently "
-            "deleting it."
+            "Archive a draft submission instead of permanently " "deleting it."
         ),
         request=None,
         responses={

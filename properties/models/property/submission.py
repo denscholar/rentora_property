@@ -45,7 +45,6 @@ class PropertySubmission(BaseModel, GeoLocationMixin, SoftArchiveMixin):
 
     class Status(models.TextChoices):
         DRAFT = "draft", "Draft"
-        SUBMITTED = "submitted", "Submitted"
         UNDER_REVIEW = "under_review", "Under Review"
         DUPLICATE_FOUND = "duplicate_found", "Duplicate Found"
         APPROVED = "approved", "Approved"
@@ -64,6 +63,18 @@ class PropertySubmission(BaseModel, GeoLocationMixin, SoftArchiveMixin):
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name="property_submissions",
+    )
+
+    property_group = models.ForeignKey(
+        "properties.PropertyGroup",
+        on_delete=models.SET_NULL,
+        related_name="submissions",
+        blank=True,
+        null=True,
+        help_text=(
+            "Canonical physical property this submission belongs to. "
+            "Multiple submissions may reference the same property group."
+        ),
     )
 
     source = models.CharField(max_length=30, choices=Source.choices, editable=False)
@@ -203,14 +214,6 @@ class PropertySubmission(BaseModel, GeoLocationMixin, SoftArchiveMixin):
         default=Status.DRAFT,
         db_index=True,
     )
-
-    # possible_duplicate_property = models.ForeignKey(
-    #     "properties.Property",
-    #     on_delete=models.SET_NULL,
-    #     blank=True,
-    #     null=True,
-    #     related_name="duplicate_submissions",
-    # )
 
     duplicate_similarity_score = models.DecimalField(
         max_digits=5,

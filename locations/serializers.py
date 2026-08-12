@@ -15,43 +15,28 @@ class CountryListSerializer(serializers.ModelSerializer):
 
 
 class StateListSerializer(serializers.ModelSerializer):
-    country_uuid = serializers.UUIDField(
-        source="country.uuid",
-        read_only=True,
-    )
-
     class Meta:
         model = State
         fields = [
-            "id",
+            "uuid",
             "name",
+            "is_active",
             "slug",
-            "country_uuid",
         ]
 
 
 class LGAListSerializer(serializers.ModelSerializer):
-    state_id = serializers.IntegerField(
-        source="state.id",
-        read_only=True,
-    )
-
     class Meta:
         model = LGA
         fields = [
             "uuid",
             "name",
             "slug",
-            "state_id",
+            "is_active",
         ]
 
 
 class AreaListSerializer(serializers.ModelSerializer):
-    lga_uuid = serializers.UUIDField(
-        source="lga.uuid",
-        read_only=True,
-    )
-
     class Meta:
         model = Area
         fields = [
@@ -60,5 +45,4 @@ class AreaListSerializer(serializers.ModelSerializer):
             "slug",
             "latitude",
             "longitude",
-            "lga_uuid",
         ]

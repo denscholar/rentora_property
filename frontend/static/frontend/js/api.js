@@ -13,35 +13,58 @@ function getCookie(name) {
 }
 
 async function apiRequest(url, options = {}) {
-  const csrfToken = getCookie("csrftoken");
-
-  const response = await fetch(url, {
+  const requestOptions = {
     credentials: "same-origin",
     ...options,
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "X-CSRFToken": csrfToken,
-      ...(options.headers || {}),
-    },
-  });
+  };
 
-  let responseData = null;
+  const headers = new Headers(requestOptions.headers || {});
 
-  try {
-    responseData = await response.json();
-  } catch (error) {
-    responseData = {
-      success: false,
-      message: "The server returned an invalid response.",
-    };
+  const isFormData = requestOptions.body instanceof FormData;
+
+  if (requestOptions.body && !isFormData && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
   }
 
-  return {
-    ok: response.ok,
-    status: response.status,
-    data: responseData,
-  };
+  const csrfToken = getCookie("csrftoken");
+
+  if (
+    csrfToken &&
+    !["GET", "HEAD", "OPTIONS"].includes(
+      String(requestOptions.method || "GET").toUpperCase(),
+    )
+  ) {
+    headers.set("X-CSRFToken", csrfToken);
+  }
+
+  requestOptions.headers = headers;
+
+  try {
+    const response = await fetch(url, requestOptions);
+
+    let data = null;
+
+    try {
+      data = await response.json();
+    } catch {
+      data = null;
+    }
+
+    return {
+      ok: response.ok,
+      status: response.status,
+      data,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      status: 0,
+      data: {
+        message: "Unable to connect to the server.",
+      },
+      error,
+    };
+  }
 }
 
 function clearFormErrors(form) {

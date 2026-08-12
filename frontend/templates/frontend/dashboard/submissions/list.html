@@ -46,14 +46,6 @@ and track your property submissions. {% endblock %} {% block dashboard_content %
   <button
     type="button"
     class="submission-filter-button"
-    data-submission-status="submitted"
-  >
-    Submitted
-  </button>
-
-  <button
-    type="button"
-    class="submission-filter-button"
     data-submission-status="under_review"
   >
     Under review
@@ -117,6 +109,26 @@ and track your property submissions. {% endblock %} {% block dashboard_content %
     Try again
   </button>
 </section>
+
+<div id="submission-pagination" class="submission-pagination" hidden>
+  <button
+    type="button"
+    id="submission-previous-button"
+    class="button button-secondary"
+  >
+    Previous
+  </button>
+
+  <span id="submission-page-info"></span>
+
+  <button
+    type="button"
+    id="submission-next-button"
+    class="button button-secondary"
+  >
+    Next
+  </button>
+</div>
 
 {% endblock %} {% block extra_js %}
 <script

@@ -1,5 +1,5 @@
 {% extends "frontend/dashboard_base.html" %} {% load static %} {% block title %}
-Add Property | Artishelta {% endblock %} {% block page_title %} Add Property {% endblock %} {% block page_description %} Create a property submission and
+Add Property | SheltaMe {% endblock %} {% block page_title %} Add Property {% endblock %} {% block page_description %} Create a property submission and
 complete it at your own pace. {% endblock %} {% block extra_css %}
 <link
   rel="stylesheet"
@@ -22,7 +22,7 @@ complete it at your own pace. {% endblock %} {% block extra_css %}
       </a>
 
       <span class="wizard-step-label" id="wizard-step-label">
-        Step 1 of 6
+        Step 1 of 7
       </span>
 
       <h2 id="wizard-step-title">Tell us about the property</h2>
@@ -114,6 +114,16 @@ complete it at your own pace. {% endblock %} {% block extra_css %}
         disabled
       >
         <span>6</span>
+        <small>Media</small>
+      </button>
+
+      <button
+        type="button"
+        class="wizard-progress-step"
+        data-progress-step="7"
+        disabled
+      >
+        <span>7</span>
         <small>Review</small>
       </button>
     </div>
@@ -849,16 +859,294 @@ complete it at your own pace. {% endblock %} {% block extra_css %}
     <!-- =========================================== -->
     <!-- STEP 5 PLACEHOLDER -->
     <!-- =========================================== -->
+    <!-- =========================================== -->
+    <!-- STEP 5: AMENITIES -->
+    <!-- =========================================== -->
     <section class="wizard-step" data-wizard-step="5">
-      <div class="wizard-coming-soon">
-        <span>05</span>
+      <div class="wizard-section-heading">
+        <span class="wizard-section-number">01</span>
 
-        <h3>Property amenities</h3>
+        <div>
+          <h3>Select available amenities</h3>
 
-        <p>
-          Available amenities and important property features will be
-          implemented next.
-        </p>
+          <p>
+            Choose the facilities and features currently available at this
+            property.
+          </p>
+        </div>
+      </div>
+
+      <div class="amenity-selection-summary" id="amenity-selection-summary">
+        <span id="selected-amenity-count">0</span>
+        amenities selected
+      </div>
+
+      <div class="amenity-category-list" id="amenity-category-list"></div>
+
+      <div class="property-media-empty" id="amenity-empty-state" hidden>
+        No amenities are currently available.
+      </div>
+
+      <span class="wizard-field-error" data-error-for="amenities"></span>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- STEP 6: PHOTOS AND VIDEO -->
+    <!-- =========================================== -->
+    <section class="wizard-step" data-wizard-step="6">
+      <div class="wizard-section-heading">
+        <span class="wizard-section-number">01</span>
+
+        <div>
+          <h3>Add property photos</h3>
+
+          <p>
+            Upload clear photos showing the exterior, rooms, kitchen, bathrooms
+            and important property features.
+          </p>
+        </div>
+      </div>
+
+      <div class="media-upload-message" id="media-upload-message" hidden></div>
+
+      <div
+        class="property-media-dropzone"
+        id="property-image-dropzone"
+        tabindex="0"
+        role="button"
+        aria-label="Upload property images"
+      >
+        <input
+          id="property-image-input"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          multiple
+          hidden
+        />
+
+        <div class="media-dropzone-icon">＋</div>
+
+        <h4>Upload property images</h4>
+
+        <p>Drag and drop images here or click to browse.</p>
+
+        <small>
+          JPG, PNG or WEBP. Maximum 8 MB per image. Up to 10 images.
+        </small>
+      </div>
+
+      <div class="media-upload-progress" id="image-upload-progress" hidden>
+        <div>
+          <span id="image-upload-progress-text"> Uploading image... </span>
+
+          <strong id="image-upload-progress-count"> 0 / 0 </strong>
+        </div>
+
+        <div class="media-progress-track">
+          <div class="media-progress-bar" id="image-upload-progress-bar"></div>
+        </div>
+      </div>
+
+      <div class="property-media-grid" id="property-image-grid"></div>
+
+      <div class="property-media-empty" id="property-image-empty">
+        No images uploaded yet.
+      </div>
+
+      <span class="wizard-field-error" data-error-for="images"></span>
+
+      <div class="wizard-divider"></div>
+
+      <div class="wizard-section-heading">
+        <span class="wizard-section-number">02</span>
+
+        <div>
+          <h3>Add a property video</h3>
+
+          <p>
+            A short walkthrough video is optional but can help prospective
+            occupants understand the property better.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="property-media-dropzone property-video-dropzone"
+        id="property-video-dropzone"
+        tabindex="0"
+        role="button"
+        aria-label="Upload property video"
+      >
+        <input
+          id="property-video-input"
+          type="file"
+          accept=".mp4,.mov,.webm,video/mp4,video/quicktime,video/webm"
+          hidden
+        />
+
+        <div class="media-dropzone-icon">▶</div>
+
+        <h4>Upload one property video</h4>
+
+        <p>Click to select an MP4, MOV or WEBM video.</p>
+
+        <small> Maximum file size: 100 MB. </small>
+      </div>
+
+      <div class="media-upload-progress" id="video-upload-progress" hidden>
+        <div>
+          <span>Uploading video...</span>
+          <strong>Please wait</strong>
+        </div>
+
+        <div class="media-progress-track">
+          <div class="media-progress-bar media-progress-indeterminate"></div>
+        </div>
+      </div>
+
+      <div
+        class="property-video-preview"
+        id="property-video-preview"
+        hidden
+      ></div>
+
+      <span class="wizard-field-error" data-error-for="video"></span>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- STEP 7: REVIEW AND SUBMIT -->
+    <!-- =========================================== -->
+    <section class="wizard-step" data-wizard-step="7">
+      <div class="review-loading-state" id="review-loading-state" hidden>
+        Loading property summary...
+      </div>
+
+      <div class="review-error-message" id="review-error-message" hidden></div>
+
+      <div id="property-review-content" hidden>
+        <section class="review-hero-card">
+          <div class="review-cover-image" id="review-cover-image"></div>
+
+          <div class="review-hero-copy">
+            <span class="review-status-badge" id="review-status-badge">
+              Draft
+            </span>
+
+            <h2 id="review-property-title">Untitled property</h2>
+
+            <p id="review-property-location">Location not provided</p>
+
+            <strong id="review-property-price"> Price not provided </strong>
+          </div>
+        </section>
+
+        <section class="review-section-card">
+          <div class="review-section-heading">
+            <div>
+              <span>01</span>
+              <h3>Basic information</h3>
+            </div>
+
+            <button type="button" class="review-edit-button" data-edit-step="1">
+              Edit
+            </button>
+          </div>
+
+          <div class="review-detail-grid" id="review-basic-information"></div>
+        </section>
+
+        <section class="review-section-card">
+          <div class="review-section-heading">
+            <div>
+              <span>02</span>
+              <h3>Location</h3>
+            </div>
+
+            <button type="button" class="review-edit-button" data-edit-step="2">
+              Edit
+            </button>
+          </div>
+
+          <div
+            class="review-detail-grid"
+            id="review-location-information"
+          ></div>
+        </section>
+
+        <section class="review-section-card">
+          <div class="review-section-heading">
+            <div>
+              <span>03</span>
+              <h3>Property details</h3>
+            </div>
+
+            <button type="button" class="review-edit-button" data-edit-step="3">
+              Edit
+            </button>
+          </div>
+
+          <div class="review-detail-grid" id="review-property-details"></div>
+        </section>
+
+        <section class="review-section-card">
+          <div class="review-section-heading">
+            <div>
+              <span>04</span>
+              <h3>Pricing</h3>
+            </div>
+
+            <button type="button" class="review-edit-button" data-edit-step="4">
+              Edit
+            </button>
+          </div>
+
+          <div class="review-detail-grid" id="review-pricing-information"></div>
+
+          <div class="review-total-cost">
+            <span>Estimated initial cost</span>
+            <strong id="review-total-cost">₦0.00</strong>
+          </div>
+        </section>
+
+        <section class="review-section-card">
+          <div class="review-section-heading">
+            <div>
+              <span>05</span>
+              <h3>Amenities</h3>
+            </div>
+
+            <button type="button" class="review-edit-button" data-edit-step="5">
+              Edit
+            </button>
+          </div>
+
+          <div class="review-amenity-list" id="review-amenity-list"></div>
+        </section>
+
+        <section class="review-section-card">
+          <div class="review-section-heading">
+            <div>
+              <span>06</span>
+              <h3>Photos and video</h3>
+            </div>
+
+            <button type="button" class="review-edit-button" data-edit-step="6">
+              Edit
+            </button>
+          </div>
+
+          <div class="review-media-grid" id="review-media-grid"></div>
+        </section>
+
+        <aside class="review-submit-notice">
+          <strong>Ready to submit?</strong>
+
+          <p>
+            After submission, the property will be reviewed before it becomes
+            publicly visible. You may not be able to edit it while the review is
+            in progress.
+          </p>
+        </aside>
       </div>
     </section>
 
@@ -930,7 +1218,49 @@ complete it at your own pace. {% endblock %} {% block extra_css %}
   </section>
 </section>
 
+<div class="media-delete-modal" id="media-delete-modal" hidden>
+  <div class="media-delete-modal-backdrop" data-close-media-modal></div>
+
+  <div
+    class="media-delete-modal-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="media-delete-modal-title"
+  >
+    <div class="media-delete-modal-icon">!</div>
+
+    <h3 id="media-delete-modal-title">Delete media?</h3>
+
+    <p id="media-delete-modal-message">
+      This file will be permanently removed from the property submission.
+    </p>
+
+    <div class="media-delete-modal-actions">
+      <button
+        type="button"
+        class="button button-secondary"
+        id="cancel-media-delete-button"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="button media-delete-confirm-button"
+        id="confirm-media-delete-button"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</div>
+
 {% endblock %} {% block extra_js %}
+<script>
+  window.submissionWizard = {
+    submissionUuid: "{{ submission_uuid|default:'' }}",
+  };
+</script>
 <script
   src="{% static 'frontend/js/dashboard/submission-wizard.js' %}"
   defer

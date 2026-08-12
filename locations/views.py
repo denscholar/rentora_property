@@ -71,7 +71,7 @@ class StateListAPIView(APIView):
         ),
         parameters=[
             OpenApiParameter(
-                name="country",
+                name="uuid",
                 type=str,
                 location=OpenApiParameter.QUERY,
                 required=True,
@@ -89,7 +89,7 @@ class StateListAPIView(APIView):
         },
     )
     def get(self, request):
-        country_uuid = request.query_params.get("country")
+        country_uuid = request.query_params.get("uuid")
 
         if not country_uuid:
             return error_response(
@@ -144,27 +144,29 @@ class LGAListAPIView(APIView):
         ),
         parameters=[
             OpenApiParameter(
-                name="state",
-                type=int,
+                name="uuid",
+                type=str,
                 location=OpenApiParameter.QUERY,
                 required=True,
-                description=("Database ID of the state whose LGAs should be returned."),
+                description=(
+                    "Database UUID of the state whose LGAs should be returned."
+                ),
             ),
         ],
         responses={
             200: LGAListSerializer(many=True),
             400: OpenApiResponse(
-                description="State query parameter is required.",
+                description="State uuid query parameter is required.",
             ),
             404: OpenApiResponse(
-                description="State was not found or is inactive.",
+                description="State uuid was not found or is inactive.",
             ),
         },
     )
     def get(self, request):
-        state_id = request.query_params.get("state")
+        state_uuid = request.query_params.get("uuid")
 
-        if not state_id:
+        if not state_uuid:
             return error_response(
                 message="State is required.",
                 errors={
@@ -177,7 +179,7 @@ class LGAListAPIView(APIView):
 
         state = get_object_or_404(
             State,
-            id=state_id,
+            uuid=state_uuid,
             is_active=True,
         )
 
@@ -217,7 +219,7 @@ class AreaListAPIView(APIView):
         ),
         parameters=[
             OpenApiParameter(
-                name="lga",
+                name="uuid",
                 type=str,
                 location=OpenApiParameter.QUERY,
                 required=True,
@@ -235,7 +237,7 @@ class AreaListAPIView(APIView):
         },
     )
     def get(self, request):
-        lga_uuid = request.query_params.get("lga")
+        lga_uuid = request.query_params.get("uuid")
 
         if not lga_uuid:
             return error_response(

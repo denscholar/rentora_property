@@ -1,80 +1,107 @@
+from pathlib import Path
+import json
+
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from locations.models import Country, State, City, Area
+from locations.models import Country, State, LGA, Area
 
 
-# =====================================================
-# SEED LOCATIONS COMMAND
-# =====================================================
 class Command(BaseCommand):
-    help = "Seed default Rentora locations."
+    help = "Import location dataset."
 
-    def handle(self, *args, **options):
-        areas = [
-            "Wuse",
-            "Wuse 2",
-            "Garki",
-            "Garki 2",
-            "Maitama",
-            "Asokoro",
-            "Gwarinpa",
-            "Jabi",
-            "Utako",
-            "Kubwa",
-            "Lugbe",
-            "Lokogoma",
-            "Apo",
-            "Guzape",
-            "Katampe",
-            "Kado",
-            "Life Camp",
-            "Jahi",
-            "Durumi",
-            "Galadimawa",
-            "Gaduwa",
-            "Dawaki",
-            "Mpape",
-            "Karsana",
-            "Kuje",
-        ]
+    EXTRA_AMAC_AREAS = [
+        "Garki",
+        "Garki II",
+        "Asokoro",
+        "Gwarinpa",
+        "Jabi",
+        "Utako",
+        "Kubwa",
+        "Lugbe",
+        "Lokogoma",
+        "Apo",
+        "Guzape",
+        "Katampe",
+        "Kado",
+        "Life Camp",
+        "Jahi",
+        "Durumi",
+        "Galadimawa",
+        "Gaduwa",
+        "Dawaki",
+        "Mpape",
+        "Karsana",
+        "Kuje",
+    ]
 
-        with transaction.atomic():
-            country, _ = Country.objects.get_or_create(
-                name="Nigeria",
-                defaults={
-                    "code": "NG",
-                    "display_order": 1,
-                },
-            )
+    @transaction.atomic
+    def handle(self, *args, **kwargs):
+
+        dataset = (
+            Path(settings.BASE_DIR)
+            / "locations"
+            / "data"
+            / "nigeria.json"
+        )
+
+        with open(dataset, encoding="utf-8") as file:
+            data = json.load(file)
+
+        country, _ = Country.objects.get_or_create(
+            code=data["country"]["code"],
+            defaults={
+                "name": data["country"]["name"],
+            },
+        )
+
+        for state_data in data["states"]:
 
             state, _ = State.objects.get_or_create(
                 country=country,
-                name="Federal Capital Territory",
-                defaults={
-                    "display_order": 1,
-                },
+                name=state_data["name"],
             )
 
-            city, _ = City.objects.get_or_create(
-                state=state,
-                name="Abuja",
-                defaults={
-                    "display_order": 1,
-                },
-            )
+            for lga_data in state_data["lgas"]:
 
-            for index, area_name in enumerate(areas, start=1):
-                Area.objects.get_or_create(
-                    city=city,
-                    name=area_name,
-                    defaults={
-                        "display_order": index,
-                    },
+                lga, _ = LGA.objects.get_or_create(
+                    state=state,
+                    name=lga_data["name"],
                 )
+
+                # Areas from JSON
+                areas = list(lga_data["areas"])
+
+                # Add extra AMAC areas
+                if lga.name == "Abuja Municipal Area Council":
+
+                    existing = {a["name"] for a in areas}
+
+                    for area_name in self.EXTRA_AMAC_AREAS:
+                        if area_name not in existing:
+                            areas.append(
+                                {
+                                    "name": area_name,
+                                    "latitude": None,
+                                    "longitude": None,
+                                }
+                            )
+
+                for index, area_data in enumerate(areas, start=1):
+
+                    Area.objects.get_or_create(
+                        lga=lga,
+                        name=area_data["name"],
+                        defaults={
+                            "latitude": area_data.get("latitude"),
+                            "longitude": area_data.get("longitude"),
+                            "display_order": index,
+                        },
+                    )
 
         self.stdout.write(
             self.style.SUCCESS(
-                "Default locations seeded successfully."
+                "Locations imported successfully."
             )
         )

@@ -8,6 +8,16 @@
   background: #f6f8fb;
 }
 
+/* logo */
+.brand-logo-dashboard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+/* ==================== */
+
 .dashboard-layout {
   min-height: 100vh;
 }
@@ -1141,4 +1151,94 @@
   border: 1px solid #fda29b;
   color: #b42318;
   background: #fef3f2;
+}
+
+/* =========================================================
+   SUBMISSION PAGINATION
+   ========================================================= */
+
+.submission-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 30px;
+  padding: 10px 0;
+}
+
+/*
+ * Page indicator
+ */
+
+.submission-page-info {
+  min-width: 100px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+}
+
+/*
+ * Pagination buttons
+ */
+
+.submission-pagination .button {
+  min-width: 100px;
+  height: 40px;
+  padding: 0 18px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/*
+ * Previous / Next hover
+ */
+
+.submission-pagination .button:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+/*
+ * Disabled pagination button
+ */
+
+.submission-pagination .button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/*
+ * Mobile
+ */
+
+@media (max-width: 600px) {
+  .submission-pagination {
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .submission-pagination .button {
+    min-width: 85px;
+    height: 38px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+
+  .submission-page-info {
+    min-width: 80px;
+    font-size: 13px;
+  }
 }

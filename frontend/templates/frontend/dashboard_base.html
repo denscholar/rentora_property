@@ -7,7 +7,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>{% block title %} Dashboard | Artishelta {% endblock %}</title>
+    <title>{% block title %} Dashboard | SheltaMe {% endblock %}</title>
 
     <link rel="stylesheet" href="{% static 'frontend/css/landing.css' %}" />
 
@@ -24,8 +24,17 @@
       <aside class="dashboard-sidebar" id="dashboard-sidebar">
         <div class="dashboard-sidebar-header">
           <a href="{% url 'frontend:landing-page' %}" class="dashboard-brand">
-            <span class="brand-mark">A</span>
-            <span>Artishelta</span>
+            <div class="brand-logo-dashboard">
+              <img
+                style="width: 40px; height: 40px"
+                src="{% static 'frontend/images/sheltame_logo.png' %}"
+                alt="SheltaMe Logo"
+              />
+              <div class="brand-text-dashboard">
+                <span class="brand-name">SheltaMe</span>
+                <small class="brand-tagline">Find Home, Feel Safe</small>
+              </div>
+            </div>
           </a>
 
           <button
@@ -62,8 +71,9 @@
           </a>
 
           {% if request.user.role == "agent" %}
-          
-          <a href="{% url 'frontend:property-submission-create' %}"
+
+          <a
+            href="{% url 'frontend:property-submission-create' %}"
             class="dashboard-nav-link {% if request.resolver_match.url_name == 'property-submission-create' %}active{% endif %}"
           >
             <span class="dashboard-nav-icon">＋</span>
@@ -89,7 +99,8 @@
           </a>
 
           {% elif request.user.role == "landlord" %}
-          <a href="{% url 'frontend:property-submission-create' %}"
+          <a
+            href="{% url 'frontend:property-submission-create' %}"
             class="dashboard-nav-link {% if request.resolver_match.url_name == 'property-submission-create' %}active{% endif %}"
           >
             <span class="dashboard-nav-icon">＋</span>
@@ -181,7 +192,7 @@
               <h1>{% block page_title %} Dashboard {% endblock %}</h1>
 
               <p>
-                {% block page_description %} Manage your Artishelta account. {% endblock %}
+                {% block page_description %} Manage your SheltaMe account. {% endblock %}
               </p>
             </div>
           </div>
@@ -196,11 +207,11 @@
               <span class="dashboard-notification-dot"></span>
             </button>
 
-            {% if request.user.role == "agent" or request.user.role == "landlord" %}
-            {% comment %} <a href="#" class="button button-primary dashboard-create-button">
+            {% if request.user.role == "agent" or request.user.role == "landlord" %} {% comment %}
+            <a href="#" class="button button-primary dashboard-create-button">
               Add property
-            </a> {% endcomment %}
-            {% endif %}
+            </a>
+            {% endcomment %} {% endif %}
 
             <div class="dashboard-topbar-user">
               <span class="dashboard-topbar-avatar">

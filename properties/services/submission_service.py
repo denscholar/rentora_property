@@ -5,32 +5,141 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 
-from properties.models import Amenity, PropertySubmission
-
+from properties.models.lookups.amenity import Amenity
+from properties.models.property.media import PropertySubmissionMedia
+from properties.models.property.submission import PropertySubmission
 
 # =====================================================
+
 # SERVICE CONSTANTS
+
 # =====================================================
+
+# -----------------------------------------------------
+
+# EDITABLE STATUSES
+
+# -----------------------------------------------------
+
+# A user can only continue editing:
+
+#
+
+# 1. A draft
+
+# 2. A submission that the admin/moderator returned
+
+# because more information is required.
+
+#
+
+# Once a submission enters UNDER_REVIEW, it is locked
+
+# from user-side editing.
+
+#
+
+# APPROVED and REJECTED submissions are also not editable
+
+# through the normal owner-facing submission service.
+
+# -----------------------------------------------------
+
 EDITABLE_SUBMISSION_STATUSES = {
     PropertySubmission.Status.DRAFT,
     PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
 }
+
+# -----------------------------------------------------
+
+# SUBMITTABLE STATUSES
+
+# -----------------------------------------------------
+
+# These are the only statuses from which a user can
+
+# submit a property for review.
+
+#
+
+# IMPORTANT:
+
+# There is NO SUBMITTED status anymore.
+
+#
+
+# The moment the user submits a completed draft, it
+
+# immediately becomes UNDER_REVIEW.
+
+# -----------------------------------------------------
 
 SUBMITTABLE_SUBMISSION_STATUSES = {
     PropertySubmission.Status.DRAFT,
     PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
 }
 
+# -----------------------------------------------------
+
+# ARCHIVABLE STATUSES
+
+# -----------------------------------------------------
+
+# Only APPROVED properties can be archived.
+
+#
+
+# A DRAFT cannot be archived through this service.
+
+# A MORE_INFORMATION_REQUIRED submission cannot be archived.
+
+# An UNDER_REVIEW submission cannot be archived.
+
+# A REJECTED submission cannot be archived.
+
+#
+
+# This matches the business rule:
+
+#
+
+# Only an approved property can be archived.
+
+# -----------------------------------------------------
+
 ARCHIVABLE_SUBMISSION_STATUSES = {
-    PropertySubmission.Status.DRAFT,
-    PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
+    PropertySubmission.Status.APPROVED,
 }
+
+# -----------------------------------------------------
+
+# ALLOWED SUBMISSION SOURCES
+
+# -----------------------------------------------------
 
 ALLOWED_SUBMISSION_SOURCES = {
     PropertySubmission.Source.AGENT,
     PropertySubmission.Source.LANDLORD,
     PropertySubmission.Source.ADMIN,
 }
+
+# -----------------------------------------------------
+
+# USER-EDITABLE SUBMISSION FIELDS
+
+# -----------------------------------------------------
+
+# Workflow fields such as status, source, reviewer,
+
+# review note, etc. are intentionally NOT included here.
+
+#
+
+# The frontend must never be able to directly manipulate
+
+# the submission workflow.
+
+# -----------------------------------------------------
 
 SUBMISSION_UPDATE_FIELDS = {
     "property_type",
@@ -67,17 +176,22 @@ SUBMISSION_UPDATE_FIELDS = {
     "longitude",
 }
 
+# =====================================================
+
+# INTERNAL HELPERS
 
 # =====================================================
-# INTERNAL HELPERS
-# =====================================================
+
+
 def _get_user_role_value(user) -> str:
     """
     Returns a normalized role value from the authenticated user.
 
     Supports role implementations where user.role may be:
+
     - a string;
     - a model containing a slug;
+    - a model containing a code;
     - a model containing a name;
     - a user model exposing account_type instead of role.
     """
@@ -91,8 +205,7 @@ def _get_user_role_value(user) -> str:
         raise ValidationError(
             {
                 "role": (
-                    "Your account does not have a role and cannot "
-                    "submit properties."
+                    "Your account does not have a role and cannot " "submit properties."
                 )
             }
         )
@@ -107,19 +220,21 @@ def _get_user_role_value(user) -> str:
         )
 
     if not role_value:
-        raise ValidationError(
-            {"role": "Unable to determine your account role."}
-        )
+        raise ValidationError({"role": "Unable to determine your account role."})
 
     return str(role_value).strip().lower().replace(" ", "_")
 
 
 def _get_submission_source(user) -> str:
     """
-    Determines the submission source from the user's actual account role.
+    Determines the submission source from the authenticated
+    user's actual account role.
 
-    The source is never accepted from frontend input because users must not
-    be allowed to impersonate agents, landlords, or administrators.
+    ```
+    The source is NEVER accepted from frontend input.
+
+    This prevents a user from pretending to submit as another
+    type of account.
     """
 
     role_value = _get_user_role_value(user)
@@ -139,8 +254,8 @@ def _get_submission_source(user) -> str:
         raise ValidationError(
             {
                 "role": (
-                    "Only agents, landlords, and administrators may "
-                    "submit properties."
+                    "Only agents, landlords, and administrators "
+                    "may submit properties."
                 )
             }
         )
@@ -156,17 +271,19 @@ def _validate_submission_owner(
     """
     Ensures the submission belongs to the requesting user.
 
-    Administrators are not automatically allowed to edit another user's
-    submission through this owner-facing service. Admin moderation should
-    use separate review service functions.
+    ```
+    Administrators are NOT automatically allowed to modify
+    another user's submission through this owner-facing service.
+
+    Admin moderation should use separate moderation/review
+    service functions.
     """
 
     if submission.submitted_by_id != user.pk:
         raise ValidationError(
             {
                 "submission": (
-                    "You do not have permission to modify this "
-                    "property submission."
+                    "You do not have permission to modify " "this property submission."
                 )
             }
         )
@@ -176,7 +293,20 @@ def _validate_submission_is_editable(
     submission: PropertySubmission,
 ) -> None:
     """
-    Prevents modification after a submission enters the review workflow.
+    Prevents modification after a submission enters the
+    review workflow.
+
+    ```
+    Editable:
+
+        DRAFT
+        MORE_INFORMATION_REQUIRED
+
+    Not editable:
+
+        UNDER_REVIEW
+        APPROVED
+        REJECTED
     """
 
     if submission.status not in EDITABLE_SUBMISSION_STATUSES:
@@ -184,7 +314,8 @@ def _validate_submission_is_editable(
             {
                 "status": (
                     f"A submission with status "
-                    f"'{submission.get_status_display()}' cannot be edited."
+                    f"'{submission.get_status_display()}' "
+                    "cannot be edited."
                 )
             }
         )
@@ -194,7 +325,25 @@ def _validate_submission_is_submittable(
     submission: PropertySubmission,
 ) -> None:
     """
-    Ensures the submission is in a status that may transition to SUBMITTED.
+    Ensures the submission is in a status that can be
+    sent into the review workflow.
+
+    ```
+    IMPORTANT:
+
+    There is no SUBMITTED state.
+
+    The transition is:
+
+        DRAFT
+            ↓
+        UNDER_REVIEW
+
+    or:
+
+        MORE_INFORMATION_REQUIRED
+            ↓
+        UNDER_REVIEW
     """
 
     if submission.status not in SUBMITTABLE_SUBMISSION_STATUSES:
@@ -202,7 +351,8 @@ def _validate_submission_is_submittable(
             {
                 "status": (
                     f"A submission with status "
-                    f"'{submission.get_status_display()}' cannot be submitted."
+                    f"'{submission.get_status_display()}' "
+                    "cannot be submitted for review."
                 )
             }
         )
@@ -212,8 +362,16 @@ def _validate_submission_is_archivable(
     submission: PropertySubmission,
 ) -> None:
     """
-    Restricts user-driven archiving to drafts and submissions returned for
-    more information.
+    Ensures that only an APPROVED property can be archived.
+
+    ```
+    Workflow:
+
+        APPROVED
+            ↓
+        ARCHIVED
+
+    All other submission states remain protected.
     """
 
     if submission.status not in ARCHIVABLE_SUBMISSION_STATUSES:
@@ -221,7 +379,9 @@ def _validate_submission_is_archivable(
             {
                 "status": (
                     f"A submission with status "
-                    f"'{submission.get_status_display()}' cannot be archived."
+                    f"'{submission.get_status_display()}' "
+                    "cannot be archived. "
+                    "Only approved properties can be archived."
                 )
             }
         )
@@ -231,9 +391,11 @@ def _validate_amenities(
     amenities: Iterable[Amenity] | None,
 ) -> list[Amenity]:
     """
-    Validates and normalizes amenities before assigning the M2M relation.
+    Validates and normalizes amenities before assigning
+    the ManyToMany relationship.
 
-    The serializer should normally supply Amenity model instances.
+    ```
+    The serializer should normally provide Amenity instances.
     """
 
     if amenities is None:
@@ -242,24 +404,16 @@ def _validate_amenities(
     normalized_amenities = list(amenities)
 
     invalid_amenities = [
-        amenity
-        for amenity in normalized_amenities
-        if not isinstance(amenity, Amenity)
+        amenity for amenity in normalized_amenities if not isinstance(amenity, Amenity)
     ]
 
     if invalid_amenities:
         raise ValidationError(
-            {
-                "amenities": (
-                    "Every amenity must be a valid Amenity instance."
-                )
-            }
+            {"amenities": ("Every amenity must be a valid Amenity instance.")}
         )
 
     inactive_amenities = [
-        amenity.name
-        for amenity in normalized_amenities
-        if not amenity.is_active
+        amenity.name for amenity in normalized_amenities if not amenity.is_active
     ]
 
     if inactive_amenities:
@@ -283,15 +437,27 @@ def _set_submission_fields(
     """
     Applies only explicitly permitted fields to a submission.
 
-    Protected workflow fields such as status, source, submitted_by,
-    reviewed_by, and approved_property cannot be changed through user input.
+    ```
+    Workflow-controlled fields such as:
 
-    Returns the names of fields that were changed.
+        status
+        source
+        submitted_by
+        reviewed_by
+        reviewed_at
+        review_note
+
+    cannot be modified through user input.
+
+    Returns the names of fields that changed.
     """
 
     changed_fields = []
 
     for field_name, value in data.items():
+
+        # Ignore anything that isn't part of the user-editable
+        # property data.
         if field_name not in SUBMISSION_UPDATE_FIELDS:
             continue
 
@@ -306,10 +472,14 @@ def _validate_submission_for_review(
     submission: PropertySubmission,
 ) -> None:
     """
-    Performs strict business validation before review submission.
+    Performs strict business validation before a submission
+    enters UNDER_REVIEW.
 
-    Drafts may remain incomplete, but a submission entering the review queue
-    must contain all essential property information.
+    ```
+    A draft can remain incomplete.
+
+    However, once the user clicks "Submit", all essential
+    property information must be available.
     """
 
     errors = {}
@@ -327,47 +497,46 @@ def _validate_submission_for_review(
     }
 
     for field_name, error_message in required_fields.items():
-        value = getattr(submission, field_name, None)
 
-        if value is None or (
-            isinstance(value, str) and not value.strip()
-        ):
+        value = getattr(
+            submission,
+            field_name,
+            None,
+        )
+
+        if value is None or (isinstance(value, str) and not value.strip()):
             errors[field_name] = error_message
 
-    if (
-        submission.proposed_price is not None
-        and submission.proposed_price <= 0
-    ):
-        errors["proposed_price"] = (
-            "Proposed price must be greater than zero."
-        )
+    if submission.proposed_price is not None and submission.proposed_price <= 0:
+        errors["proposed_price"] = "Proposed price must be greater than zero."
 
     if submission.units_available < 1:
-        errors["units_available"] = (
-            "At least one property unit must be available."
-        )
+        errors["units_available"] = "At least one property unit must be available."
 
     if submission.minimum_stay is not None:
+
         if submission.minimum_stay < 1:
-            errors["minimum_stay"] = (
-                "Minimum stay must be at least one."
-            )
+            errors["minimum_stay"] = "Minimum stay must be at least one."
 
     current_year = timezone.now().year
 
     if submission.year_built is not None:
+
         if submission.year_built > current_year:
             errors["year_built"] = (
-                "Year built cannot be later than the current year."
+                "Year built cannot be later than " "the current year."
             )
 
     if errors:
         raise ValidationError(errors)
 
+    # =====================================================
 
-# =====================================================
-# CREATE SUBMISSION DRAFT
-# =====================================================
+    # CREATE SUBMISSION DRAFT
+
+    # =====================================================
+
+
 @transaction.atomic
 def create_submission_draft(
     *,
@@ -376,21 +545,25 @@ def create_submission_draft(
     amenities: Iterable[Amenity] | None = None,
 ) -> PropertySubmission:
     """
-    Creates an incomplete property submission owned by the authenticated user.
+    Creates an incomplete property submission owned by
+    the authenticated user.
 
-    Draft creation is intentionally permissive because the user may complete
-    the submission through multiple frontend wizard steps.
+    ```
+    New submissions ALWAYS start as DRAFT.
+
+    The frontend cannot choose the initial status.
     """
 
     if not user or not user.is_authenticated:
-        raise ValidationError(
-            {"user": "Authentication is required."}
-        )
+        raise ValidationError({"user": "Authentication is required."})
 
     source = _get_submission_source(user)
+
     data = dict(data or {})
 
-    # These values are controlled by the service, not the frontend.
+    # -------------------------------------------------
+    # Remove all workflow-controlled fields.
+    # -------------------------------------------------
     data.pop("submitted_by", None)
     data.pop("source", None)
     data.pop("status", None)
@@ -405,6 +578,11 @@ def create_submission_draft(
     submission = PropertySubmission(
         submitted_by=user,
         source=source,
+        # -------------------------------------------------
+        # Every new property submission starts as DRAFT.
+        # It will only become UNDER_REVIEW when the user
+        # explicitly submits it.
+        # -------------------------------------------------
         status=PropertySubmission.Status.DRAFT,
     )
 
@@ -413,21 +591,31 @@ def create_submission_draft(
         data=data,
     )
 
-    # Model-level validation catches invalid choices, negative counters,
-    # and other field errors while excluding M2M relations.
+    # Model-level validation catches invalid choices,
+    # negative values and other model constraints.
     submission.full_clean()
     submission.save()
 
     if amenities is not None:
-        valid_amenities = _validate_amenities(amenities)
-        submission.amenities.set(valid_amenities)
+
+        valid_amenities = _validate_amenities(
+            amenities,
+        )
+
+        submission.amenities.set(
+            valid_amenities,
+        )
 
     return submission
 
 
 # =====================================================
+
 # UPDATE SUBMISSION DRAFT
+
 # =====================================================
+
+
 @transaction.atomic
 def update_submission_draft(
     *,
@@ -437,32 +625,42 @@ def update_submission_draft(
     amenities: Iterable[Amenity] | None = None,
 ) -> PropertySubmission:
     """
-    Updates an existing draft or a submission returned for more information.
+    Updates an existing DRAFT or
+    MORE_INFORMATION_REQUIRED submission.
 
-    Workflow-controlled fields are ignored and cannot be altered through this
-    function.
+    ```
+    UNDER_REVIEW, APPROVED and REJECTED submissions
+    cannot be modified through this service.
     """
 
     _validate_submission_owner(
         submission=submission,
         user=user,
     )
-    _validate_submission_is_editable(submission)
 
-    # Lock the current database row to prevent concurrent updates.
-    submission = (
-        PropertySubmission.objects.select_for_update()
-        .get(pk=submission.pk)
+    _validate_submission_is_editable(
+        submission,
     )
+
+    # Lock the current database row to prevent concurrent
+    # updates.
+    submission = PropertySubmission.objects.select_for_update().get(pk=submission.pk)
 
     _validate_submission_owner(
         submission=submission,
         user=user,
     )
-    _validate_submission_is_editable(submission)
+
+    _validate_submission_is_editable(
+        submission,
+    )
 
     data = dict(data or {})
 
+    # -------------------------------------------------
+    # These fields belong to the workflow and must never
+    # be controlled by the frontend.
+    # -------------------------------------------------
     protected_fields = {
         "submitted_by",
         "source",
@@ -477,7 +675,10 @@ def update_submission_draft(
     }
 
     for protected_field in protected_fields:
-        data.pop(protected_field, None)
+        data.pop(
+            protected_field,
+            None,
+        )
 
     changed_fields = _set_submission_fields(
         submission=submission,
@@ -487,6 +688,7 @@ def update_submission_draft(
     submission.full_clean()
 
     if changed_fields:
+
         submission.save(
             update_fields=[
                 *changed_fields,
@@ -495,17 +697,29 @@ def update_submission_draft(
         )
 
     # None means the client did not send amenities.
-    # An empty list means the client intentionally removed all amenities.
+    #
+    # An empty list means the client intentionally
+    # removed all amenities.
     if amenities is not None:
-        valid_amenities = _validate_amenities(amenities)
-        submission.amenities.set(valid_amenities)
+
+        valid_amenities = _validate_amenities(
+            amenities,
+        )
+
+        submission.amenities.set(
+            valid_amenities,
+        )
 
     return submission
 
 
 # =====================================================
+
 # SUBMIT PROPERTY SUBMISSION
+
 # =====================================================
+
+
 @transaction.atomic
 def submit_property_submission(
     *,
@@ -513,13 +727,25 @@ def submit_property_submission(
     user,
 ) -> PropertySubmission:
     """
-    Validates a completed draft and places it in the admin review queue.
+    Validates a completed draft and moves it directly
+    into the UNDER_REVIEW workflow.
 
-    Valid transitions:
+    ```
+    IMPORTANT:
 
-        DRAFT -> SUBMITTED
+    There is intentionally NO SUBMITTED status.
 
-        MORE_INFORMATION_REQUIRED -> SUBMITTED
+    The lifecycle is:
+
+        DRAFT
+        ↓
+        UNDER_REVIEW
+
+    or:
+
+        MORE_INFORMATION_REQUIRED
+        ↓
+        UNDER_REVIEW
     """
 
     _validate_submission_owner(
@@ -527,31 +753,53 @@ def submit_property_submission(
         user=user,
     )
 
-    submission = (
-        PropertySubmission.objects.select_for_update()
-        .select_related(
-            "submitted_by",
-            "property_type",
-            "purpose",
-            "property_condition",
-            "furnishing_status",
-            "area",
-        )
-        .prefetch_related("amenities")
-        .get(pk=submission.pk)
-    )
+    submission = PropertySubmission.objects.select_for_update().get(pk=submission.pk)
 
     _validate_submission_owner(
         submission=submission,
         user=user,
     )
-    _validate_submission_is_submittable(submission)
-    _validate_submission_for_review(submission)
 
-    submission.status = PropertySubmission.Status.SUBMITTED
+    # -------------------------------------------------
+    # Make sure the current status is allowed to enter
+    # the review workflow.
+    #
+    # DRAFT -> UNDER_REVIEW
+    # MORE_INFORMATION_REQUIRED -> UNDER_REVIEW
+    # -------------------------------------------------
+    _validate_submission_is_submittable(
+        submission,
+    )
 
-    # Clear the previous moderation response when corrected information
-    # is resubmitted.
+    # -------------------------------------------------
+    # Perform the strict validation required before
+    # entering UNDER_REVIEW.
+    # -------------------------------------------------
+    _validate_submission_for_review(
+        submission,
+    )
+
+    # -------------------------------------------------
+    # IMPORTANT:
+    #
+    # We DO NOT set:
+    #
+    #     PropertySubmission.Status.SUBMITTED
+    #
+    # because that status no longer exists in the
+    # business workflow.
+    #
+    # Submission immediately enters UNDER_REVIEW.
+    # -------------------------------------------------
+    submission.status = PropertySubmission.Status.UNDER_REVIEW
+
+    # -------------------------------------------------
+    # Clear any previous moderation response.
+    #
+    # This is important when an admin previously returned
+    # the property with MORE_INFORMATION_REQUIRED and
+    # the owner has now corrected the property.
+    # -------------------------------------------------
     submission.review_note = ""
     submission.reviewed_by = None
     submission.reviewed_at = None
@@ -572,8 +820,12 @@ def submit_property_submission(
 
 
 # =====================================================
-# ARCHIVE SUBMISSION DRAFT
+
+# ARCHIVE APPROVED PROPERTY SUBMISSION
+
 # =====================================================
+
+
 @transaction.atomic
 def archive_submission_draft(
     *,
@@ -581,10 +833,24 @@ def archive_submission_draft(
     user,
 ) -> PropertySubmission:
     """
-    Soft-archives a draft instead of permanently deleting it.
+    Archives an approved property submission.
 
-    Submitted, approved, rejected, or under-review records are preserved for
-    moderation and audit purposes.
+    ```
+    IMPORTANT:
+
+    Despite the historical function name
+    `archive_submission_draft`, this function now handles
+    APPROVED submissions only.
+
+    Only:
+
+        APPROVED -> ARCHIVED
+
+    is allowed.
+
+    DRAFT, UNDER_REVIEW, REJECTED and
+    MORE_INFORMATION_REQUIRED submissions cannot be
+    archived.
     """
 
     _validate_submission_owner(
@@ -592,23 +858,236 @@ def archive_submission_draft(
         user=user,
     )
 
-    submission = (
-        PropertySubmission.objects.select_for_update()
-        .get(pk=submission.pk)
-    )
+    # Lock the row so two archive requests cannot race.
+    submission = PropertySubmission.objects.select_for_update().get(pk=submission.pk)
 
     _validate_submission_owner(
         submission=submission,
         user=user,
     )
-    _validate_submission_is_archivable(submission)
 
-    if getattr(submission, "is_archived", False):
+    # -------------------------------------------------
+    # Only APPROVED submissions can be archived.
+    #
+    # This is the backend enforcement of the business
+    # rule. Even if somebody manually calls the endpoint,
+    # the backend will reject every non-approved status.
+    # -------------------------------------------------
+    _validate_submission_is_archivable(
+        submission,
+    )
+
+    # -------------------------------------------------
+    # Prevent duplicate archive operations.
+    # -------------------------------------------------
+    if getattr(
+        submission,
+        "is_archived",
+        False,
+    ):
         raise ValidationError(
-            {"submission": "This property submission is already archived."}
+            {"submission": ("This property submission is already archived.")}
         )
 
-    # Uses the archive behaviour supplied by SoftArchiveMixin.
+    # -------------------------------------------------
+    # SoftArchiveMixin handles the actual archive
+    # operation.
+    #
+    # This should NOT physically delete the record.
+    # -------------------------------------------------
     submission.archive()
+
+    return submission
+
+
+# =====================================================
+
+# SUBMISSION VALIDATION ERROR
+
+# =====================================================
+
+
+class PropertySubmissionSubmitError(Exception):
+    """
+    Raised when a property submission cannot be submitted.
+    """
+
+    pass
+
+
+# =====================================================
+
+# SUBMISSION MISSING-FIELDS HELPER
+
+# =====================================================
+
+
+def _get_submission_missing_fields(
+    submission: PropertySubmission,
+) -> dict[str, str]:
+    """
+    Returns the fields that must be completed before
+    the submission can enter UNDER_REVIEW.
+    """
+
+    missing_fields = {}
+
+    required_fields = {
+        "property_type": "Property type is required.",
+        "purpose": "Property purpose is required.",
+        "title": "Property title is required.",
+        "area": "Property area is required.",
+        "street_address": "Street address is required.",
+        "property_condition": "Property condition is required.",
+        "furnishing_status": "Furnishing status is required.",
+        "proposed_price": "Proposed price is required.",
+        "payment_frequency": "Payment frequency is required.",
+    }
+
+    for field_name, message in required_fields.items():
+
+        value = getattr(
+            submission,
+            field_name,
+            None,
+        )
+
+        if value in {
+            None,
+            "",
+        }:
+            missing_fields[field_name] = message
+
+    # -------------------------------------------------
+    # A property must have at least one successfully
+    # uploaded image before entering UNDER_REVIEW.
+    # -------------------------------------------------
+    completed_images_exist = submission.media.filter(
+        media_type=(PropertySubmissionMedia.MediaType.IMAGE),
+        upload_status=(PropertySubmissionMedia.UploadStatus.COMPLETED),
+    ).exists()
+
+    if not completed_images_exist:
+
+        missing_fields["images"] = "Upload at least one property image."
+
+    # -------------------------------------------------
+    # At least one completed image must be selected as
+    # the property's cover image.
+    # -------------------------------------------------
+    cover_image_exists = submission.media.filter(
+        media_type=(PropertySubmissionMedia.MediaType.IMAGE),
+        upload_status=(PropertySubmissionMedia.UploadStatus.COMPLETED),
+        is_cover=True,
+    ).exists()
+
+    if completed_images_exist and not cover_image_exists:
+        missing_fields["cover_image"] = "Select a cover image."
+
+    return missing_fields
+
+
+# =====================================================
+
+# SUBMIT PROPERTY SUBMISSION
+
+# =====================================================
+
+
+@transaction.atomic
+def submit_property_submission_with_media_validation(
+    *,
+    submission: PropertySubmission,
+    user,
+) -> PropertySubmission:
+    """
+    Alternative submission function that also performs
+    the media-specific validation.
+
+    ```
+    This function exists so that the submission endpoint
+    can enforce image and cover-image requirements.
+
+    IMPORTANT:
+
+        DRAFT
+        ↓
+        UNDER_REVIEW
+
+    There is NO SUBMITTED state.
+    """
+
+    submission = PropertySubmission.objects.select_for_update().get(pk=submission.pk)
+
+    # -------------------------------------------------
+    # Ownership check.
+    # -------------------------------------------------
+    if submission.submitted_by_id != user.id:
+
+        raise PropertySubmissionSubmitError("You do not own this property submission.")
+
+    # -------------------------------------------------
+    # Only DRAFT and MORE_INFORMATION_REQUIRED can
+    # enter the review workflow.
+    # -------------------------------------------------
+    if submission.status not in {
+        PropertySubmission.Status.DRAFT,
+        PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
+    }:
+
+        raise PropertySubmissionSubmitError(
+            "This property submission cannot be submitted " "in its current status."
+        )
+
+    # -------------------------------------------------
+    # Validate all required fields and uploaded media.
+    # -------------------------------------------------
+    missing_fields = _get_submission_missing_fields(
+        submission,
+    )
+
+    if missing_fields:
+
+        error = PropertySubmissionSubmitError(
+            "Complete all required property information " "before submitting."
+        )
+
+        error.errors = missing_fields
+
+        raise error
+
+    # -------------------------------------------------
+    # IMPORTANT:
+    #
+    # Do NOT set status to SUBMITTED.
+    #
+    # Submission immediately enters UNDER_REVIEW.
+    # -------------------------------------------------
+    submission.status = PropertySubmission.Status.UNDER_REVIEW
+
+    # -------------------------------------------------
+    # Keep submitted_at only if the model contains this
+    # field. It represents when the owner submitted the
+    # property into the review workflow.
+    # -------------------------------------------------
+    update_fields = [
+        "status",
+        "updated_at",
+    ]
+
+    if hasattr(
+        submission,
+        "submitted_at",
+    ):
+
+        submission.submitted_at = timezone.now()
+
+        update_fields.append(
+            "submitted_at",
+        )
+
+    submission.save(
+        update_fields=update_fields,
+    )
 
     return submission

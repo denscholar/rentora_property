@@ -1,5 +1,11 @@
 from django.urls import path
 
+from properties.api.views.media import (
+    PropertySubmissionMediaDeleteAPIView,
+    PropertySubmissionMediaListCreateAPIView,
+    PropertySubmissionMediaSetCoverAPIView,
+)
+
 from .views import (
     ArchivePropertySubmissionAPIView,
     PropertySubmissionDetailAPIView,
@@ -61,12 +67,12 @@ urlpatterns = [
         name="submission-detail",
     ),
     path(
-        "properties/submissions/<uuid:submission_uuid>/submit/",
+        "submissions/<uuid:submission_uuid>/submit/",
         SubmitPropertySubmissionAPIView.as_view(),
         name="submission-submit",
     ),
     path(
-        "properties/submissions/<uuid:submission_uuid>/archive/",
+        "submissions/<uuid:submission_uuid>/archive/",
         ArchivePropertySubmissionAPIView.as_view(),
         name="submission-archive",
     ),
@@ -74,5 +80,20 @@ urlpatterns = [
         "lookups/payment-frequencies/",
         PaymentFrequencyListAPIView.as_view(),
         name="payment-frequency-list",
+    ),
+    path(
+        "submissions/<uuid:submission_uuid>/media/",
+        PropertySubmissionMediaListCreateAPIView.as_view(),
+        name="submission-media-list-create",
+    ),
+    path(
+        "submissions/<uuid:submission_uuid>/media/<uuid:media_uuid>/",
+        PropertySubmissionMediaDeleteAPIView.as_view(),
+        name="submission-media-delete",
+    ),
+    path(
+        "submissions/<uuid:submission_uuid>/media/<uuid:media_uuid>/set-cover/",
+        PropertySubmissionMediaSetCoverAPIView.as_view(),
+        name="submission-media-set-cover",
     ),
 ]

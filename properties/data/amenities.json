@@ -1,27 +1,27 @@
 [
-  {"category": "SEC", "name": "CCTV", "icon": "camera"},
-  {"category": "SEC", "name": "Security Guards", "icon": "shield"},
-  {"category": "SEC", "name": "Electric Fence", "icon": "bolt"},
+  {"category": "SEC", "name": "CCTV", "icon": "/static/frontend/images/icons/amenities/cctv-camera.png"},
+  {"category": "SEC", "name": "Security Guards", "icon": "/static/frontend/images/icons/amenities/policeman.png"},
+  {"category": "SEC", "name": "Electric Fence", "icon": "/static/frontend/images/icons/amenities/danger.png"},
 
-  {"category": "UTL", "name": "Generator", "icon": "generator"},
-  {"category": "UTL", "name": "Borehole", "icon": "water"},
-  {"category": "UTL", "name": "Water Tank", "icon": "water"},
-  {"category": "UTL", "name": "Prepaid Meter", "icon": "meter"},
+  {"category": "UTL", "name": "Generator", "icon": "/static/frontend/images/icons/amenities/generator.png"},
+  {"category": "UTL", "name": "Borehole", "icon": "/static/frontend/images/icons/amenities/tap.png"},
+  {"category": "UTL", "name": "Water Tank", "icon": "/static/frontend/images/icons/amenities/tank.png"},
+  {"category": "UTL", "name": "Prepaid Meter", "icon": "/static/frontend/images/icons/amenities/electric-meter.png"},
 
-  {"category": "INT", "name": "POP Ceiling", "icon": "home"},
-  {"category": "INT", "name": "Fitted Kitchen", "icon": "kitchen"},
-  {"category": "INT", "name": "Wardrobe", "icon": "wardrobe"},
-  {"category": "INT", "name": "Balcony", "icon": "balcony"},
+  {"category": "INT", "name": "POP Ceiling", "icon": "/static/frontend/images/icons/amenities/home.png"},
+  {"category": "INT", "name": "Fitted Kitchen", "icon": "/static/frontend/images/icons/amenities/kitchen.png"},
+  {"category": "INT", "name": "Wardrobe", "icon": "/static/frontend/images/icons/amenities/wardrobe.png"},
+  {"category": "INT", "name": "Balcony", "icon": "/static/frontend/images/icons/amenities/balcony.png"},
 
-  {"category": "EXT", "name": "Parking Space", "icon": "car"},
-  {"category": "EXT", "name": "Tarred Road", "icon": "road"},
-  {"category": "EXT", "name": "Fenced Compound", "icon": "fence"},
+  {"category": "EXT", "name": "Parking Space", "icon": "/static/frontend/images/icons/amenities/car.png"},
+  {"category": "EXT", "name": "Tarred Road", "icon": "/static/frontend/images/icons/amenities/road.png"},
+  {"category": "EXT", "name": "Fenced Compound", "icon": "/static/frontend/images/icons/amenities/wire.png"},
 
-  {"category": "REC", "name": "Swimming Pool", "icon": "pool"},
-  {"category": "REC", "name": "Gym", "icon": "fitness"},
-  {"category": "REC", "name": "Children Playground", "icon": "playground"},
+  {"category": "REC", "name": "Swimming Pool", "icon": "/static/frontend/images/icons/amenities/swimming.png"},
+  {"category": "REC", "name": "Gym", "icon": "/static/frontend/images/icons/amenities/weightlifting.png"},
+  {"category": "REC", "name": "Children Playground", "icon": "/static/frontend/images/icons/amenities/playground.png"},
 
-  {"category": "TEC", "name": "Fiber Internet", "icon": "wifi"},
-  {"category": "TEC", "name": "Intercom", "icon": "phone"},
-  {"category": "TEC", "name": "Smart Home", "icon": "smart-home"}
+  {"category": "TEC", "name": "Fiber Internet", "icon": "/static/frontend/images/icons/amenities/wifi.png"},
+  {"category": "TEC", "name": "Intercom", "icon": "/static/frontend/images/icons/amenities/phone-call.png"},
+  {"category": "TEC", "name": "Smart Home", "icon": "/static/frontend/images/icons/amenities/home2.png"}
 ]

@@ -4,7 +4,6 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-
 class LandingPageView(TemplateView):
     template_name = "frontend/landing.html"
 
@@ -91,7 +90,6 @@ class PropertySubmissionListPageView(
         )
 
 
-
 class PropertySubmissionCreatePageView(
     LoginRequiredMixin,
     TemplateView,
@@ -103,9 +101,7 @@ class PropertySubmissionCreatePageView(
     REST API using JavaScript.
     """
 
-    template_name = (
-        "frontend/dashboard/submissions/create.html"
-    )
+    template_name = "frontend/dashboard/submissions/create.html"
 
     login_url = "frontend:login"
 
@@ -121,3 +117,82 @@ class PropertySubmissionCreatePageView(
             *args,
             **kwargs,
         )
+
+
+class PropertySubmissionWizardPageView(
+    LoginRequiredMixin,
+    TemplateView,
+):
+    template_name = "frontend/dashboard/submissions/create.html"
+
+    login_url = "frontend:login"
+
+    def dispatch(
+        self,
+        request,
+        *args,
+        **kwargs,
+    ):
+        if request.user.role not in {
+            "agent",
+            "landlord",
+        }:
+            return redirect("frontend:dashboard")
+
+        return super().dispatch(
+            request,
+            *args,
+            **kwargs,
+        )
+
+    def get_context_data(
+        self,
+        **kwargs,
+    ):
+        context = super().get_context_data(
+            **kwargs,
+        )
+
+        context["submission_uuid"] = self.kwargs.get("submission_uuid")
+
+        return context
+
+
+    
+class PropertySubmissionDetailWizardPageView(
+    LoginRequiredMixin,
+    TemplateView,
+):
+    template_name = "frontend/dashboard/submissions/property-detail.html"
+
+    login_url = "frontend:login"
+
+    def dispatch(
+        self,
+        request,
+        *args,
+        **kwargs,
+    ):
+        if request.user.role not in {
+            "agent",
+            "landlord",
+        }:
+            return redirect("frontend:dashboard")
+
+        return super().dispatch(
+            request,
+            *args,
+            **kwargs,
+        )
+
+    def get_context_data(
+        self,
+        **kwargs,
+    ):
+        context = super().get_context_data(
+            **kwargs,
+        )
+
+        context["submission_uuid"] = self.kwargs.get("submission_uuid")
+
+        return context

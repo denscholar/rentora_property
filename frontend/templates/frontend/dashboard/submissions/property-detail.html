@@ -1,0 +1,107 @@
+{% extends "frontend/dashboard_base.html" %} {% load static %} {% block title %}
+Property Details | SheltaMe {% endblock %} {% block page_title %} Property
+Details {% endblock %} {% block page_description %} View and manage your
+property submission. {% endblock %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'frontend/css/property-detail.css' %}" />
+{% endblock %} {% block dashboard_content %}
+
+<div class="property-detail-page">
+  <!-- General message -->
+  <div
+    id="property-detail-message"
+    class="property-detail-message"
+    hidden
+  ></div>
+
+  <!-- ============================= -->
+  <!-- PROPERTY HEADER -->
+  <!-- ============================= -->
+
+  <section id="property-detail-header" class="property-detail-header">
+    <p>Loading property...</p>
+  </section>
+
+  <!-- ============================= -->
+  <!-- DESCRIPTION -->
+  <!-- ============================= -->
+
+  <section class="property-detail-section">
+    <div id="property-description-content"><p>Loading description...</p></div>
+  </section>
+
+  <!-- ============================= -->
+  <!-- PROPERTY GALLERY -->
+  <!-- ============================= -->
+
+  <section class="property-detail-section property-media-section">
+    <div class="property-section-heading"><h2>Property Images</h2></div>
+    <div id="property-images"><p>Loading images...</p></div>
+    <div class="property-video-wrapper">
+      <div class="property-section-heading"><h2>Property Video</h2></div>
+      <div id="property-video"><p>Loading video...</p></div>
+    </div>
+  </section>
+
+  <!-- ============================= -->
+  <!-- PROPERTY OVERVIEW -->
+  <!-- ============================= -->
+
+  <section class="property-detail-section">
+    <div id="property-overview-content">
+      <p>Loading property information...</p>
+    </div>
+  </section>
+
+  <!-- ============================= -->
+  <!-- LOCATION -->
+  <!-- ============================= -->
+
+  <section class="property-detail-section">
+    <div id="property-location-content"><p>Loading location...</p></div>
+  </section>
+
+  <!-- ============================= -->
+  <!-- PRICING -->
+  <!-- ============================= -->
+
+  <section class="property-detail-section">
+    <div id="property-pricing-content"><p>Loading pricing...</p></div>
+  </section>
+
+  <!-- ============================= -->
+  <!-- AMENITIES -->
+  <!-- ============================= -->
+
+  <section class="property-detail-section">
+    <div id="property-amenities-content"><p>Loading amenities...</p></div>
+  </section>
+</div>
+
+{% comment %} Delete Button {% endcomment %}
+
+<div id="property-archive-modal" hidden>
+  <div class="property-archive-modal-content">
+    <h3 id="property-archive-modal-title">Archive property?</h3>
+
+    <p id="property-archive-modal-message">
+      Are you sure you want to archive this property submission?
+    </p>
+
+    <div class="property-archive-modal-actions">
+      <button type="button" id="cancel-property-archive-button">Cancel</button>
+
+      <button type="button" id="confirm-property-archive-button">
+        Archive
+      </button>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block extra_js %}
+
+<script
+  src="{% static 'frontend/js/dashboard/property-detail.js' %}"
+  defer
+></script>
+
+{% endblock %}
