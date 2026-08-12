@@ -1,0 +1,748 @@
+/* =========================================================
+   PROPERTY DETAIL PAGE
+   ========================================================= */
+
+.property-detail-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* =========================================================
+   GENERAL MESSAGE
+   ========================================================= */
+
+.property-detail-message {
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.property-detail-message.error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.property-detail-message.success {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+/* =========================================================
+   PROPERTY HEADER
+   ========================================================= */
+
+.property-detail-header {
+  margin-bottom: 28px;
+}
+
+.property-detail-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  padding: 28px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+}
+
+.property-detail-header-content > div:first-child {
+  min-width: 0;
+}
+
+.property-status-badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 6px 12px;
+  margin-bottom: 10px;
+
+  border-radius: 999px;
+
+  background: #eff6ff;
+  color: #1d4ed8;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.property-detail-header h1 {
+  margin: 0;
+
+  color: #111827;
+
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.property-detail-header p {
+  margin: 8px 0 0;
+
+  color: #6b7280;
+  font-size: 15px;
+}
+
+/* =========================================================
+   HEADER ACTIONS
+   ========================================================= */
+
+.property-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  flex-shrink: 0;
+}
+
+.property-detail-actions .btn {
+  border: 0;
+  border-radius: 9px;
+
+  padding: 11px 18px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.property-detail-actions .btn:hover {
+  transform: translateY(-1px);
+}
+
+.property-detail-actions .btn-primary {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.property-detail-actions .btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.property-detail-actions .btn-danger {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.property-detail-actions .btn-danger:hover {
+  background: #b91c1c;
+}
+
+/* =========================================================
+   DETAIL SECTIONS
+   ========================================================= */
+
+#property-overview,
+#property-location,
+#property-pricing,
+#property-amenities,
+#property-description {
+  margin-bottom: 24px;
+
+  padding: 24px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+}
+
+#property-overview h2,
+#property-location h2,
+#property-pricing h2,
+#property-amenities h2,
+#property-description h2 {
+  margin: 0 0 20px;
+
+  color: #111827;
+
+  font-size: 19px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   DETAIL GRID
+   ========================================================= */
+
+.property-detail-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 18px;
+}
+
+.property-detail-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  padding: 14px 16px;
+
+  background: #f9fafb;
+
+  border: 1px solid #f3f4f6;
+  border-radius: 10px;
+}
+
+.property-detail-grid span {
+  color: #6b7280;
+
+  font-size: 13px;
+}
+
+.property-detail-grid strong {
+  color: #111827;
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.property-description-content {
+  color: #374151;
+
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.property-description-content p {
+  margin: 0;
+}
+
+/* =========================================================
+   AMENITIES
+   ========================================================= */
+
+.property-amenities-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+.property-amenity-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px;
+
+  background: #f9fafb;
+
+  border: 1px solid #f3f4f6;
+  border-radius: 10px;
+}
+
+.property-amenity-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+
+  background: #eff6ff;
+  color: #2563eb;
+
+  font-size: 14px;
+}
+
+.property-amenity-item strong {
+  display: block;
+
+  color: #111827;
+
+  font-size: 14px;
+}
+
+.property-amenity-item span:not(.property-amenity-icon) {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #9ca3af;
+
+  font-size: 12px;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .property-detail-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .property-amenities-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .property-detail-page {
+    padding: 16px;
+  }
+
+  .property-detail-header-content {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .property-detail-header h1 {
+    font-size: 24px;
+  }
+
+  .property-detail-actions {
+    width: 100%;
+  }
+
+  .property-detail-actions .btn {
+    flex: 1;
+  }
+
+  #property-overview,
+  #property-location,
+  #property-pricing,
+  #property-amenities,
+  #property-description {
+    padding: 18px;
+  }
+
+  .property-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .property-amenities-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   PROPERTY MEDIA SECTION
+   ========================================================= */
+
+.property-media-section {
+  overflow: hidden;
+}
+
+.property-images {
+  width: 100%;
+}
+
+.property-detail-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.property-detail-gallery-item {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #f3f4f6;
+}
+
+.property-detail-gallery-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Cover badge */
+
+.property-media-cover-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #111827;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================================
+   VIDEO
+========================================= */
+
+.property-video-wrapper {
+  margin-top: 32px;
+}
+
+.property-video {
+  width: 100%;
+}
+
+.property-detail-video {
+  width: 100%;
+  margin-top: 16px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #000;
+}
+
+.property-detail-video video {
+  display: block;
+  width: 100%;
+  max-height: 520px;
+  object-fit: contain;
+  background: #000;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+  .property-detail-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .property-detail-gallery-item {
+    height: 240px;
+  }
+}
+
+@media (max-width: 600px) {
+  .property-detail-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .property-detail-gallery-item {
+    height: 280px;
+  }
+
+  .property-detail-video video {
+    max-height: 360px;
+  }
+}
+
+/* =========================================
+   PROPERTY DETAIL PAGE
+========================================= */
+
+.property-detail-page {
+  width: 100%;
+}
+
+/* Space between every major section */
+.property-detail-section {
+  margin-top: 24px;
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e5e7eb);
+}
+
+/* First section shouldn't have unnecessary top spacing */
+.property-detail-page > .property-detail-section:first-of-type {
+  margin-top: 0;
+}
+
+.property-detail-page {
+  width: 100%;
+}
+
+/* Property header */
+.property-detail-header {
+  margin-bottom: 24px;
+}
+
+/* Every major content section */
+.property-detail-section {
+  margin-bottom: 24px;
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e5e7eb);
+}
+
+/* Don't leave unnecessary space after the last section */
+.property-detail-section:last-child {
+  margin-bottom: 0;
+}
+
+.property-amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.property-amenity-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.property-amenity-icon {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+  background: #f3f6ff;
+  overflow: hidden;
+}
+
+.property-amenity-icon img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+}
+
+.property-amenity-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.property-amenity-info strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.property-amenity-info span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+@media (max-width: 768px) {
+  .property-amenities-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .property-amenities-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =====================================================
+   PROPERTY ARCHIVE MODAL
+   ===================================================== */
+
+#property-archive-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+/* Hidden state */
+#property-archive-modal[hidden] {
+  display: none;
+}
+
+/* =====================================================
+   MODAL CONTENT
+   ===================================================== */
+
+.property-archive-modal-content {
+  width: 100%;
+  max-width: 460px;
+
+  background: #ffffff;
+  border-radius: 16px;
+
+  padding: 28px;
+
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.18),
+    0 4px 12px rgba(15, 23, 42, 0.08);
+
+  animation: propertyArchiveModalIn 0.2s ease-out;
+}
+
+/* =====================================================
+   TITLE
+   ===================================================== */
+
+#property-archive-modal-title {
+  margin: 0 0 12px;
+
+  color: #111827;
+
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* =====================================================
+   MESSAGE
+   ===================================================== */
+
+#property-archive-modal-message {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* =====================================================
+   ACTIONS
+   ===================================================== */
+
+.property-archive-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-top: 28px;
+}
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+
+#cancel-property-archive-button,
+#confirm-property-archive-button {
+  min-width: 100px;
+
+  padding: 10px 18px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* Cancel */
+#cancel-property-archive-button {
+  color: #374151;
+
+  background: #ffffff;
+
+  border: 1px solid #d1d5db;
+}
+
+#cancel-property-archive-button:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+/* Archive */
+#confirm-property-archive-button {
+  color: #ffffff;
+
+  background: #dc2626;
+
+  border: 1px solid #dc2626;
+}
+
+#confirm-property-archive-button:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+/* Disabled */
+#cancel-property-archive-button:disabled,
+#confirm-property-archive-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* =====================================================
+   MODAL ANIMATION
+   ===================================================== */
+
+@keyframes propertyArchiveModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 480px) {
+  #property-archive-modal {
+    padding: 16px;
+  }
+
+  .property-archive-modal-content {
+    padding: 22px;
+    border-radius: 14px;
+  }
+
+  #property-archive-modal-title {
+    font-size: 19px;
+  }
+
+  #property-archive-modal-message {
+    font-size: 14px;
+  }
+
+  .property-archive-modal-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  #cancel-property-archive-button,
+  #confirm-property-archive-button {
+    width: 100%;
+  }
+}

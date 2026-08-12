@@ -5,7 +5,9 @@ from frontend.views import (
     LandingPageView,
     LoginPageView,
     PropertySubmissionCreatePageView,
+    PropertySubmissionDetailWizardPageView,
     PropertySubmissionListPageView,
+    PropertySubmissionWizardPageView,
     RegisterPageView,
     VerifyEmailPageView,
 )
@@ -48,5 +50,15 @@ urlpatterns = [
         "dashboard/submissions/create/",
         PropertySubmissionCreatePageView.as_view(),
         name="property-submission-create",
+    ),
+    path(
+        "dashboard/submissions/<uuid:submission_uuid>/edit/",
+        PropertySubmissionWizardPageView.as_view(),
+        name="property-submission-edit",
+    ),
+    path(
+        "dashboard/submissions/<uuid:submission_uuid>/detail/",
+        PropertySubmissionDetailWizardPageView.as_view(),
+        name="property-submission-detail",
     ),
 ]

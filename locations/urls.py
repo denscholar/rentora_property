@@ -15,7 +15,7 @@ urlpatterns = [
         "countries/",
         CountryListAPIView.as_view(),
         name="country-list",
-    ),
+    ), 
     path(
         "states/",
         StateListAPIView.as_view(),

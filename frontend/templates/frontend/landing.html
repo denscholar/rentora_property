@@ -1,17 +1,23 @@
-{% extends "frontend/base.html" %} {% load static %} {% block title %} Rentora |
-Find Verified Properties {% endblock %} {% block content %}
+{% extends "frontend/base.html" %} {% load static %} {% block title %} SheltaMe
+| Find Verified Properties {% endblock %} {% block content %}
 
 <header class="site-header">
   <div class="container navigation">
     <a href="{% url 'frontend:landing-page' %}" class="brand">
-      <span class="brand-mark">R</span>
-      <span>Rentora</span>
+      <img
+        src="{% static 'frontend/images/sheltame_logo.png' %}"
+        alt="SheltaMe Logo"
+      />
+      <div class="brand-text">
+        <span class="brand-name">SheltaMe</span>
+        <small class="brand-tagline">Find Home, Feel Safe</small>
+      </div>
     </a>
 
     <!-- Desktop navigation -->
     <nav class="navigation-links">
       <a href="#how-it-works">How it works</a>
-      <a href="#why-rentora">Why Rentora</a>
+      <a href="#why-SheltaMe">Why SheltaMe</a>
       <a href="#agents">For agents</a>
       <a href="#landlords">For landlords</a>
     </nav>
@@ -67,10 +73,17 @@ Find Verified Properties {% endblock %} {% block content %}
   aria-label="Mobile navigation"
 >
   <div class="mobile-navigation-header">
-    <a href="{% url 'frontend:landing-page' %}" class="brand">
-      <span class="brand-mark">R</span>
-      <span>Rentora</span>
-    </a>
+    <div class="mobile-brand-text">
+      <img
+        style="width: 40px; height: 40px"
+        src="{% static 'frontend/images/sheltame_logo.png' %}"
+        alt="SheltaMe Logo"
+      />
+      <div class="brand-text-mobile">
+        <span class="brand-name">SheltaMe</span>
+        <small class="brand-tagline">Find Home, Feel Safe</small>
+      </div>
+    </div>
 
     <button
       class="mobile-menu-close"
@@ -84,7 +97,7 @@ Find Verified Properties {% endblock %} {% block content %}
 
   <nav class="mobile-navigation-links">
     <a href="#how-it-works">How it works</a>
-    <a href="#why-rentora">Why Rentora</a>
+    <a href="#why-SheltaMe">Why SheltaMe</a>
     <a href="#agents">For agents</a>
     <a href="#landlords">For landlords</a>
   </nav>
@@ -126,7 +139,7 @@ Find Verified Properties {% endblock %} {% block content %}
         <h1>Find the right property. Choose the right agent.</h1>
 
         <p class="hero-description">
-          Rentora brings verified properties and trusted agents together in one
+          SheltaMe brings verified properties and trusted agents together in one
           marketplace. Compare agents, inspection fees and service quality
           before making a decision.
         </p>
@@ -421,12 +434,12 @@ Find Verified Properties {% endblock %} {% block content %}
   <section class="section" id="how-it-works">
     <div class="container">
       <div class="section-heading">
-        <span class="eyebrow">How Rentora works</span>
+        <span class="eyebrow">How SheltaMe works</span>
 
         <h2>A clearer way to find and inspect properties</h2>
 
         <p>
-          Rentora removes duplicate listings and helps tenants compare agents
+          SheltaMe removes duplicate listings and helps tenants compare agents
           attached to the same property.
         </p>
       </div>
@@ -469,17 +482,17 @@ Find Verified Properties {% endblock %} {% block content %}
   </section>
 
   <!-- ============================================= -->
-  <!-- WHY RENTORA -->
+  <!-- WHY SheltaMe -->
   <!-- ============================================= -->
-  <section class="section section-soft" id="why-rentora">
+  <section class="section section-soft" id="why-SheltaMe">
     <div class="container">
       <div class="section-heading">
-        <span class="eyebrow">Why Rentora</span>
+        <span class="eyebrow">Why SheltaMe</span>
 
         <h2>One property. Multiple trusted agents.</h2>
 
         <p>
-          Instead of displaying the same property repeatedly, Rentora groups
+          Instead of displaying the same property repeatedly, SheltaMe groups
           agents under one verified property.
         </p>
       </div>
@@ -543,7 +556,7 @@ Find Verified Properties {% endblock %} {% block content %}
         <h2>Build trust and win more serious clients</h2>
 
         <p>
-          Rentora gives professional agents tools to submit properties, manage
+          SheltaMe gives professional agents tools to submit properties, manage
           listings and compete based on service quality rather than duplicate
           advertisements.
         </p>
@@ -628,7 +641,7 @@ Find Verified Properties {% endblock %} {% block content %}
   <section class="section">
     <div class="container final-cta">
       <div>
-        <span class="eyebrow">Get started with Rentora</span>
+        <span class="eyebrow">Get started with SheltaMe</span>
 
         <h2>Your next property search should feel simpler.</h2>
 
@@ -656,7 +669,7 @@ Find Verified Properties {% endblock %} {% block content %}
     <div>
       <a href="{% url 'frontend:landing-page' %}" class="brand footer-brand">
         <span class="brand-mark">R</span>
-        <span>Rentora</span>
+        <span>SheltaMe</span>
       </a>
 
       <p>A trusted marketplace for properties, agents and tenants.</p>
@@ -684,7 +697,7 @@ Find Verified Properties {% endblock %} {% block content %}
   </div>
 
   <div class="container footer-bottom">
-    <p>&copy; {% now "Y" %} Rentora. All rights reserved.</p>
+    <p>&copy; {% now "Y" %} SheltaMe. All rights reserved.</p>
   </div>
 </footer>
 

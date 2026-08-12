@@ -1,10 +1,10 @@
 {% extends "frontend/dashboard_base.html" %}{% load static %} {% block title %}
-Dashboard | Artishelta {% endblock %} {% block page_title %} Welcome, {{ request.user.first_name }} {% endblock %} {% block page_description %} Here is
+Dashboard | SheltaMe {% endblock %} {% block page_title %} Welcome, {{ request.user.first_name }} {% endblock %} {% block page_description %} Here is
 an overview of your account activity. {% endblock %} {% block dashboard_content %}
 
 <section class="dashboard-welcome-card">
   <div>
-    <span class="dashboard-welcome-label"> Welcome to Artishelta </span>
+    <span class="dashboard-welcome-label"> Welcome to SheltaMe </span>
 
     {% if request.user.role == "agent" %}
     <h2>Grow your property business with verified listings.</h2>
@@ -123,7 +123,7 @@ an overview of your account activity. {% endblock %} {% block dashboard_content 
     <div class="dashboard-panel-header">
       <div>
         <h2>Recent activity</h2>
-        <p>Your latest Artishelta account activity.</p>
+        <p>Your latest SheltaMe account activity.</p>
       </div>
 
       <a href="#">View all</a>

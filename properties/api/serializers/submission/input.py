@@ -235,30 +235,7 @@ class PropertySubmissionInputSerializer(serializers.Serializer):
 
         return value
 
-    # def validate(self, attrs):
-    #     land_size = attrs.get("land_size")
-    #     building_size = attrs.get("building_size")
-
-    #     size_unit = attrs.get(
-    #         "size_unit",
-    #         getattr(
-    #             self.instance,
-    #             "size_unit",
-    #             "sqm",
-    #         ),
-    #     )
-
-    #     if (land_size is not None or building_size is not None) and not size_unit:
-    #         raise serializers.ValidationError(
-    #             {
-    #                 "size_unit": (
-    #                     "Size unit is required when land size or "
-    #                     "building size is provided."
-    #                 )
-    #             }
-    #         )
-
-    #     return attrs
+   
 
 
 class CreatePropertySubmissionSerializer(PropertySubmissionInputSerializer):

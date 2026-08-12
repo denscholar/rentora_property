@@ -34,6 +34,45 @@ html {
   scroll-behavior: smooth;
 }
 
+/* logo */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.brand img {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.brand-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #0b2a5b; /* Navy */
+}
+
+.brand-tagline {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: #6c757d;
+  line-height: 1;
+  letter-spacing: 0.5px;
+}
+
+/* ============================= */
+
 body {
   font-family:
     Inter,
@@ -820,7 +859,6 @@ textarea {
     overflow: hidden;
     touch-action: none;
   }
-
   .navigation-links,
   .navigation-actions {
     display: none;
@@ -911,6 +949,39 @@ textarea {
 
     border-bottom: 1px solid var(--border);
   }
+
+  /* logo */
+  .mobile-brand-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .mobile-brand-text img {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .brand-text-mobile .brand-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #0b2a5b; /* Navy */
+  }
+
+  .brand-tagline {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: #6c757d;
+    line-height: 1;
+    letter-spacing: 0.5px;
+  }
+
+  /* ============================= */
 
   .mobile-menu-close {
     width: 42px;

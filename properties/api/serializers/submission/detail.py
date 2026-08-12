@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from locations.models import Area
+from properties.api.serializers.submission.media import PropertySubmissionMediaSerializer
 from properties.models import (
     Amenity,
     FurnishingStatus,
@@ -69,34 +70,39 @@ class AmenitySummarySerializer(serializers.ModelSerializer):
         ]
 
 
+class CountrySummarySerializer(serializers.Serializer):
+    uuid = serializers.UUIDField()
+    name = serializers.CharField()
+
+
+class StateSummarySerializer(serializers.Serializer):
+    uuid = serializers.UUIDField()
+    name = serializers.CharField()
+
+
+class LGASummarySerializer(serializers.Serializer):
+    uuid = serializers.UUIDField()
+    name = serializers.CharField()
+
+
 class AreaSummarySerializer(serializers.ModelSerializer):
-    lga = serializers.CharField(
-        source="lga.name",
-        read_only=True,
-    )
-
-    state = serializers.CharField(
-        source="lga.state.name",
-        read_only=True,
-    )
-
-    country = serializers.CharField(
-        source="lga.state.country.name",
-        read_only=True,
-    )
-
     class Meta:
         model = Area
         fields = [
             "uuid",
             "name",
-            "lga",
-            "state",
-            "country",
         ]
 
 
 class PropertySubmissionDetailSerializer(serializers.ModelSerializer):
+    media = PropertySubmissionMediaSerializer(
+        many=True,
+        read_only=True,
+    )
+    country = serializers.SerializerMethodField()
+    state = serializers.SerializerMethodField()
+    lga = serializers.SerializerMethodField()
+
     property_type = PropertyTypeSummarySerializer(
         read_only=True,
     )
@@ -147,6 +153,9 @@ class PropertySubmissionDetailSerializer(serializers.ModelSerializer):
             "purpose",
             "property_condition",
             "furnishing_status",
+            "country",
+            "state",
+            "lga",
             "area",
             "amenities",
             "payment_frequency",
@@ -181,6 +190,7 @@ class PropertySubmissionDetailSerializer(serializers.ModelSerializer):
             "reviewed_at",
             "is_archived",
             "archived_at",
+            "media",
             "created_at",
             "updated_at",
         ]
@@ -202,3 +212,36 @@ class PropertySubmissionDetailSerializer(serializers.ModelSerializer):
         full_name = f"{first_name} {last_name}".strip()
 
         return full_name or getattr(user, "email", "")
+
+    def get_country(self, obj):
+        if not obj.area:
+            return None
+
+        country = obj.area.lga.state.country
+
+        return {
+            "uuid": country.uuid,
+            "name": country.name,
+        }
+
+    def get_state(self, obj):
+        if not obj.area:
+            return None
+
+        state = obj.area.lga.state
+
+        return {
+            "uuid": state.uuid,
+            "name": state.name,
+        }
+
+    def get_lga(self, obj):
+        if not obj.area:
+            return None
+
+        lga = obj.area.lga
+
+        return {
+            "uuid": lga.uuid,
+            "name": lga.name,
+        }
