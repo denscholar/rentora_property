@@ -43,6 +43,10 @@ urlpatterns = [
         "api/locations/",
         include("locations.urls"),
     ),
+    path(
+        "api/property-moderation/",
+        include("locations.urls"),
+    ),
 ]
 
 

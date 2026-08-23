@@ -5,6 +5,7 @@ import random
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 from django.contrib.auth.models import BaseUserManager
 
@@ -65,7 +66,27 @@ class CustomUser(AbstractUser):
         LANDLORD = "landlord", "Landlord"
         ADMIN = "admin", "Admin"
 
-    username = None
+    class AdminType(models.TextChoices):
+        SUPER_ADMIN = (
+            "super_admin",
+            "Super Admin",
+        )
+        PROPERTY_MODERATOR = (
+            "property_moderator",
+            "Property Moderator",
+        )
+        FINANCE_ADMIN = (
+            "finance_admin",
+            "Finance Admin",
+        )
+        SUPPORT_ADMIN = (
+            "support_admin",
+            "Support Admin",
+        )
+        OPERATIONS_ADMIN = (
+            "operations_admin",
+            "Operations Admin",
+        )
 
     slug = models.UUIDField(
         default=uuid.uuid4,
@@ -73,6 +94,7 @@ class CustomUser(AbstractUser):
         unique=True,
         db_index=True,
     )
+    username = None
 
     email = models.EmailField(
         unique=True,
@@ -87,6 +109,14 @@ class CustomUser(AbstractUser):
     email_otp_expires_at = models.DateTimeField(
         blank=True,
         null=True,
+    )
+
+    admin_type = models.CharField(
+        max_length=40,
+        choices=AdminType.choices,
+        blank=True,
+        null=True,
+        db_index=True,
     )
 
     email_otp_verified_at = models.DateTimeField(
@@ -139,7 +169,9 @@ class CustomUser(AbstractUser):
         otp = str(secrets.randbelow(900000) + 100000)
 
         self.email_otp = otp
-        self.email_otp_expires_at = timezone.now() + timedelta(minutes=EMAIL_OTP_EXPIRY_MINUTES)
+        self.email_otp_expires_at = timezone.now() + timedelta(
+            minutes=EMAIL_OTP_EXPIRY_MINUTES
+        )
         self.save(
             update_fields=[
                 "email_otp",
@@ -149,6 +181,40 @@ class CustomUser(AbstractUser):
         )
 
         return otp
+
+    def clean(self):
+        super().clean()
+
+        if self.role == self.Role.ADMIN:
+            if not self.admin_type:
+                raise ValidationError(
+                    {"admin_type": ("Admin users must have an admin type.")}
+                )
+
+        elif self.admin_type:
+            raise ValidationError(
+                {
+                    "admin_type": (
+                        "Only users with the admin role can have " "an admin type."
+                    )
+                }
+            )
+
+    def has_admin_permission(self, permission_code):
+        if self.role != self.Role.ADMIN:
+            return False
+
+        if not self.admin_type:
+            return False
+
+        from accounts.admin_permissions import ADMIN_PERMISSIONS
+
+        permissions = ADMIN_PERMISSIONS.get(
+            self.admin_type,
+            set(),
+        )
+
+        return permission_code in permissions
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.role}"

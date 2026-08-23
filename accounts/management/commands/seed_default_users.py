@@ -17,35 +17,37 @@ class Command(BaseCommand):
 
         users = [
             {
-                "email": "admin@rentora.com",
+                "email": "admin@sheltame.com.ng",
                 "phone_number": "2348000000001",
-                "first_name": "Rentora",
+                "first_name": "SheltaMe",
                 "last_name": "Admin",
                 "role": CustomUser.Role.ADMIN,
+                "admin_type": CustomUser.AdminType.SUPER_ADMIN,
                 "is_staff": True,
                 "is_superuser": True,
+                "is_active": True,
                 "is_verified": True,
             },
             {
-                "email": "tenant@rentora.com",
+                "email": "tenant@sheltame.com.ng",
                 "phone_number": "2348000000002",
-                "first_name": "Demo",
+                "first_name": "SheltaMe",
                 "last_name": "Tenant",
                 "role": CustomUser.Role.TENANT,
                 "is_verified": True,
             },
             {
-                "email": "agent@rentora.com",
+                "email": "agent@sheltame.com.ng",
                 "phone_number": "2348000000003",
-                "first_name": "Demo",
+                "first_name": "SheltaMe",
                 "last_name": "Agent",
                 "role": CustomUser.Role.AGENT,
                 "is_verified": True,
             },
             {
-                "email": "landlord@rentora.com",
+                "email": "landlord@sheltame.com.ng",
                 "phone_number": "2348000000004",
-                "first_name": "Demo",
+                "first_name": "SheltaMe",
                 "last_name": "Landlord",
                 "role": CustomUser.Role.LANDLORD,
                 "is_verified": True,
@@ -65,24 +67,40 @@ class Command(BaseCommand):
 
                 if created:
                     user.set_password(default_password)
-                    user.save(update_fields=["password"])
+                    user.save()
 
-                    self.stdout.write(
-                        self.style.SUCCESS(
-                            f"Created user: {email}"
-                        )
-                    )
+                    self.stdout.write(self.style.SUCCESS(f"Created user: {email}"))
+
                 else:
-                    self.stdout.write(
-                        self.style.WARNING(
-                            f"User already exists: {email}"
-                        )
-                    )
+                    updated_fields = []
 
-        self.stdout.write(
-            self.style.SUCCESS(
-                "Default Rentora users seeding completed."
-            )
-        )
+                    for field, value in data.items():
+                        if field == "email":
+                            continue
+
+                        if getattr(user, field) != value:
+                            setattr(user, field, value)
+                            updated_fields.append(field)
+
+                    if updated_fields:
+                        user.save(update_fields=updated_fields)
+
+                        self.stdout.write(
+                            self.style.WARNING(
+                                f"Updated user: {email} "
+                                f"({', '.join(updated_fields)})"
+                            )
+                        )
+                    else:
+                        self.stdout.write(
+                            self.style.WARNING(f"User already exists: {email}")
+                        )
+
+                        self.stdout.write(
+                            self.style.SUCCESS(
+                                "Default Rentora users seeding completed."
+                            )
+                        )
+
 
 # python manage.py seed_default_users

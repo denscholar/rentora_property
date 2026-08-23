@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "core.apps.CoreConfig",
     "locations",
     "properties",
+    "property_moderation",
     "frontend",
     # third party packages
     "rest_framework",
