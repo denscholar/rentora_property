@@ -246,8 +246,8 @@ class PropertySubmissionAdmin(admin.ModelAdmin):
             PropertySubmission.Status.UNDER_REVIEW: "#0d6efd",
             PropertySubmission.Status.APPROVED: "#198754",
             PropertySubmission.Status.REJECTED: "#dc3545",
-            PropertySubmission.Status.DUPLICATE_FOUND: "#fd7e14",
-            PropertySubmission.Status.MORE_INFORMATION_REQUIRED: "#ffc107",
+            # PropertySubmission.Status.DUPLICATE_FOUND: "#fd7e14",
+            # PropertySubmission.Status.MORE_INFORMATION_REQUIRED: "#ffc107",
         }
 
         color = colors.get(obj.status, "#6c757d")

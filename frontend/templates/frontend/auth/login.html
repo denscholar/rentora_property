@@ -45,6 +45,13 @@ Rentora {% endblock %} {% block extra_css %}
       </div>
 
       <div class="auth-form-header">
+        <a href="{% url 'frontend:landing-page' %}" class="auth-back-link">
+          <span class="back-icon">
+            <i class="fa-solid fa-arrow-left"></i>
+          </span>
+
+          <span class="auth-back-link-text">Back to Home</span>
+        </a><br/>
         <span class="eyebrow">Account login</span>
 
         <h1>Welcome back</h1>

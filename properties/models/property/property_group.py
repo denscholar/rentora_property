@@ -55,6 +55,10 @@ class PropertyGroup(BaseModel, GeoLocationMixin, SoftArchiveMixin):
             "Land",
         )
 
+    class Status(models.TextChoices):
+        ACTIVE = "active", "Active"
+        INACTIVE = "inactive", "Inactive"
+
     # =====================================================
     # CLASSIFICATION
     # =====================================================
@@ -75,6 +79,13 @@ class PropertyGroup(BaseModel, GeoLocationMixin, SoftArchiveMixin):
         PropertyPurpose,
         on_delete=models.PROTECT,
         related_name="property_groups",
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.INACTIVE,
+        db_index=True,
     )
 
     # =====================================================
@@ -113,9 +124,7 @@ class PropertyGroup(BaseModel, GeoLocationMixin, SoftArchiveMixin):
     unit_identifier = models.CharField(
         max_length=100,
         blank=True,
-        help_text=(
-            "Flat, apartment, room, shop, suite or unit identifier."
-        ),
+        help_text=("Flat, apartment, room, shop, suite or unit identifier."),
     )
 
     house_number = models.CharField(
@@ -268,7 +277,4 @@ class PropertyGroup(BaseModel, GeoLocationMixin, SoftArchiveMixin):
         ]
 
     def __str__(self):
-        return (
-            f"{self.property_type} - "
-            f"{self.area}"
-        )
+        return f"{self.property_type} - " f"{self.area}"

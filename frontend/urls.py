@@ -8,6 +8,7 @@ from frontend.views import (
     PropertySubmissionDetailWizardPageView,
     PropertySubmissionListPageView,
     PropertySubmissionWizardPageView,
+    PropertyVerificationAuthorizationPageView,
     RegisterPageView,
     VerifyEmailPageView,
 )
@@ -60,5 +61,10 @@ urlpatterns = [
         "dashboard/submissions/<uuid:submission_uuid>/detail/",
         PropertySubmissionDetailWizardPageView.as_view(),
         name="property-submission-detail",
+    ),
+    path(
+        "property-verification/<str:token>/",
+        PropertyVerificationAuthorizationPageView.as_view(),
+        name="property-verification-authorize",
     ),
 ]

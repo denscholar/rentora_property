@@ -41,6 +41,8 @@ class PropertySubmissionListSerializer(serializers.ModelSerializer):
             "bathrooms",
             "proposed_price",
             "is_negotiable",
+            "is_eligibility_test",
+            "landlord_lives_in_compound",
             "created_at",
             "updated_at",
         ]

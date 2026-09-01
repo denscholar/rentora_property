@@ -34,11 +34,12 @@
         Log out
       </button>
       {% else %}
-      <a href="{% url 'frontend:login' %}" class="text-link"> Log in </a>
+      {% comment %} <a href="{% url 'frontend:login' %}" class="text-link"> Log in </a> {% endcomment %}
+      <a href="{% url 'frontend:login' %}" class="button button-primary"> Log in </a>
 
-      <a href="{% url 'frontend:register' %}" class="button button-primary">
+      {% comment %} <a href="{% url 'frontend:register' %}" class="button button-primary">
         Create account
-      </a>
+      </a> {% endcomment %}
       {% endif %}
     </div>
 
@@ -116,13 +117,16 @@
       Log out
     </button>
     {% else %}
-    <a href="{% url 'frontend:login' %}" class="button button-secondary">
+    <a href="{% url 'frontend:login' %}" class="button button-primary">
       Log in
     </a>
+    {% comment %} <a href="{% url 'frontend:login' %}" class="button button-secondary">
+      Log in
+    </a> {% endcomment %}
 
-    <a href="{% url 'frontend:register' %}" class="button button-primary">
+    {% comment %} <a href="{% url 'frontend:register' %}" class="button button-primary">
       Create account
-    </a>
+    </a> {% endcomment %}
     {% endif %}
   </div>
 </aside>

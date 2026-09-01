@@ -46,13 +46,8 @@ class PropertySubmission(BaseModel, GeoLocationMixin, SoftArchiveMixin):
     class Status(models.TextChoices):
         DRAFT = "draft", "Draft"
         UNDER_REVIEW = "under_review", "Under Review"
-        DUPLICATE_FOUND = "duplicate_found", "Duplicate Found"
         APPROVED = "approved", "Approved"
         REJECTED = "rejected", "Rejected"
-        MORE_INFORMATION_REQUIRED = (
-            "more_information_required",
-            "More Information Required",
-        )
 
     class Source(models.TextChoices):
         AGENT = "agent", "Agent"
@@ -85,6 +80,20 @@ class PropertySubmission(BaseModel, GeoLocationMixin, SoftArchiveMixin):
         related_name="submissions",
         blank=True,
         null=True,
+    )
+    is_eligibility_test = models.BooleanField(
+        default=False,
+        help_text=(
+            "Whether tenants must complete an eligibility "
+            "screening before requesting an inspection."
+        ),
+    )
+
+    landlord_lives_in_compound = models.BooleanField(
+        default=False,
+        help_text=(
+            "Whether the landlord resides within the same " "compound/property."
+        ),
     )
 
     purpose = models.ForeignKey(

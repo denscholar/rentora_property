@@ -139,7 +139,7 @@ def get_review_queue():
 
     return (
         PropertySubmission.objects.filter(
-            status=PropertySubmission.Status.SUBMITTED,
+            status=PropertySubmission.Status.UNDER_REVIEW,
             is_archived=False,
         )
         .select_related(
@@ -210,9 +210,6 @@ def get_submission_status_counts(
     return {
         "draft": queryset.filter(
             status=PropertySubmission.Status.DRAFT,
-        ).count(),
-        "submitted": queryset.filter(
-            status=PropertySubmission.Status.SUBMITTED,
         ).count(),
         "under_review": queryset.filter(
             status=PropertySubmission.Status.UNDER_REVIEW,
