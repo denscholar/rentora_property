@@ -1,6 +1,8 @@
 from django.core.exceptions import ValidationError as DjangoValidationError
 
+from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import (
+    OpenApiParameter,
     OpenApiResponse,
     extend_schema,
 )
@@ -74,9 +76,6 @@ class PropertySubmissionListCreateAPIView(APIView):
 
     pagination_class = PropertySubmissionPagination
 
-    # =================================================
-    # LIST USER SUBMISSIONS
-    # =================================================
     @extend_schema(
         tags=["Property Submissions"],
         summary="List property submissions",
@@ -84,11 +83,31 @@ class PropertySubmissionListCreateAPIView(APIView):
             "Return all non-archived property submissions belonging "
             "to the authenticated user."
         ),
+        parameters=[
+            OpenApiParameter(
+                name="status",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                enum=[
+                    PropertySubmission.Status.DRAFT,
+                    PropertySubmission.Status.UNDER_REVIEW,
+                    PropertySubmission.Status.APPROVED,
+                    PropertySubmission.Status.REJECTED,
+                ],
+                description="Filter submissions by status.",
+            ),
+            OpenApiParameter(
+                name="search",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Search property submissions.",
+            ),
+        ],
         responses={
             200: PropertySubmissionListSerializer(many=True),
-            401: OpenApiResponse(
-                description="Authentication required.",
-            ),
+            401: OpenApiResponse(description="Authentication required."),
             403: OpenApiResponse(
                 description="Account cannot submit properties.",
             ),

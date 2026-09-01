@@ -332,7 +332,7 @@ def create_submission_media(
 
     if locked_submission.status not in {
         PropertySubmission.Status.DRAFT,
-        PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
+        # PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
     }:
         raise PropertySubmissionMediaError(
             "Media can only be added to an editable property submission."

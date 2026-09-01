@@ -1,9 +1,15 @@
 from django.urls import path
 
+from properties.api.views.eligibility import PropertyEligibilityConfigurationAPIView
+from properties.api.views.eligibility_attempt import StartPropertyEligibilityAPIView
 from properties.api.views.media import (
     PropertySubmissionMediaDeleteAPIView,
     PropertySubmissionMediaListCreateAPIView,
     PropertySubmissionMediaSetCoverAPIView,
+)
+from properties.api.views.public import (
+    PublicPropertyDetailAPIView,
+    PublicPropertyListAPIView,
 )
 
 from .views import (
@@ -95,5 +101,25 @@ urlpatterns = [
         "submissions/<uuid:submission_uuid>/media/<uuid:media_uuid>/set-cover/",
         PropertySubmissionMediaSetCoverAPIView.as_view(),
         name="submission-media-set-cover",
+    ),
+    path(
+        "public/",
+        PublicPropertyListAPIView.as_view(),
+        name="public-property-list",
+    ),
+    path(
+        "public/<uuid:property_uuid>/",
+        PublicPropertyDetailAPIView.as_view(),
+        name="public-property-detail",
+    ),
+    path(
+        "submissions/<uuid:submission_uuid>/eligibility/",
+        PropertyEligibilityConfigurationAPIView.as_view(),
+        name="property-eligibility",
+    ),
+    path(
+        "public/<uuid:property_uuid>/eligibility/start/",
+        StartPropertyEligibilityAPIView.as_view(),
+        name="start-property-eligibility",
     ),
 ]

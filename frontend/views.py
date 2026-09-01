@@ -158,7 +158,6 @@ class PropertySubmissionWizardPageView(
         return context
 
 
-    
 class PropertySubmissionDetailWizardPageView(
     LoginRequiredMixin,
     TemplateView,
@@ -194,5 +193,24 @@ class PropertySubmissionDetailWizardPageView(
         )
 
         context["submission_uuid"] = self.kwargs.get("submission_uuid")
+
+        return context
+
+
+class PropertyVerificationAuthorizationPageView(TemplateView):
+    """
+    Public page used by a landlord or authorized representative
+    to review and authorize a property verification request.
+
+    The token is passed to the page and used by JavaScript to
+    communicate with the property verification API.
+    """
+
+    template_name = "frontend/property_verification/authorize.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["token"] = self.kwargs.get("token")
 
         return context

@@ -26,6 +26,7 @@ python-dotenv==1.0.1
 PyYAML==6.0.3
 referencing==0.37.0
 requests==2.32.3
+resend==2.39.0
 rpds-py==2026.5.1
 six==1.17.0
 sqlparse==0.5.5

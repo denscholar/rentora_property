@@ -16,6 +16,15 @@ from .property.submission import (
     PaymentFrequency,
     PropertySubmission,
 )
+from .property.eligibility import (
+    EligibilityAttemptStatus,
+    EligibilityQuestionType,
+    PropertyEligibilityAnswer,
+    PropertyEligibilityAttempt,
+    PropertyEligibilityOption,
+    PropertyEligibilityQuestion,
+    PropertyEligibilityTest,
+)
 
 
 from .property.media import PropertySubmissionMedia
@@ -32,4 +41,11 @@ __all__ = [
     "PropertyType",
     "PropertySubmissionSubmitError",
     "submit_property_submission",
+    "EligibilityAttemptStatus",
+    "EligibilityQuestionType",
+    "PropertyEligibilityAnswer",
+    "PropertyEligibilityAttempt",
+    "PropertyEligibilityOption",
+    "PropertyEligibilityQuestion",
+    "PropertyEligibilityTest",
 ]

@@ -231,7 +231,7 @@ class PropertySubmissionMediaUploadSerializer(
     ):
         if submission.status not in {
             PropertySubmission.Status.DRAFT,
-            PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
+            # PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
         }:
             raise serializers.ValidationError(
                 {

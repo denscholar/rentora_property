@@ -1,0 +1,684 @@
+{% extends "frontend/base.html" %} {% load static %} {% block title %} Verify
+Property | SheltaMe {% endblock %} {% block extra_css %}
+
+<link
+  rel="stylesheet"
+  href="{% static 'frontend/css/property-verification.css' %}"
+/>
+
+{% endblock %} {% block content %} {% csrf_token %}
+
+<main class="verification-page" id="property-verification-page">
+  <section class="verification-card">
+    <!-- =============================== -->
+    <!-- HEADER -->
+    <!-- =============================== -->
+
+    <header class="verification-header">
+      <div class="verification-brand">
+        <strong>SheltaMe</strong>
+      </div>
+
+      <span class="verification-badge"> Property Verification </span>
+
+      <h1>Verify this property</h1>
+
+      <p>
+        You have been asked to confirm that this property is available and that
+        the named agent is authorized to market it.
+      </p>
+    </header>
+
+    <!-- =============================== -->
+    <!-- LOADING -->
+    <!-- =============================== -->
+
+    <section class="verification-state" id="verification-loading">
+      <div class="verification-spinner"></div>
+
+      <h2>Loading verification request</h2>
+
+      <p>Please wait while we retrieve the property information.</p>
+    </section>
+
+    <!-- =============================== -->
+    <!-- ERROR -->
+    <!-- =============================== -->
+
+    <section
+      class="verification-state verification-error"
+      id="verification-error"
+      hidden
+    >
+      <div class="verification-state-icon">!</div>
+
+      <h2 id="verification-error-title">Verification unavailable</h2>
+
+      <p id="verification-error-message">
+        This verification request could not be loaded.
+      </p>
+    </section>
+
+    <!-- =============================== -->
+    <!-- AUTHORIZED SUCCESS -->
+    <!-- =============================== -->
+
+    <section
+      class="verification-state verification-success"
+      id="verification-success"
+      hidden
+    >
+      <div class="verification-state-icon">✓</div>
+
+      <h2>Property authorization submitted</h2>
+
+      <p>Thank you. SheltaMe has received your authorization.</p>
+
+      <p>
+        The property will now continue through the SheltaMe verification
+        process.
+      </p>
+    </section>
+
+    <!-- =============================== -->
+    <!-- REJECTED -->
+    <!-- =============================== -->
+
+    <section
+      class="verification-state verification-rejected"
+      id="verification-rejected"
+      hidden
+    >
+      <div class="verification-state-icon">×</div>
+
+      <h2>Property verification rejected</h2>
+
+      <p>
+        Your response has been received and the property verification request
+        has been rejected.
+      </p>
+
+      <p>
+        SheltaMe will review your response and the verification process will not
+        continue as an authorized property.
+      </p>
+    </section>
+
+    <!-- =============================== -->
+    <!-- VERIFICATION CONTENT -->
+    <!-- =============================== -->
+
+    <section id="verification-content" hidden>
+      <!-- =============================== -->
+      <!-- PROPERTY -->
+      <!-- =============================== -->
+
+      <section class="verification-section">
+        <div class="verification-section-heading">
+          <span> 01 </span>
+
+          <div>
+            <h2>Property</h2>
+
+            <p>Property associated with this verification request.</p>
+          </div>
+        </div>
+
+        <div class="verification-details">
+          <div class="verification-detail">
+            <span> Property </span>
+
+            <strong id="property-title"> — </strong>
+          </div>
+
+          <div class="verification-detail">
+            <span> Location </span>
+
+            <strong id="property-location"> — </strong>
+          </div>
+
+          <!-- <div class="verification-detail">
+            <span> Property type </span>
+
+            <strong id="property-type"> — </strong>
+          </div> -->
+        </div>
+      </section>
+
+      <!-- =============================== -->
+      <!-- AGENT -->
+      <!-- =============================== -->
+
+      <section class="verification-section">
+        <div class="verification-section-heading">
+          <span> 02 </span>
+
+          <div>
+            <h2>Agent</h2>
+
+            <p>The agent requesting authorization to market this property.</p>
+          </div>
+        </div>
+
+        <div class="verification-details">
+          <div class="verification-detail">
+            <span> Agent name </span>
+
+            <strong id="agent-name"> — </strong>
+          </div>
+
+          <div class="verification-detail">
+            <span> Agency </span>
+
+            <strong id="agent-agency"> — </strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- =============================== -->
+      <!-- REPRESENTATIVE -->
+      <!-- =============================== -->
+
+      <section class="verification-section">
+        <div class="verification-section-heading">
+          <span> 03 </span>
+
+          <div>
+            <h2>Representative</h2>
+
+            <p>Your information as provided by the agent.</p>
+          </div>
+        </div>
+
+        <div class="verification-details">
+          <div class="verification-detail">
+            <span> Name </span>
+
+            <strong id="representative-name"> — </strong>
+          </div>
+
+          <div class="verification-detail">
+            <span> Role </span>
+
+            <strong id="representative-role"> — </strong>
+          </div>
+
+          <div class="verification-detail">
+            <span> Email </span>
+
+            <strong id="representative-email"> — </strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- =============================== -->
+      <!-- VERIFICATION STATUS -->
+      <!-- =============================== -->
+
+      {% comment %}
+      <section class="verification-section">
+        <div class="verification-section-heading">
+          <span> 04 </span>
+
+          <div>
+            <h2>Verification Status</h2>
+
+            <p>Current status of this property verification request.</p>
+          </div>
+        </div>
+
+        <div class="verification-status">
+          <span class="verification-status-label"> Status </span>
+
+          <strong
+            id="verification-status-value"
+            class="verification-status-value"
+          >
+            —
+          </strong>
+        </div>
+      </section>
+      {% endcomment %}
+
+      <!-- ================================================= -->
+      <!-- DOCUMENTS -->
+      <!-- ================================================= -->
+
+      {% comment %}
+      <section
+        class="verification-section verification-documents-section"
+        id="verification-documents-section"
+      >
+        <div class="verification-section-heading">
+          <span> 04 </span>
+
+          <div>
+            <h2>Verification Documents</h2>
+
+            <p>
+              Upload the documents required to support this property
+              verification.
+            </p>
+          </div>
+        </div>
+
+        <!-- =============================== -->
+        <!-- DOCUMENT MESSAGES -->
+        <!-- =============================== -->
+
+        <div class="verification-form-error" id="documents-error" hidden></div>
+
+        <div
+          class="verification-form-success"
+          id="documents-success"
+          hidden
+        ></div>
+
+        <!-- =============================== -->
+        <!-- EXISTING DOCUMENTS -->
+        <!-- =============================== -->
+
+        <div class="verification-documents-list">
+          <div
+            class="verification-documents-loading"
+            id="documents-loading"
+            hidden
+          >
+            Loading documents...
+          </div>
+
+          <div class="verification-documents-empty" id="documents-empty" hidden>
+            No documents have been uploaded yet.
+          </div>
+
+          <div id="documents-container" class="documents-container"></div>
+        </div>
+
+        <!-- =============================== -->
+        <!-- DOCUMENT UPLOAD -->
+        <!-- =============================== -->
+
+        <form id="verification-document-form" enctype="multipart/form-data">
+          <div class="verification-note">
+            <label for="verification-document-type"> Document type </label>
+
+            <select
+              id="verification-document-type"
+              name="document_type"
+              required
+            >
+              <option value="">Select document type</option>
+
+              <option value="authorization_letter">Authorization Letter</option>
+
+              <option value="ownership_document">Ownership Document</option>
+
+              <option value="lawyer_document">Lawyer Document</option>
+
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="verification-note">
+            <label for="verification-document-file"> Document </label>
+
+            <input
+              type="file"
+              id="verification-document-file"
+              name="document"
+              accept=".pdf,.jpg,.jpeg,.png"
+              required
+            />
+
+            <small>
+              Accepted formats: PDF, JPG, JPEG and PNG. Maximum size: 10 MB.
+            </small>
+          </div>
+
+          <div class="verification-note">
+            <label for="document-uploaded-by-name">
+              Your name
+
+              <span> (optional) </span>
+            </label>
+
+            <input
+              type="text"
+              id="document-uploaded-by-name"
+              name="uploaded_by_name"
+              maxlength="255"
+              placeholder="Enter your full name"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="verification-submit-button"
+            id="upload-verification-document-button"
+          >
+            Upload Document
+          </button>
+        </form>
+      </section>
+      {% endcomment %}
+
+      <!-- ================================================= -->
+      <!-- DECISION / AUTHORIZATION -->
+      <!-- ================================================= -->
+
+      <section
+        class="verification-authorization"
+        id="verification-decision-section"
+      >
+        <div class="verification-authorization-header">
+          <span class="verification-authorization-icon"> ✓ </span>
+
+          <div>
+            <h2>Property Verification Decision</h2>
+
+            <p>
+              Please review the property information above and select whether
+              you authorize the property and agent.
+            </p>
+          </div>
+        </div>
+
+        <!-- ================================================= -->
+        <!-- DECISION -->
+        <!-- ================================================= -->
+
+        <div class="verification-decision">
+          <label class="verification-decision-option">
+            <input
+              type="radio"
+              name="verification-decision"
+              id="decision-authorize"
+              value="authorized"
+            />
+
+            <span class="verification-decision-content">
+              <strong>Authorize Property</strong>
+
+              <small>
+                I confirm that the property is available and that the named
+                agent is authorized to market it.
+              </small>
+            </span>
+          </label>
+
+          <label
+            class="verification-decision-option verification-decision-reject"
+          >
+            <input
+              type="radio"
+              name="verification-decision"
+              id="decision-reject"
+              value="rejected"
+            />
+
+            <span class="verification-decision-content">
+              <strong>Reject Property</strong>
+
+              <small>
+                I do not authorize this property or the named agent to market
+                it.
+              </small>
+            </span>
+          </label>
+        </div>
+
+        <!-- ================================================= -->
+        <!-- AUTHORIZE FIELDS -->
+        <!-- ================================================= -->
+
+        <div
+          id="authorization-fields"
+          class="verification-decision-fields"
+          hidden
+        >
+          <!-- =============================================== -->
+          <!-- DOCUMENTS -->
+          <!-- =============================================== -->
+
+          <div class="verification-decision-subsection">
+            <div class="verification-decision-subsection-header">
+              <h3>Verification Documents</h3>
+
+              <p>
+                Upload supporting documents confirming ownership or
+                authorization of this property.
+              </p>
+            </div>
+
+            <div
+              class="verification-form-error"
+              id="documents-error"
+              hidden
+            ></div>
+
+            <div
+              class="verification-form-success"
+              id="documents-success"
+              hidden
+            ></div>
+
+            <!-- Existing documents -->
+
+            <div class="verification-documents-list">
+              <div
+                class="verification-documents-loading"
+                id="documents-loading"
+                hidden
+              >
+                Loading documents...
+              </div>
+
+              <div
+                class="verification-documents-empty"
+                id="documents-empty"
+                hidden
+              >
+                No documents have been uploaded yet.
+              </div>
+
+              <div id="documents-container" class="documents-container"></div>
+            </div>
+
+            <!-- Upload form -->
+
+            <form id="verification-document-form" enctype="multipart/form-data">
+              <div class="verification-note">
+                <label for="verification-document-type"> Document type </label>
+
+                <select
+                  id="verification-document-type"
+                  name="document_type"
+                  required
+                >
+                  <option value="">Select document type</option>
+
+                  <option value="authorization_letter">
+                    Authorization Letter
+                  </option>
+
+                  <option value="ownership_document">Ownership Document</option>
+
+                  <option value="lawyer_document">Lawyer Document</option>
+
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div class="verification-note">
+                <label for="verification-document-file"> Document </label>
+
+                <input
+                  type="file"
+                  id="verification-document-file"
+                  name="document"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  required
+                />
+
+                <small>
+                  Accepted formats: PDF, JPG, JPEG and PNG. Maximum size: 10 MB.
+                </small>
+              </div>
+
+              <div class="verification-note">
+                <label for="document-uploaded-by-name">
+                  Your name
+
+                  <span> (optional) </span>
+                </label>
+
+                <input
+                  type="text"
+                  id="document-uploaded-by-name"
+                  name="uploaded_by_name"
+                  maxlength="255"
+                  placeholder="Enter your full name"
+                />
+              </div>
+
+              <button
+                type="submit"
+                class="verification-submit-button verification-secondary-button"
+                id="upload-verification-document-button"
+                disabled
+              >
+                Upload Document
+              </button>
+            </form>
+          </div>
+
+          <!-- =============================================== -->
+          <!-- AUTHORIZATION CONFIRMATIONS -->
+          <!-- =============================================== -->
+
+          <div class="verification-decision-subsection">
+            <div class="verification-decision-subsection-header">
+              <h3>Authorization Confirmation</h3>
+
+              <p>
+                Please confirm both statements before authorizing this property.
+              </p>
+            </div>
+
+            <label class="verification-checkbox">
+              <input type="checkbox" id="availability-confirmed" />
+
+              <span>
+                I confirm that this property is currently available for rent.
+              </span>
+            </label>
+
+            <label class="verification-checkbox">
+              <input type="checkbox" id="agent-authorized" />
+
+              <span>
+                I confirm that the named agent is authorized by the
+                landlord/property owner to market this property.
+              </span>
+            </label>
+
+            <div class="verification-note">
+              <label for="authorization-note">
+                Additional note
+
+                <span> (optional) </span>
+              </label>
+
+              <textarea
+                id="authorization-note"
+                rows="4"
+                placeholder="Add any additional information SheltaMe should know..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================= -->
+        <!-- REJECTION FIELDS -->
+        <!-- ================================================= -->
+
+        <div id="rejection-fields" class="verification-decision-fields" hidden>
+          <div class="verification-decision-subsection rejection-subsection">
+            <div class="verification-decision-subsection-header">
+              <h3>Reason for Rejection</h3>
+
+              <p>
+                Please provide a reason for rejecting this property verification
+                request.
+              </p>
+            </div>
+
+            <div class="verification-note">
+              <label for="rejection-reason"> Rejection reason </label>
+
+              <textarea
+                id="rejection-reason"
+                rows="5"
+                maxlength="2000"
+                placeholder="Please explain why you are rejecting this property verification request..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================= -->
+        <!-- ERROR -->
+        <!-- ================================================= -->
+
+        <div
+          class="verification-form-error"
+          id="authorization-error"
+          hidden
+        ></div>
+
+        <!-- ================================================= -->
+        <!-- SUBMIT -->
+        <!-- ================================================= -->
+
+        <button
+          type="button"
+          class="verification-submit-button"
+          id="submit-decision-button"
+          disabled
+        >
+          Select a Decision
+        </button>
+      </section>
+
+      <!-- =============================== -->
+      <!-- FOOTER -->
+      <!-- =============================== -->
+
+      <footer class="verification-footer">
+        <p>
+          By authorizing this property, you confirm that the information
+          provided above is accurate to the best of your knowledge.
+        </p>
+
+        <small> SheltaMe Property Verification </small>
+      </footer>
+    </section>
+  </section>
+</main>
+
+{% endblock %} {% block extra_js %}
+
+<script>
+  window.propertyVerification = {
+    token: "{{ token|escapejs }}",
+  };
+
+  window.propertyVerification;
+</script>
+
+<script
+  src="{% static 'frontend/js/property-verification.js' %}"
+  defer
+></script>
+
+{% endblock %}

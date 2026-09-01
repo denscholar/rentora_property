@@ -1,7 +1,9 @@
 from rest_framework import serializers
 
 from locations.models import Area
-from properties.api.serializers.submission.media import PropertySubmissionMediaSerializer
+from properties.api.serializers.submission.media import (
+    PropertySubmissionMediaSerializer,
+)
 from properties.models import (
     Amenity,
     FurnishingStatus,
@@ -190,6 +192,8 @@ class PropertySubmissionDetailSerializer(serializers.ModelSerializer):
             "reviewed_at",
             "is_archived",
             "archived_at",
+            "is_eligibility_test",
+            "landlord_lives_in_compound",
             "media",
             "created_at",
             "updated_at",

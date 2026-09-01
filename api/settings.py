@@ -1,4 +1,5 @@
 from decouple import config
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -9,7 +10,21 @@ SECRET_KEY = "django-insecure-14g51=ckjq^%ijibsfmi0qvw%v1ga6h1=ba+7digz_$@rn8c6b
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "sheltame.com.ng",
+    "www.sheltame.com.ng",
+]
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://sheltame.com.ng",
+    "https://www.sheltame.com.ng",
+]
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 
 # Application definition
@@ -28,6 +43,8 @@ INSTALLED_APPS = [
     "properties",
     "property_moderation",
     "frontend",
+    "property_verification",
+    "property_verification_admin",
     # third party packages
     "rest_framework",
     "drf_spectacular",
@@ -131,27 +148,48 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
+# REST_FRAMEWORK = {
+#     "AUTHENTICATION_WHITELIST": [
+#         "rest_framework.authentication.SessionAuthentication",
+#     ],
+#     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+#     "DEFAULT_AUTHENTICATION_CLASSES": (
+#         "rest_framework.authentication.SessionAuthentication",
+#     ),
+#     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
+#     "EXCEPTION_HANDLER": ("core.exceptions.custom_exception_handler"),
+# }
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
+
 REST_FRAMEWORK = {
     "AUTHENTICATION_WHITELIST": [
         "rest_framework.authentication.SessionAuthentication",
     ],
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_SCHEMA_CLASS": ("drf_spectacular.openapi.AutoSchema"),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "EXCEPTION_HANDLER": ("core.exceptions.custom_exception_handler"),
 }
 
-
 SPECTACULAR_SETTINGS = {
     # ==========================================
     # PROJECT INFORMATION
     # ==========================================
-    "TITLE": "Rentora API",
+    "TITLE": "SheltaMe API",
     "DESCRIPTION": """
-        ## Rentora Property Marketplace API
-        Rentora is a trust-first property marketplace designed to simplify
+        ## SheltaMe Property Marketplace API
+        SheltaMe is a trust-first property marketplace designed to simplify
         property discovery, viewing bookings, payments, escrow,
         wallets, KYC and property management.
         ### Features
@@ -168,8 +206,8 @@ SPECTACULAR_SETTINGS = {
         """,
     "VERSION": "1.0.0",
     "CONTACT": {
-        "name": "Rentora Engineering",
-        "email": "engineering@rentora.com",
+        "name": "SheltaMe Engineering",
+        "email": "engineering@SheltaMe.com",
     },
     "LICENSE": {
         "name": "Copyright ©Rentora",
@@ -231,7 +269,6 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-
 CLOUDINARY_CLOUD_NAME = config(
     "CLOUDINARY_CLOUD_NAME",
 )
@@ -249,3 +286,18 @@ CLOUDINARY_SECURE = config(
     default=True,
     cast=bool,
 )
+
+
+RESEND_API_KEY = config("RESEND_API_KEY")
+RESEND_FROM_EMAIL = config("RESEND_FROM_EMAIL")
+PROPERTY_VERIFICATION_URL = config("PROPERTY_VERIFICATION_URL")
+
+
+PROPERTY_VERIFICATION_DOCUMENT_MAX_SIZE = 2 * 1024 * 1024  # 2 MB
+
+PROPERTY_VERIFICATION_DOCUMENT_EXTENSIONS = {
+    ".pdf",
+    ".jpg",
+    ".jpeg",
+    ".png",
+}

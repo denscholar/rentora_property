@@ -47,7 +47,7 @@ from properties.models.property.submission import PropertySubmission
 
 EDITABLE_SUBMISSION_STATUSES = {
     PropertySubmission.Status.DRAFT,
-    PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
+    PropertySubmission.Status.REJECTED,
 }
 
 # -----------------------------------------------------
@@ -76,7 +76,7 @@ EDITABLE_SUBMISSION_STATUSES = {
 
 SUBMITTABLE_SUBMISSION_STATUSES = {
     PropertySubmission.Status.DRAFT,
-    PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
+    PropertySubmission.Status.REJECTED,
 }
 
 # -----------------------------------------------------

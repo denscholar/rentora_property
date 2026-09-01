@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Verify Property - SheltaMe</title>
+  </head>
+
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7f6;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #222222;
+    "
+  >
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      style="background-color: #f5f7f6; padding: 40px 0"
+    >
+      <tr>
+        <td align="center">
+          <table
+            width="600"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="
+              max-width: 600px;
+              width: 100%;
+              background-color: #ffffff;
+              border-radius: 8px;
+              overflow: hidden;
+            "
+          >
+            <!-- Header -->
+            <tr>
+              <td
+                style="
+                  padding: 28px 32px;
+                  background-color: #1f7a4d;
+                  color: #ffffff;
+                "
+              >
+                <h1 style="margin: 0; font-size: 24px">SheltaMe</h1>
+
+                <p style="margin: 8px 0 0; font-size: 14px">
+                  Find Home, Feel Safe
+                </p>
+              </td>
+            </tr>
+
+            <!-- Content -->
+            <tr>
+              <td style="padding: 32px">
+                <h2 style="margin-top: 0; font-size: 22px">
+                  Verify This Property
+                </h2>
+
+                <p>Hello {{ representative_name }},</p>
+
+                <p>
+                  An agent has submitted a property on SheltaMe and identified
+                  you as the landlord or authorised representative responsible
+                  for the property.
+                </p>
+
+                <p>
+                  SheltaMe requires the landlord or authorised representative to
+                  confirm that the agent is authorised to market this property.
+                </p>
+
+                <p>
+                  Please review the property details and complete the
+                  verification process using the button below.
+                </p>
+
+                <!-- CTA -->
+                <table
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                  style="margin: 30px 0"
+                >
+                  <tr>
+                    <td
+                      align="center"
+                      style="border-radius: 6px; background-color: #1f7a4d"
+                    >
+                      <a
+                        href="{{ verification_url }}"
+                        style="
+                          display: inline-block;
+                          padding: 14px 24px;
+                          color: #ffffff;
+                          text-decoration: none;
+                          font-size: 15px;
+                          font-weight: bold;
+                        "
+                      >
+                        Verify This Property
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+
+                <p>
+                  This verification link is valid for
+                  <strong>7 days</strong>.
+                </p>
+
+                <p>
+                  If you did not expect this request, you can safely ignore this
+                  email.
+                </p>
+
+                {% comment %} <hr
+                  style="
+                    border: 0;
+                    border-top: 1px solid #eeeeee;
+                    margin: 30px 0;
+                  "
+                /> {% endcomment %}
+
+                {% comment %} <p style="font-size: 13px; color: #666666">
+                  Property reference:
+                  <strong> {{ property_reference }} </strong>
+                </p> {% endcomment %}
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td
+                style="
+                  padding: 24px 32px;
+                  background-color: #f8f8f8;
+                  color: #777777;
+                  font-size: 12px;
+                "
+              >
+                <p style="margin: 0">
+                  This email was sent by SheltaMe as part of its property
+                  verification process.
+                </p>
+
+                <p style="margin: 8px 0 0">Find Home, Feel Safe.</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
