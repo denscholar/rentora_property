@@ -5,6 +5,7 @@ from properties.models.property.eligibility import (
     PropertyEligibilityQuestion,
     PropertyEligibilityTest,
 )
+from properties.models.property.eligibility import PropertyEligibilityRule
 
 
 class PropertyEligibilityService:
@@ -53,6 +54,11 @@ class PropertyEligibilityService:
                 [],
             )
 
+            rule_data = question_data.pop(
+                "rule",
+                {},
+            )
+
             question = PropertyEligibilityQuestion.objects.create(
                 eligibility_test=test,
                 **question_data,
@@ -62,6 +68,12 @@ class PropertyEligibilityService:
                 PropertyEligibilityOption.objects.create(
                     question=question,
                     **option_data,
+                )
+
+            if rule_data:
+                PropertyEligibilityRule.objects.create(
+                    question=question,
+                    **rule_data,
                 )
 
         return test

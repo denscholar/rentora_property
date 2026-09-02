@@ -2,6 +2,7 @@ from decouple import config
 from datetime import timedelta
 from pathlib import Path
 import os
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -88,15 +89,22 @@ WSGI_APPLICATION = "api.wsgi.application"
 # }
 
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": config("DB_NAME"),
+#         "USER": config("DB_USER"),
+#         "PASSWORD": config("DB_PASSWORD"),
+#         "HOST": config("DB_HOST", default="db"),  # "db" = docker-compose service name
+#         "PORT": config("DB_PORT", default="5432"),
+#     }
+# }
+
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST", default="db"),  # "db" = docker-compose service name
-        "PORT": config("DB_PORT", default="5432"),
-    }
+    "default": dj_database_url.parse(
+        config("DATABASE_URL"),
+    ),
 }
 
 # Password validation
@@ -238,15 +246,15 @@ SPECTACULAR_SETTINGS = {
 
 CLOUDINARY_CLOUD_NAME = config(
     "CLOUDINARY_CLOUD_NAME",
+    default="",
 )
 
 CLOUDINARY_API_KEY = config(
     "CLOUDINARY_API_KEY",
+    default="",
 )
 
-CLOUDINARY_API_SECRET = config(
-    "CLOUDINARY_API_SECRET",
-)
+CLOUDINARY_API_SECRET = config("CLOUDINARY_API_SECRET", default="", cast=str)
 
 CLOUDINARY_SECURE = config(
     "CLOUDINARY_SECURE",
@@ -255,9 +263,9 @@ CLOUDINARY_SECURE = config(
 )
 
 
-RESEND_API_KEY = config("RESEND_API_KEY")
-RESEND_FROM_EMAIL = config("RESEND_FROM_EMAIL")
-PROPERTY_VERIFICATION_URL = config("PROPERTY_VERIFICATION_URL")
+RESEND_API_KEY = config("RESEND_API_KEY", default="", cast=str)
+RESEND_FROM_EMAIL = config("RESEND_FROM_EMAIL", default="", cast=str)
+PROPERTY_VERIFICATION_URL = config("PROPERTY_VERIFICATION_URL", default="", cast=str)
 
 
 PROPERTY_VERIFICATION_DOCUMENT_MAX_SIZE = 2 * 1024 * 1024  # 2 MB

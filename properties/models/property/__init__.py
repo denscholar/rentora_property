@@ -10,4 +10,5 @@ from .eligibility import (
     PropertyEligibilityOption,
     PropertyEligibilityQuestion,
     PropertyEligibilityTest,
+    PropertyEligibilityRule,
 )
