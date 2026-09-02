@@ -103,7 +103,7 @@ WSGI_APPLICATION = "api.wsgi.application"
 
 DATABASES = {
     "default": dj_database_url.parse(
-        config("DATABASE_URL"),
+        config("DATABASE_URL", default=""),
     ),
 }
 
