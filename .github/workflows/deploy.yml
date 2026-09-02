@@ -46,4 +46,5 @@ jobs:
             docker compose pull web
             docker compose up -d web
             docker compose exec -T web python manage.py migrate
+            docker compose restart nginx
             docker image prune -f

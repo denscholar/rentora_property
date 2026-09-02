@@ -33,7 +33,11 @@ ENV SECRET_KEY=build-time-placeholder-not-used-at-runtime \
     CLOUDINARY_CLOUD_NAME=placeholder \
     CLOUDINARY_API_KEY=placeholder \
     CLOUDINARY_API_SECRET=placeholder \
-    CLOUDINARY_SECURE=True
+    CLOUDINARY_SECURE=True \
+    RESEND_API_KEY=placeholder \
+    RESEND_FROM_EMAIL=placeholder \
+    FRONTEND_URL=http://localhost \
+    PROPERTY_VERIFICATION_URL=http://localhost
 
 # Collect static files (frontend JS/CSS/templates included)
 RUN python manage.py collectstatic --noinput
