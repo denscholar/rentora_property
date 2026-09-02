@@ -2,6 +2,7 @@ from decouple import config
 from datetime import timedelta
 from pathlib import Path
 import os
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -88,15 +89,22 @@ WSGI_APPLICATION = "api.wsgi.application"
 # }
 
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": config("DB_NAME"),
+#         "USER": config("DB_USER"),
+#         "PASSWORD": config("DB_PASSWORD"),
+#         "HOST": config("DB_HOST", default="db"),  # "db" = docker-compose service name
+#         "PORT": config("DB_PORT", default="5432"),
+#     }
+# }
+
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST", default="db"),  # "db" = docker-compose service name
-        "PORT": config("DB_PORT", default="5432"),
-    }
+    "default": dj_database_url.parse(
+        config("DATABASE_URL"),
+    ),
 }
 
 # Password validation
