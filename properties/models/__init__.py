@@ -23,6 +23,7 @@ from .property.eligibility import (
     PropertyEligibilityAttempt,
     PropertyEligibilityOption,
     PropertyEligibilityQuestion,
+    PropertyEligibilityRule,
     PropertyEligibilityTest,
 )
 
@@ -48,4 +49,5 @@ __all__ = [
     "PropertyEligibilityOption",
     "PropertyEligibilityQuestion",
     "PropertyEligibilityTest",
+    "PropertyEligibilityRule",
 ]

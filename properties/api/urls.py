@@ -1,7 +1,7 @@
 from django.urls import path
 
 from properties.api.views.eligibility import PropertyEligibilityConfigurationAPIView
-from properties.api.views.eligibility_attempt import StartPropertyEligibilityAPIView
+from properties.api.views.eligibility_attempt import StartPropertyEligibilityAPIView, SubmitPropertyEligibilityAPIView
 from properties.api.views.media import (
     PropertySubmissionMediaDeleteAPIView,
     PropertySubmissionMediaListCreateAPIView,
@@ -121,5 +121,10 @@ urlpatterns = [
         "public/<uuid:property_uuid>/eligibility/start/",
         StartPropertyEligibilityAPIView.as_view(),
         name="start-property-eligibility",
+    ),
+    path(
+        "eligibility-attempts/<uuid:attempt_uuid>/submit/",
+        SubmitPropertyEligibilityAPIView.as_view(),
+        name="submit-property-eligibility",
     ),
 ]

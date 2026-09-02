@@ -299,3 +299,76 @@ class PropertyEligibilityAnswer(BaseModel):
 
     def __str__(self):
         return f"{self.attempt} - " f"{self.question.question}"
+
+
+
+
+class PropertyEligibilityRule(BaseModel):
+    """
+    Defines the condition used to evaluate a tenant's answer
+    to an eligibility question.
+
+    Only the fields relevant to the question type are used.
+    """
+
+    question = models.OneToOneField(
+        PropertyEligibilityQuestion,
+        on_delete=models.CASCADE,
+        related_name="rule",
+    )
+
+    # =====================================================
+    # TEXT / YES-NO
+    # =====================================================
+
+    expected_text = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    # =====================================================
+    # NUMBER
+    # =====================================================
+
+    minimum_number = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+
+    maximum_number = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+
+    # =====================================================
+    # DATE
+    # =====================================================
+
+    minimum_date = models.DateField(
+        blank=True,
+        null=True,
+    )
+
+    maximum_date = models.DateField(
+        blank=True,
+        null=True,
+    )
+
+    # =====================================================
+    # CHOICE
+    # =====================================================
+
+    accepted_options = models.JSONField(
+        default=list,
+        blank=True,
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Rule - {self.question.question}"
