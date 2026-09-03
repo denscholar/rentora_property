@@ -102,7 +102,6 @@ WSGI_APPLICATION = "api.wsgi.application"
 
 # print("DATABASE_URL =", os.getenv("DATABASE_URL"))
 
-DATABASE_URL = config("DATABASE_URL", default=None)
 
 DATABASE_URL = config("DATABASE_URL", default=None)
 
