@@ -295,7 +295,7 @@ class PropertySubmissionAdmin(admin.ModelAdmin):
     @admin.action(description="Request more information")
     def request_more_information(self, request, queryset):
         queryset.update(
-            status=PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
+            # status=PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
             reviewed_by=request.user,
             reviewed_at=timezone.now(),
         )

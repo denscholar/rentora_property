@@ -60,6 +60,7 @@ class PropertySubmissionAdminDetailAPIView(APIView):
         request,
         submission_uuid,
     ):
+
         submission = (
             get_admin_submission_queryset()
             .filter(
@@ -67,6 +68,7 @@ class PropertySubmissionAdminDetailAPIView(APIView):
             )
             .first()
         )
+
 
         if submission is None:
             return error_response(

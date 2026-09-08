@@ -1,0 +1,223 @@
+{% extends "frontend/base.html" %} {% load static %} {% block title %}
+Properties | SheltaMe {% endblock %} {% block meta_description %} Browse
+verified properties available on SheltaMe. {% endblock %} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{% static 'frontend/css/property-listing.css' %}"
+/>
+<link rel="stylesheet" href="{% static 'frontend/css/landing.css' %}" />
+{% endblock %} {% block content %}
+
+<main
+  class="property-list-page"
+  id="property-list-page"
+  data-properties-api="/api/properties/public/"
+>
+  {% include "frontend/components/navbar.html" %}
+  <!-- =====================================================
+     PROPERTY HERO
+====================================================== -->
+
+  <section class="property-list-hero">
+    <div class="container">
+      <div class="property-list-hero-content">
+        <span class="eyebrow"> Verified properties </span>
+
+        <h1>Find a home you can trust.</h1>
+
+        <p>
+          Explore verified properties across Nigeria and find a home that fits
+          your needs.
+        </p>
+      </div>
+
+      <!-- =================================================
+         SEARCH BAR
+    ================================================== -->
+
+      <form class="property-search" id="property-search-form">
+        <!-- LOCATION -->
+
+        <div class="property-search-field">
+          <div class="property-search-field-icon">
+            <i class="fa-solid fa-location-dot"></i>
+          </div>
+
+          <div class="property-search-field-content">
+            <label for="property-location-search"> Location </label>
+
+            <input
+              type="text"
+              id="property-location-search"
+              name="location"
+              placeholder="Enter your preferred location"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <!-- PRICE RANGE -->
+
+        <div class="property-search-field">
+          <div class="property-search-field-icon">
+            <i class="fa-solid fa-naira-sign"></i>
+          </div>
+
+          <div class="property-search-field-content">
+            <label for="property-price-range"> Price Range </label>
+
+            <select id="property-price-range" name="price_range">
+              <option value="">Any</option>
+
+              <option value="0-1000000">Under ₦1m</option>
+
+              <option value="1000000-3000000">₦1m – ₦3m</option>
+
+              <option value="3000000-5000000">₦3m – ₦5m</option>
+
+              <option value="5000000-10000000">₦5m – ₦10m</option>
+
+              <option value="10000000-">₦10m+</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- PROPERTY TYPE -->
+
+        <div class="property-search-field">
+          <div class="property-search-field-icon">
+            <i class="fa-solid fa-house"></i>
+          </div>
+
+          <div class="property-search-field-content">
+            <label for="property-type-filter"> Property Type </label>
+
+            <select id="property-type-filter" name="property_type">
+              <option value="">Any</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- SEARCH -->
+
+        <button type="submit" class="property-search-button">
+          <i class="fa-solid fa-magnifying-glass"></i>
+
+          <span> Search </span>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       PROPERTY RESULTS
+  ====================================================== -->
+
+  <section class="property-results-section">
+    <div class="container">
+      <!-- Toolbar -->
+      <div class="property-results-toolbar">
+        <div class="property-results-heading">
+          <span class="property-results-count" id="property-results-count">
+            Properties
+          </span>
+
+          <span
+            class="property-results-subtitle"
+            id="property-results-subtitle"
+          >
+            Verified homes available on SheltaMe
+          </span>
+        </div>
+
+        <div class="property-results-actions">
+          <button
+            type="button"
+            class="property-toolbar-button"
+            id="property-sort-toggle"
+          >
+            <span id="property-sort-label"> Newest </span>
+
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           LOADING STATE
+      ====================================================== -->
+
+      <div
+        class="property-list-status"
+        id="property-list-status"
+        aria-live="polite"
+        hidden
+      >
+        <div class="property-loading">
+          <span class="property-loading-spinner"></span>
+          <span>Loading properties...</span>
+        </div>
+      </div>
+      <!-- =====================================================
+           PROPERTY GRID
+      ====================================================== -->
+
+      <div class="property-grid" id="property-grid"></div>
+
+      <!-- =====================================================
+            EMPTY STATE
+      ====================================================== -->
+      <div class="property-empty-state" id="property-empty-state" hidden>
+        <div class="empty-state-icon">
+          <i class="fa-regular fa-house"></i>
+        </div>
+
+        <h2>No properties found</h2>
+
+        <p>
+          We couldn't find properties matching your search. Try changing your
+          filters or search terms.
+        </p>
+
+        <button
+          type="button"
+          class="button button-secondary"
+          id="property-clear-search"
+        >
+          Clear search
+        </button>
+      </div>
+      <!-- =====================================================
+           PAGINATION
+      ====================================================== -->
+
+      <nav class="property-pagination" aria-label="Property pagination">
+        <button type="button" class="pagination-button" disabled>
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <button type="button" class="pagination-button is-active">1</button>
+
+        <button type="button" class="pagination-button">2</button>
+
+        <button type="button" class="pagination-button">3</button>
+
+        <button type="button" class="pagination-button">4</button>
+
+        <button type="button" class="pagination-button">5</button>
+
+        <button type="button" class="pagination-button">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </nav>
+    </div>
+  </section>
+  {% include "frontend/components/footer.html" %}
+</main>
+
+{% endblock %} {% block extra_js %}
+<script
+  src="{% static 'frontend/js/property-listing/property-list.js' %}"
+  defer
+></script>
+{% endblock %}

@@ -460,7 +460,7 @@ def delete_submission_media(
 
     if locked_submission.status not in {
         PropertySubmission.Status.DRAFT,
-        PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
+        # PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
     }:
         raise PropertySubmissionMediaError(
             "Media can only be deleted from an editable submission."
@@ -552,7 +552,7 @@ def set_submission_cover_media(
 
     if locked_submission.status not in {
         PropertySubmission.Status.DRAFT,
-        PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
+        # PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
     }:
         raise PropertySubmissionMediaError(
             "The cover image can only be changed on an editable submission."

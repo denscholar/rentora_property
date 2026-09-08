@@ -9,6 +9,7 @@ from frontend.views import (
     PropertySubmissionListPageView,
     PropertySubmissionWizardPageView,
     PropertyVerificationAuthorizationPageView,
+    PublicPropertyListPageView,
     RegisterPageView,
     VerifyEmailPageView,
 )
@@ -66,5 +67,10 @@ urlpatterns = [
         "property-verification/<str:token>/",
         PropertyVerificationAuthorizationPageView.as_view(),
         name="property-verification-authorize",
+    ),
+    path(
+        "properties/",
+        PublicPropertyListPageView.as_view(),
+        name="property-list",
     ),
 ]
