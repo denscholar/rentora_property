@@ -1,0 +1,185 @@
+{% load static %}
+
+<header class="site-header">
+  <div class="container navigation">
+    <a
+      href="{% url 'frontend:landing-page' %}"
+      class="brand"
+    >
+      <img
+        src="{% static 'frontend/images/sheltame_logo.png' %}"
+        alt="SheltaMe Logo"
+      />
+
+      <div class="brand-text">
+        <span class="brand-name">SheltaMe</span>
+        <small class="brand-tagline">
+          Find Home, Feel Safe
+        </small>
+      </div>
+    </a>
+
+    <!-- Desktop navigation -->
+    <nav class="navigation-links">
+      <a href="{% url 'frontend:property-list' %}">
+        Properties
+      </a>
+
+      <a href="/#how-it-works">
+        How it works
+      </a>
+
+      {% comment %} <a href="/#why-SheltaMe">
+        Why SheltaMe
+      </a> {% endcomment %}
+
+      <a href="/#agents">
+        Safety
+      </a>
+
+      <a href="/#landlords">
+        For agents
+      </a>
+    </nav>
+
+    <div class="navigation-actions">
+      {% if request.user.is_authenticated %}
+
+      <a
+        href="{% url 'frontend:dashboard' %}"
+        class="text-link"
+      >
+        Dashboard
+      </a>
+
+      <button
+        type="button"
+        class="button button-secondary logout-button"
+        data-logout-button
+      >
+        Log out
+      </button>
+
+      {% else %}
+
+      <a
+        href="{% url 'frontend:login' %}"
+        class="button button-primary"
+      >
+        Log in
+      </a>
+
+      {% endif %}
+    </div>
+
+    <!-- Mobile menu trigger -->
+    <button
+      class="mobile-menu-button"
+      id="mobile-menu-button"
+      type="button"
+      aria-label="Open navigation menu"
+      aria-controls="mobile-navigation"
+      aria-expanded="false"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>
+
+
+<!-- Mobile overlay -->
+<div
+  class="mobile-menu-overlay"
+  id="mobile-menu-overlay"
+  aria-hidden="true"
+></div>
+
+
+<!-- Mobile drawer -->
+<aside
+  class="mobile-navigation"
+  id="mobile-navigation"
+  aria-hidden="true"
+  aria-label="Mobile navigation"
+>
+  <div class="mobile-navigation-header">
+    <div class="mobile-brand-text">
+      <img
+        style="width: 40px; height: 40px"
+        src="{% static 'frontend/images/sheltame_logo.png' %}"
+        alt="SheltaMe Logo"
+      />
+
+      <div class="brand-text-mobile">
+        <span class="brand-name">SheltaMe</span>
+
+        <small class="brand-tagline">
+          Find Home, Feel Safe
+        </small>
+      </div>
+    </div>
+
+    <button
+      class="mobile-menu-close"
+      id="mobile-menu-close"
+      type="button"
+      aria-label="Close navigation menu"
+    >
+      &times;
+    </button>
+  </div>
+
+  <nav class="mobile-navigation-links">
+    <a href="{% url 'frontend:property-list' %}">
+      Properties
+    </a>
+
+    <a href="/#how-it-works">
+      How it works
+    </a>
+
+    <a href="/#why-SheltaMe">
+      Safety
+    </a> 
+
+    <a href="/#agents">
+      For agents
+    </a>
+
+    {% comment %} <a href="/#landlords">
+      For landlords
+    </a> {% endcomment %}
+  </nav>
+
+  <div class="mobile-navigation-actions">
+    {% if request.user.is_authenticated %}
+
+    <a
+      href="{% url 'frontend:dashboard' %}"
+      class="button button-primary"
+    >
+      Dashboard
+    </a>
+
+    <button
+      type="button"
+      class="button button-secondary logout-button"
+      data-logout-button
+    >
+      Log out
+    </button>
+
+    {% else %}
+
+    <a
+      href="{% url 'frontend:login' %}"
+      class="button button-primary"
+    >
+      Log in
+    </a>
+
+    {% endif %}
+  </div>
+</aside>

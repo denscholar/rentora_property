@@ -299,7 +299,7 @@ class LoginAPIView(APIView):
 
         except ValidationError as exc:
             return error_response(
-                message=str(exc),
+                message=" ".join(exc.messages),
                 code=LOGIN_FAILED,
                 errors=None,
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -328,7 +328,7 @@ class LogoutAPIView(APIView):
     def post(self, request):
         print("USER:", request.user)
         print("AUTH:", request.user.is_authenticated)
-        
+
         logout_user(request)
 
         return success_response(

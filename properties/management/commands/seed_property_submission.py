@@ -371,16 +371,16 @@ class Command(BaseCommand):
         PropertySubmission.Status.APPROVED,
         PropertySubmission.Status.APPROVED,
         PropertySubmission.Status.REJECTED,
-        PropertySubmission.Status.REJECTED,
-        PropertySubmission.Status.REJECTED,
-        PropertySubmission.Status.REJECTED,
-        PropertySubmission.Status.REJECTED,
-        PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
-        PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
-        PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
-        PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
-        PropertySubmission.Status.DUPLICATE_FOUND,
-        PropertySubmission.Status.DUPLICATE_FOUND,
+        PropertySubmission.Status.APPROVED,
+        PropertySubmission.Status.APPROVED,
+        PropertySubmission.Status.APPROVED,
+        PropertySubmission.Status.APPROVED,
+        PropertySubmission.Status.APPROVED,
+        PropertySubmission.Status.APPROVED,
+        PropertySubmission.Status.APPROVED,
+        PropertySubmission.Status.APPROVED,
+        PropertySubmission.Status.APPROVED,
+        PropertySubmission.Status.APPROVED,
     ]
 
     def handle(self, *args, **options):
@@ -617,7 +617,7 @@ class Command(BaseCommand):
                 submission.reviewed_by = user
                 submission.reviewed_at = submission.updated_at
 
-            elif status == PropertySubmission.Status.MORE_INFORMATION_REQUIRED:
+            elif status == PropertySubmission.Status.UNDER_REVIEW:
                 submission.review_note = random.choice(
                     [
                         "Please provide clearer property documentation.",
@@ -628,7 +628,7 @@ class Command(BaseCommand):
                 submission.reviewed_by = user
                 submission.reviewed_at = submission.updated_at
 
-            elif status == PropertySubmission.Status.DUPLICATE_FOUND:
+            elif status == PropertySubmission.Status.UNDER_REVIEW:
                 submission.duplicate_similarity_score = Decimal(
                     random.choice(
                         [

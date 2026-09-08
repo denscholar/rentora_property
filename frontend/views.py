@@ -214,3 +214,10 @@ class PropertyVerificationAuthorizationPageView(TemplateView):
         context["token"] = self.kwargs.get("token")
 
         return context
+
+
+# =================================================
+# property listing pages
+# ===================================================
+class PublicPropertyListPageView(TemplateView):
+    template_name = "frontend/properties/property-list.html"
