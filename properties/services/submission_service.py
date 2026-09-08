@@ -1032,7 +1032,7 @@ def submit_property_submission_with_media_validation(
     # -------------------------------------------------
     if submission.status not in {
         PropertySubmission.Status.DRAFT,
-        PropertySubmission.Status.MORE_INFORMATION_REQUIRED,
+        # PropertySubmission.Status.,
     }:
 
         raise PropertySubmissionSubmitError(

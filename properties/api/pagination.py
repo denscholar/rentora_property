@@ -23,7 +23,6 @@ class PropertySubmissionPagination(PageNumberPagination):
         """
 
         return {
-            "results": serializer_data,
             "pagination": {
                 "count": self.page.paginator.count,
                 "page": self.page.number,
@@ -32,4 +31,5 @@ class PropertySubmissionPagination(PageNumberPagination):
                 "next": self.get_next_link(),
                 "previous": self.get_previous_link(),
             },
+            "results": serializer_data,
         }

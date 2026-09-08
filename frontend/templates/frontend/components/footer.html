@@ -1,0 +1,41 @@
+{% load static %}
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <a href="{% url 'frontend:landing-page' %}" class="brand footer-brand">
+        <img
+          src="{% static 'frontend/images/sheltame_logo.png' %}"
+          alt="SheltaMe Logo"
+        />
+        <span>SheltaMe</span>
+      </a>
+
+      <p>A trusted marketplace for properties, agents and tenants.</p>
+    </div>
+
+    <div>
+      <h3>Platform</h3>
+      <a href="#how-it-works">How it works</a>
+      <a href="#agents">For agents</a>
+      <a href="#landlords">For landlords</a>
+    </div>
+
+    <div>
+      <h3>Company</h3>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+      <a href="#">Support</a>
+    </div>
+
+    <div>
+      <h3>Legal</h3>
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <p>&copy; {% now "Y" %} SheltaMe. All rights reserved.</p>
+  </div>
+</footer>

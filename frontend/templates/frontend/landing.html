@@ -1,137 +1,11 @@
 {% extends "frontend/base.html" %} {% load static %} {% block title %} SheltaMe
-| Find Verified Properties {% endblock %} {% block content %}
-
-<header class="site-header">
-  <div class="container navigation">
-    <a href="{% url 'frontend:landing-page' %}" class="brand">
-      <img
-        src="{% static 'frontend/images/sheltame_logo.png' %}"
-        alt="SheltaMe Logo"
-      />
-      <div class="brand-text">
-        <span class="brand-name">SheltaMe</span>
-        <small class="brand-tagline">Find Home, Feel Safe</small>
-      </div>
-    </a>
-
-    <!-- Desktop navigation -->
-    <nav class="navigation-links">
-      <a href="#how-it-works">How it works</a>
-      <a href="#why-SheltaMe">Why SheltaMe</a>
-      <a href="#agents">For agents</a>
-      <a href="#landlords">For landlords</a>
-    </nav>
-
-    <div class="navigation-actions">
-      {% if request.user.is_authenticated %}
-      <a href="{% url 'frontend:dashboard' %}" class="text-link"> Dashboard </a>
-
-      <button
-        type="button"
-        class="button button-secondary logout-button"
-        data-logout-button
-      >
-        Log out
-      </button>
-      {% else %}
-      {% comment %} <a href="{% url 'frontend:login' %}" class="text-link"> Log in </a> {% endcomment %}
-      <a href="{% url 'frontend:login' %}" class="button button-primary"> Log in </a>
-
-      {% comment %} <a href="{% url 'frontend:register' %}" class="button button-primary">
-        Create account
-      </a> {% endcomment %}
-      {% endif %}
-    </div>
-
-    <!-- Mobile menu trigger -->
-    <button
-      class="mobile-menu-button"
-      id="mobile-menu-button"
-      type="button"
-      aria-label="Open navigation menu"
-      aria-controls="mobile-navigation"
-      aria-expanded="false"
-    >
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </div>
-</header>
-
-<!-- Mobile overlay -->
-<div
-  class="mobile-menu-overlay"
-  id="mobile-menu-overlay"
-  aria-hidden="true"
-></div>
-
-<!-- Mobile drawer -->
-<aside
-  class="mobile-navigation"
-  id="mobile-navigation"
-  aria-hidden="true"
-  aria-label="Mobile navigation"
->
-  <div class="mobile-navigation-header">
-    <div class="mobile-brand-text">
-      <img
-        style="width: 40px; height: 40px"
-        src="{% static 'frontend/images/sheltame_logo.png' %}"
-        alt="SheltaMe Logo"
-      />
-      <div class="brand-text-mobile">
-        <span class="brand-name">SheltaMe</span>
-        <small class="brand-tagline">Find Home, Feel Safe</small>
-      </div>
-    </div>
-
-    <button
-      class="mobile-menu-close"
-      id="mobile-menu-close"
-      type="button"
-      aria-label="Close navigation menu"
-    >
-      &times;
-    </button>
-  </div>
-
-  <nav class="mobile-navigation-links">
-    <a href="#how-it-works">How it works</a>
-    <a href="#why-SheltaMe">Why SheltaMe</a>
-    <a href="#agents">For agents</a>
-    <a href="#landlords">For landlords</a>
-  </nav>
-
-  <div class="mobile-navigation-actions">
-    {% if request.user.is_authenticated %}
-    <a href="{% url 'frontend:dashboard' %}" class="button button-primary">
-      Dashboard
-    </a>
-
-    <button
-      type="button"
-      class="button button-secondary logout-button"
-      data-logout-button
-    >
-      Log out
-    </button>
-    {% else %}
-    <a href="{% url 'frontend:login' %}" class="button button-primary">
-      Log in
-    </a>
-    {% comment %} <a href="{% url 'frontend:login' %}" class="button button-secondary">
-      Log in
-    </a> {% endcomment %}
-
-    {% comment %} <a href="{% url 'frontend:register' %}" class="button button-primary">
-      Create account
-    </a> {% endcomment %}
-    {% endif %}
-  </div>
-</aside>
+| Find Verified Properties {% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'frontend/css/landing.css' %}" />
+{% endblock %} {% block content %}
 
 <main>
+  {% include "frontend/components/navbar.html" %}
   <!-- ============================================= -->
   <!-- HERO -->
   <!-- ============================================= -->
@@ -149,7 +23,10 @@
         </p>
 
         <div class="hero-actions">
-          <a href="#" class="button button-primary button-large">
+          <a
+            href="{% url 'frontend:property-list' %}"
+            class="button button-primary button-large"
+          >
             Find a property
           </a>
 
@@ -660,49 +537,21 @@
           Create account
         </a>
 
-        <a href="#" class="button button-secondary button-large">
+        <a
+          href="{% url 'frontend:property-list' %}"
+          class="button button-secondary button-large"
+        >
           Explore properties
         </a>
       </div>
     </div>
   </section>
+  <!-- ============================================= -->
+  <!-- FOOTER -->
+  <!-- ============================================= -->
+  {% include "frontend/components/footer.html" %}
 </main>
-
-<footer class="site-footer">
-  <div class="container footer-grid">
-    <div>
-      <a href="{% url 'frontend:landing-page' %}" class="brand footer-brand">
-        <span class="brand-mark">R</span>
-        <span>SheltaMe</span>
-      </a>
-
-      <p>A trusted marketplace for properties, agents and tenants.</p>
-    </div>
-
-    <div>
-      <h3>Platform</h3>
-      <a href="#how-it-works">How it works</a>
-      <a href="#agents">For agents</a>
-      <a href="#landlords">For landlords</a>
-    </div>
-
-    <div>
-      <h3>Company</h3>
-      <a href="#">About</a>
-      <a href="#">Contact</a>
-      <a href="#">Support</a>
-    </div>
-
-    <div>
-      <h3>Legal</h3>
-      <a href="#">Privacy</a>
-      <a href="#">Terms</a>
-    </div>
-  </div>
-
-  <div class="container footer-bottom">
-    <p>&copy; {% now "Y" %} SheltaMe. All rights reserved.</p>
-  </div>
-</footer>
-
+{% endblock %}
+{% block extra_js %}
+{% static 'frontend/js/landing.js' %}script>
 {% endblock %}
