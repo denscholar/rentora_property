@@ -107,14 +107,15 @@ WSGI_APPLICATION = "api.wsgi.application"
 # print("DATABASE_URL =", repr(os.getenv("DATABASE_URL")))
 # print("TYPE =", type(os.getenv("DATABASE_URL")))
 
-DATABASES = {
-    "default": dj_database_url.parse(
-        os.getenv("DATABASE_URL"),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
+# DATABASES = {
+#     "default": dj_database_url.parse(
+#         os.getenv("DATABASE_URL"),
+#         conn_max_age=600,
+#         conn_health_checks=True,
+#     )
+# }
 
+database_url = os.getenv("DATABASE_URL")
 
 
 # Password validation
