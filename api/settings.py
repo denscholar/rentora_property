@@ -3,6 +3,9 @@ from datetime import timedelta
 from pathlib import Path
 import os
 import dj_database_url
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -90,10 +93,6 @@ WSGI_APPLICATION = "api.wsgi.application"
 # DATABASE_URL = config("DATABASE_URL", default=None)
 
 
-
-
-
-
 # if DATABASE_URL:
 #     DATABASES = {"default": dj_database_url.parse(DATABASE_URL)}
 # else:
@@ -105,13 +104,18 @@ WSGI_APPLICATION = "api.wsgi.application"
 #     }
 
 
+# print("DATABASE_URL =", repr(os.getenv("DATABASE_URL")))
+# print("TYPE =", type(os.getenv("DATABASE_URL")))
+
 DATABASES = {
-    "default": dj_database_url.config(
-        default=f"",
+    "default": dj_database_url.parse(
+        os.getenv("DATABASE_URL"),
         conn_max_age=600,
         conn_health_checks=True,
     )
 }
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -287,4 +291,3 @@ PROPERTY_VERIFICATION_DOCUMENT_EXTENSIONS = {
     ".jpeg",
     ".png",
 }
-
