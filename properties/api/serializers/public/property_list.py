@@ -28,6 +28,7 @@ class PublicPropertyListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PropertySubmission
+
         fields = [
             "uuid",
             "title",

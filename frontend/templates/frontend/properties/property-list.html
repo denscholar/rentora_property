@@ -131,15 +131,17 @@ verified properties available on SheltaMe. {% endblock %} {% block extra_css %}
         </div>
 
         <div class="property-results-actions">
-          <button
-            type="button"
-            class="property-toolbar-button"
-            id="property-sort-toggle"
-          >
-            <span id="property-sort-label"> Newest </span>
+          <div class="property-sort">
+            <label for="property-sort-select"> Sort by </label>
 
-            <i class="fa-solid fa-chevron-down"></i>
-          </button>
+            <select id="property-sort-select" name="ordering">
+              <option value="-created_at">Newest first</option>
+
+              <option value="proposed_price">Price: Low to High</option>
+
+              <option value="-proposed_price">Price: High to Low</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -191,25 +193,7 @@ verified properties available on SheltaMe. {% endblock %} {% block extra_css %}
            PAGINATION
       ====================================================== -->
 
-      <nav class="property-pagination" aria-label="Property pagination">
-        <button type="button" class="pagination-button" disabled>
-          <i class="fa-solid fa-chevron-left"></i>
-        </button>
-
-        <button type="button" class="pagination-button is-active">1</button>
-
-        <button type="button" class="pagination-button">2</button>
-
-        <button type="button" class="pagination-button">3</button>
-
-        <button type="button" class="pagination-button">4</button>
-
-        <button type="button" class="pagination-button">5</button>
-
-        <button type="button" class="pagination-button">
-          <i class="fa-solid fa-chevron-right"></i>
-        </button>
-      </nav>
+      <nav class="property-pagination" aria-label="Property pagination"></nav>
     </div>
   </section>
   {% include "frontend/components/footer.html" %}
