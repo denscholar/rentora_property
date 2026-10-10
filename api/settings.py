@@ -16,6 +16,8 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "sheltame.com.ng",
     "www.sheltame.com.ng",
+    "rentora-property.onrender.com",
+    "https://rentora-property.onrender.com",
 ]
 
 
