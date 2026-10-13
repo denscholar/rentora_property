@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.hashers import check_password
 import secrets
 import uuid
 import random
@@ -6,6 +7,7 @@ from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.contrib.auth.hashers import make_password, check_password
 
 from django.contrib.auth.models import BaseUserManager
 
@@ -22,10 +24,20 @@ class CustomUserManager(BaseUserManager):
         password=None,
         **extra_fields,
     ):
-        if not email:
-            raise ValueError("Email address is required.")
 
-        email = self.normalize_email(email)
+        role = extra_fields.get("role")
+
+        if email:
+            email = self.normalize_email(email)
+
+        elif role != CustomUser.Role.TENANT:
+            raise ValueError("Email address is required for this account type.")
+
+        else:
+            email = None
+
+        if not extra_fields.get("phone_number"):
+            raise ValueError("Phone number is required.")
 
         user = self.model(
             email=email,
@@ -98,10 +110,11 @@ class CustomUser(AbstractUser):
 
     email = models.EmailField(
         unique=True,
-        db_index=True,
+        null=True,
+        blank=True,
     )
-    email_otp = models.CharField(
-        max_length=6,
+    email_otp_hash = models.CharField(
+        max_length=128,
         blank=True,
         null=True,
     )
@@ -123,13 +136,31 @@ class CustomUser(AbstractUser):
         blank=True,
         null=True,
     )
+    phone_verified_at = models.DateTimeField(blank=True, null=True)
     otp_created_at = models.DateTimeField(blank=True, null=True)
     last_otp_sent_at = models.DateTimeField(null=True, blank=True)
 
     phone_number = models.CharField(
         max_length=20,
         unique=True,
-        db_index=True,
+    )
+    # Store a hash, not the raw phone OTP.
+    phone_otp_hash = models.CharField(
+        max_length=128,
+        null=True,
+        blank=True,
+    )
+
+    phone_otp_expires_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    phone_otp_attempts = models.PositiveSmallIntegerField(default=0)
+
+    last_phone_otp_sent_at = models.DateTimeField(
+        null=True,
+        blank=True,
     )
 
     role = models.CharField(
@@ -165,17 +196,34 @@ class CustomUser(AbstractUser):
     # GENERATE EMAIL OTP
     # ==========================================
     def generate_email_otp(self):
-        # otp = str(random.randint(100000, 999999))
-        otp = str(secrets.randbelow(900000) + 100000)
-
-        self.email_otp = otp
+        otp = str(random.randint(100000, 999999))
+        # otp = str(secrets.randbelow(900000) + 100000)
+        self.email_otp_hash = make_password(otp)
         self.email_otp_expires_at = timezone.now() + timedelta(
             minutes=EMAIL_OTP_EXPIRY_MINUTES
         )
         self.save(
             update_fields=[
-                "email_otp",
+                "email_otp_hash",
                 "email_otp_expires_at",
+                "updated_at",
+            ]
+        )
+
+        return otp
+
+    def generate_phone_otp(self):
+        otp = str(random.randint(100000, 999999))
+
+        self.phone_otp_hash = make_password(otp)
+        self.phone_otp_expires_at = timezone.now() + timedelta(
+            minutes=EMAIL_OTP_EXPIRY_MINUTES
+        )
+
+        self.save(
+            update_fields=[
+                "phone_otp_hash",
+                "phone_otp_expires_at",
                 "updated_at",
             ]
         )

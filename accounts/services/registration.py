@@ -1,27 +1,37 @@
 from django.db import transaction
+
 from accounts.models import CustomUser
-from accounts.services.otp import generate_email_otp
 from accounts.services.email import send_email_otp
+from accounts.services.termii_sms_service import TermiiService
 
 
-# ==========================================
-# REGISTER USER
-# ==========================================
 @transaction.atomic
 def register_user(validated_data):
-    password = validated_data.pop("password")
-    validated_data.pop("confirm_password")
+    data = dict(validated_data)
 
-    user = CustomUser.objects.create(
-        **validated_data,
+    password = data.pop("password")
+    data.pop("confirm_password", None)
+
+    email = data.pop("email", None)
+
+    user = CustomUser.objects.create_user(
+        email=email,
+        password=password,
+        **data,
         is_active=True,
         is_verified=False,
     )
 
-    user.set_password(password)
-    user.save(update_fields=["password"])
+    if user.role == CustomUser.Role.TENANT:
+        otp = user.generate_phone_otp()
 
-    otp = generate_email_otp(user)
-    send_email_otp(user, otp)
+        TermiiService.send_sms(
+            phone_number=user.phone_number,
+            otp=otp,
+        )
+
+    else:
+        otp = user.generate_email_otp()
+        send_email_otp(user, otp)
 
     return user
