@@ -92,7 +92,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "api.wsgi.application"
 
 
-
 # DATABASE_URL = os.getenv("DATABASE_URL")
 
 # if not DATABASE_URL:
@@ -111,6 +110,15 @@ WSGI_APPLICATION = "api.wsgi.application"
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 print("DATABASE_URL =", repr(DATABASE_URL))
+
+DATABASES = {
+    "default": dj_database_url.parse(
+        DATABASE_URL,
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=True,
+    )
+}
 
 # DATABASE_URL = config("DATABASE_URL", default=None)
 
