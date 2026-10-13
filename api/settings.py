@@ -93,20 +93,24 @@ WSGI_APPLICATION = "api.wsgi.application"
 
 
 
+# DATABASE_URL = os.getenv("DATABASE_URL")
+
+# if not DATABASE_URL:
+#     raise Exception("DATABASE_URL environment variable is missing")
+
+# DATABASES = {
+#     "default": dj_database_url.parse(
+#         DATABASE_URL,
+#         conn_max_age=600,
+#         conn_health_checks=True,
+#         ssl_require=True,
+#     )
+# }
+
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-if not DATABASE_URL:
-    raise Exception("DATABASE_URL environment variable is missing")
-
-DATABASES = {
-    "default": dj_database_url.parse(
-        DATABASE_URL,
-        conn_max_age=600,
-        conn_health_checks=True,
-        ssl_require=True,
-    )
-}
-
+print("DATABASE_URL =", repr(DATABASE_URL))
 
 # DATABASE_URL = config("DATABASE_URL", default=None)
 
