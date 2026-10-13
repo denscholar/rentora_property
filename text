@@ -13,3 +13,15 @@ laptops
 accountant:
 lawyer: 150000
 
+
+{
+  "first_name": "Dennis",
+  "last_name": "Akagha",
+  "email": "d.akagha20@gmail.com",
+  "phone_number": "07031501124",
+  "role": "tenant",
+  "password": "flower123456",
+  "confirm_password": "flower123456"
+
+}
+
