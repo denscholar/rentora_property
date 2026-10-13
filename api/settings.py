@@ -117,8 +117,17 @@ WSGI_APPLICATION = "api.wsgi.application"
 #     )
 # }
 
+
+DATABASES = {
+    "default": dj_database_url.config(
+        default=os.getenv("DATABASE_URL"),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+}
+
 # Render deployment
-DATABASE_URL = os.getenv("DATABASE_URL")
+# DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 # Password validation
