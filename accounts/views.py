@@ -9,6 +9,7 @@ from rest_framework.authentication import SessionAuthentication
 from accounts.models import CustomUser
 from accounts.services.authentication import (
     authenticate_user,
+    authenticate_user_phone,
     login_user,
     logout_user,
 )
@@ -25,6 +26,7 @@ from accounts.selectors.user import get_user_by_email, phone_exists
 from accounts.serializers import (
     AuthUserSerializer,
     LoginSerializer,
+    MobileLoginSerializer,
     RegisterSerializer,
     ResendEmailOTPSerializer,
     ResendPhoneOTPSerializer,
@@ -530,7 +532,7 @@ It does not create a Django browser session.
 Users must satisfy the existing authentication and
 email-verification requirements.
 """,
-    request=LoginSerializer,
+    request=MobileLoginSerializer,
     responses={
         200: OpenApiResponse(
             description="Login successful. Returns the user and JWT tokens."
@@ -541,12 +543,11 @@ email-verification requirements.
     },
 )
 class MobileLoginAPIView(APIView):
-    # This endpoint uses credentials rather than an existing session/token.
     authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request):
-        serializer = LoginSerializer(data=request.data)
+        serializer = MobileLoginSerializer(data=request.data)
 
         if not serializer.is_valid():
             return error_response(
@@ -557,9 +558,9 @@ class MobileLoginAPIView(APIView):
             )
 
         try:
-            user = authenticate_user(
+            user = authenticate_user_phone(
                 request=request,
-                email=serializer.validated_data["email"],
+                phone_number=serializer.validated_data["phone_number"],
                 password=serializer.validated_data["password"],
             )
 
