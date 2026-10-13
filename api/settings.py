@@ -118,7 +118,7 @@ WSGI_APPLICATION = "api.wsgi.application"
 # }
 
 # Render deployment
-database_url = os.getenv("DATABASE_URL") 
+DATABASES = os.getenv("DATABASE_URL")
 
 
 # Password validation
@@ -195,6 +195,12 @@ SIMPLE_JWT = {
 }
 
 FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:8006")
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "accounts.backends.PhoneNumberBackend",
+]
+
 
 REST_FRAMEWORK = {
     "AUTHENTICATION_WHITELIST": [
@@ -295,7 +301,6 @@ PROPERTY_VERIFICATION_DOCUMENT_EXTENSIONS = {
     ".jpeg",
     ".png",
 }
-
 
 
 TERMII_API_KEY = os.getenv("TERMII_API_KEY")

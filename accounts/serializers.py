@@ -3,7 +3,6 @@ from rest_framework import serializers
 from accounts.models import AgentProfile, CustomUser, LandlordProfile, UserProfile
 from accounts.utils.phone_numbers import normalize_phone_number
 
-
 # ==========================================
 # REGISTER SERIALIZER
 # ==========================================
@@ -35,7 +34,6 @@ from accounts.utils.phone_numbers import normalize_phone_number
 #             )
 
 #         return attrs
-
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -160,7 +158,6 @@ class ResendEmailOTPSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 
-
 # ==========================================
 # RESEND PHONE OTP SERIALIZER
 # ==========================================
@@ -174,6 +171,11 @@ class ResendPhoneOTPSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
+
+
+# ==========================================
+# LOGIN SERIALIZER - MOBILE
+# ==========================================
 
 
 class MobileLoginSerializer(serializers.Serializer):
