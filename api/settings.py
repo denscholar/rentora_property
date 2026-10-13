@@ -109,16 +109,16 @@ WSGI_APPLICATION = "api.wsgi.application"
 # print("DATABASE_URL =", repr(os.getenv("DATABASE_URL")))
 # print("TYPE =", type(os.getenv("DATABASE_URL")))
 
-# DATABASES = {
-#     "default": dj_database_url.parse(
-#         os.getenv("DATABASE_URL"),
-#         conn_max_age=600,
-#         conn_health_checks=True,
-#     )
-# }
+DATABASES = {
+    "default": dj_database_url.parse(
+        os.getenv("DATABASE_URL"),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+}
 
 # Render deployment
-DATABASES = os.getenv("DATABASE_URL")
+# DATABASES = os.getenv("DATABASE_URL")
 
 
 # Password validation
@@ -304,5 +304,5 @@ PROPERTY_VERIFICATION_DOCUMENT_EXTENSIONS = {
 
 
 TERMII_API_KEY = os.getenv("TERMII_API_KEY")
-TERMII_BASE_URL = os.getenv("TERMII_BASE_URL", default="https://api.ng.termii.com")
-TERMII_SENDER_ID = os.getenv("TERMII_SENDER_ID", default="N-Alert")
+TERMII_BASE_URL = os.getenv("TERMII_BASE_URL")
+TERMII_SENDER_ID = os.getenv("TERMII_SENDER_ID")
