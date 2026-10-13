@@ -11,7 +11,6 @@ class CustomUserAdmin(UserAdmin):
     model = CustomUser
 
     list_display = (
-        "id",
         "email",
         "phone_number",
         "first_name",
@@ -22,6 +21,7 @@ class CustomUserAdmin(UserAdmin):
         "is_staff",
         "created_at",
     )
+    list_display_links = ("email",)
 
     list_filter = (
         "role",
@@ -61,6 +61,21 @@ class CustomUserAdmin(UserAdmin):
                     "role",
                     "is_verified",
                     "email_verified_at",
+                    "email_otp_hash",
+                    "email_otp_expires_at",
+                )
+            },
+        ),
+        (
+            "Phone Details",
+            {
+                "fields": (
+                    "phone_verified_at",
+                    "phone_otp_hash",
+                    "phone_otp_expires_at",
+                    "phone_otp_attempts",
+                    "last_phone_otp_sent_at",
+                    "otp_created_at",
                 )
             },
         ),
