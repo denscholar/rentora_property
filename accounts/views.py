@@ -1,7 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.utils import timezone
 from rest_framework.permissions import AllowAny
+import math
 from django.core.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication
@@ -45,6 +47,7 @@ from accounts.services.otp import (
 )
 from accounts.services.email import send_email_otp
 from accounts.tokens import create_jwt_pair_for_user
+from accounts.utils.can_otp_resend import increment_otp_resend_attempt
 from core.api.responses import error_response, success_response
 from core.constants.response_codes import (
     ACCOUNT_ALREADY_VERIFIED,
@@ -245,7 +248,7 @@ class VerifyEmailOTPAPIView(APIView):
         - OTP is cleared.
         - Verification timestamp is saved.
         """,
-    request=VerifyEmailOTPSerializer,
+    request=VerifyPhoneOTPSerializer,
     responses={
         200: OpenApiResponse(
             description="Phone number verified.",
@@ -363,9 +366,24 @@ class ResendEmailOTPAPIView(APIView):
                 errors=serializer.errors,
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
+        if (
+            user.otp_resend_locked_until
+            and user.otp_resend_locked_until > timezone.now()
+        ):
+            return error_response(
+                message=(
+                    f"You have exceeded the maximum OTP resend limit. "
+                    f"Try again after "
+                    f"{user.otp_resend_locked_until.strftime('%Y-%m-%d %H:%M:%S')}."
+                ),
+                code="OTP_RESEND_LIMIT_EXCEEDED",
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            )
 
         otp = generate_email_otp(user)
         send_email_otp(user, otp)
+
+        increment_otp_resend_attempt(user)
 
         return success_response(
             message="A new OTP has been sent to your email.",
@@ -386,7 +404,7 @@ Generate and send a new OTP to the registered phone.
 
 Only unverified users can request a new OTP.
 """,
-    request=ResendEmailOTPSerializer,
+    request=ResendPhoneOTPSerializer,
     responses={
         200: OpenApiResponse(description="OTP resent."),
         400: OpenApiResponse(description="Account already verified."),
@@ -426,8 +444,30 @@ class ResendPhoneOTPAPIView(APIView):
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
 
+        now = timezone.now()
+
+        if user.otp_resend_locked_until and user.otp_resend_locked_until > now:
+
+            retry_after_seconds = math.ceil(
+                (user.otp_resend_locked_until - now).total_seconds()
+            )
+            return error_response(
+                message="You have exceeded the maximum OTP resend limit. ",
+                code="OTP_RESEND_LIMIT_EXCEEDED",
+                data={
+                    "resend_available_at": (
+                        user.otp_resend_locked_until.isoformat(timespec="seconds")
+                    ),
+                    "retry_after_seconds": retry_after_seconds,
+                },
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            )
+
         otp = generate_phone_otp(user)
-        TermiiService.send_sms(phone_number, otp)
+
+        TermiiService.send_sms(phone_number=phone_number, otp=otp)
+
+        increment_otp_resend_attempt(user)
 
         return success_response(
             message="A new OTP has been sent to your phone.",
@@ -523,15 +563,15 @@ class LogoutAPIView(APIView):
     tags=["Authentication"],
     summary="Mobile Login",
     description="""
-Authenticate a verified SheltaMe user using email and password.
+            Authenticate a verified SheltaMe user using email and password.
 
-This endpoint is intended for mobile clients and issues
-JWT access and refresh tokens.
+            This endpoint is intended for mobile clients and issues
+            JWT access and refresh tokens.
 
-It does not create a Django browser session.
-Users must satisfy the existing authentication and
-email-verification requirements.
-""",
+            It does not create a Django browser session.
+            Users must satisfy the existing authentication and
+            email-verification requirements.
+            """,
     request=MobileLoginSerializer,
     responses={
         200: OpenApiResponse(
@@ -557,11 +597,33 @@ class MobileLoginAPIView(APIView):
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
 
+        phone_number = (serializer.validated_data["phone_number"])
+        password = serializer.validated_data["password"]
+
+
+        user = phone_exists(phone_number=phone_number)
+
+        if not user.is_verified:
+            return error_response(
+                message="Please verify your phone number before logging in.",
+                code="PHONE_VERIFICATION_REQUIRED",
+                errors=serializer.errors,
+                status_code=status.HTTP_403_FORBIDDEN,
+                data={
+                    "phone_number": user.phone_number,
+                    "verification_channel": "phone",
+                    "resend_available_at": user.otp_resend_locked_until.isoformat(
+                        timespec="seconds"
+                    ),
+                    "can_resend": False,
+                },
+            )
+
         try:
             user = authenticate_user_phone(
                 request=request,
-                phone_number=serializer.validated_data["phone_number"],
-                password=serializer.validated_data["password"],
+                phone_number=phone_number,
+                password=password,
             )
 
             tokens = create_jwt_pair_for_user(user)

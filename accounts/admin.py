@@ -73,8 +73,8 @@ class CustomUserAdmin(UserAdmin):
                     "phone_verified_at",
                     "phone_otp_hash",
                     "phone_otp_expires_at",
-                    "phone_otp_attempts",
                     "last_phone_otp_sent_at",
+                    "otp_resend_count",
                     "otp_created_at",
                 )
             },

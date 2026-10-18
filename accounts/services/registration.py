@@ -1,5 +1,5 @@
 from django.db import transaction
-
+from django.utils import timezone
 from accounts.models import CustomUser
 from accounts.services.email import send_email_otp
 from accounts.services.termii_sms_service import TermiiService
@@ -23,7 +23,15 @@ def register_user(validated_data):
     )
 
     if user.role == CustomUser.Role.TENANT:
+        now = timezone.now()
         otp = user.generate_phone_otp()
+        user.otp_created_at = now
+
+        user.save(
+            update_fields=[
+                "otp_created_at",
+            ]
+        )
 
         TermiiService.send_sms(
             phone_number=user.phone_number,

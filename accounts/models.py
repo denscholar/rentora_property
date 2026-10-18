@@ -156,7 +156,11 @@ class CustomUser(AbstractUser):
         blank=True,
     )
 
-    phone_otp_attempts = models.PositiveSmallIntegerField(default=0)
+    otp_resend_count = models.PositiveSmallIntegerField(default=0)
+    otp_resend_locked_until = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
 
     last_phone_otp_sent_at = models.DateTimeField(
         null=True,
@@ -197,7 +201,6 @@ class CustomUser(AbstractUser):
     # ==========================================
     def generate_email_otp(self):
         otp = str(random.randint(100000, 999999))
-        # otp = str(secrets.randbelow(900000) + 100000)
         self.email_otp_hash = make_password(otp)
         self.email_otp_expires_at = timezone.now() + timedelta(
             minutes=EMAIL_OTP_EXPIRY_MINUTES

@@ -182,6 +182,15 @@ class ResendEmailOTPSerializer(serializers.Serializer):
 class ResendPhoneOTPSerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=20)
 
+    def validate_phone_number(self, value):
+        try:
+            return normalize_phone_number(
+                value,
+                default_region="NG",
+            )
+        except ValueError:
+            raise serializers.ValidationError("Enter a valid phone number.")
+
 
 # ==========================================
 # LOGIN SERIALIZER
