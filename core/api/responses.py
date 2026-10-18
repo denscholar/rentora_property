@@ -1,10 +1,10 @@
 from rest_framework.response import Response
 from rest_framework import status
 
-
 # =====================================================
 # SUCCESS RESPONSE
 # =====================================================
+
 
 def success_response(
     *,
@@ -28,16 +28,17 @@ def success_response(
     )
 
 
-
 # =====================================================
 # ERROR RESPONSE
 # =====================================================
+
 
 def error_response(
     *,
     message,
     code="ERROR",
     errors=None,
+    data=None,
     status_code=status.HTTP_400_BAD_REQUEST,
 ):
     """
@@ -50,6 +51,7 @@ def error_response(
             "code": code,
             "message": message,
             "errors": errors,
+            "data": data,
         },
         status=status_code,
     )

@@ -94,7 +94,6 @@ def mark_phone_verified(user):
     user.is_verified = True
     user.phone_otp_hash = None
     user.phone_otp_expires_at = None
-    user.phone_otp_verified_at = now
     user.phone_verified_at = now
 
     user.save(
@@ -102,7 +101,6 @@ def mark_phone_verified(user):
             "is_verified",
             "phone_otp_hash",
             "phone_otp_expires_at",
-            "phone_otp_verified_at",
             "phone_verified_at",
             "updated_at",
         ]

@@ -19,4 +19,4 @@ def email_exists(email):
 # CHECK PHONE EXISTS
 # ==========================================
 def phone_exists(phone_number):
-    return CustomUser.objects.filter(phone_number=phone_number).exists()
+    return CustomUser.objects.filter(phone_number=phone_number).first()
