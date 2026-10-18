@@ -597,27 +597,8 @@ class MobileLoginAPIView(APIView):
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
 
-        phone_number = (serializer.validated_data["phone_number"])
+        phone_number = serializer.validated_data["phone_number"]
         password = serializer.validated_data["password"]
-
-
-        user = phone_exists(phone_number=phone_number)
-
-        if not user.is_verified:
-            return error_response(
-                message="Please verify your phone number before logging in.",
-                code="PHONE_VERIFICATION_REQUIRED",
-                errors=serializer.errors,
-                status_code=status.HTTP_403_FORBIDDEN,
-                data={
-                    "phone_number": user.phone_number,
-                    "verification_channel": "phone",
-                    "resend_available_at": user.otp_resend_locked_until.isoformat(
-                        timespec="seconds"
-                    ),
-                    "can_resend": False,
-                },
-            )
 
         try:
             user = authenticate_user_phone(
@@ -626,15 +607,44 @@ class MobileLoginAPIView(APIView):
                 password=password,
             )
 
-            tokens = create_jwt_pair_for_user(user)
-
         except ValidationError as exc:
             return error_response(
                 message=" ".join(exc.messages),
                 code=LOGIN_FAILED,
                 errors=None,
+                data=None,
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Password is correct, but phone is not verified.
+        if not user.is_verified:
+            now = timezone.now()
+
+            is_resend_locked = bool(
+                user.otp_resend_locked_until and user.otp_resend_locked_until > now
+            )
+
+            resend_available_at = None
+
+            if is_resend_locked:
+                resend_available_at = user.otp_resend_locked_until.isoformat(
+                    timespec="seconds"
+                )
+
+            return error_response(
+                message=("Please verify your phone number " "before logging in."),
+                code="PHONE_VERIFICATION_REQUIRED",
+                errors=None,
+                data={
+                    "phone_number": user.phone_number,
+                    "verification_channel": "phone",
+                    "resend_available_at": (resend_available_at),
+                    "can_resend": not is_resend_locked,
+                },
+                status_code=status.HTTP_403_FORBIDDEN,
+            )
+
+        tokens = create_jwt_pair_for_user(user)
 
         return success_response(
             message="Login successful.",

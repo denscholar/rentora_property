@@ -29,20 +29,21 @@ def authenticate_user(request, email, password):
 # ==========================================
 # AUTHENTICATE USER - Email
 # ==========================================
-def authenticate_user_phone(request, phone_number, password):
+def authenticate_user_phone(
+    request,
+    phone_number,
+    password,
+):
     try:
         user = CustomUser.objects.get(phone_number=phone_number)
     except CustomUser.DoesNotExist:
-        raise ValidationError("Invalid phone_number or password.")
+        raise ValidationError("Invalid phone number or password.")
 
     if not user.check_password(password):
-        raise ValidationError("Invalid phone_number or password.")
+        raise ValidationError("Invalid phone number or password.")
 
     if not user.is_active:
         raise ValidationError("This account has been disabled.")
-
-    if not user.is_verified:
-        raise ValidationError("Please verify your phone_number before logging in.")
 
     return user
 
