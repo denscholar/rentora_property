@@ -147,8 +147,26 @@ class VerifyEmailOTPSerializer(serializers.Serializer):
 # VERIFY PHONE OTP SERIALIZER
 # ==========================================
 class VerifyPhoneOTPSerializer(serializers.Serializer):
-    phone_number = serializers.EmailField()
+    phone_number = serializers.CharField(
+        max_length=20,
+        trim_whitespace=True,
+    )
     otp = serializers.CharField(min_length=6, max_length=6)
+
+    def validate_phone_number(self, value):
+        try:
+            return normalize_phone_number(
+                value,
+                default_region="NG",
+            )
+        except ValueError:
+            raise serializers.ValidationError("Enter a valid phone number.")
+
+    def validate_otp(self, value):
+        if not value.isdigit():
+            raise serializers.ValidationError("OTP must contain only numbers.")
+
+        return value
 
 
 # ==========================================
