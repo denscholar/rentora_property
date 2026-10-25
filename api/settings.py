@@ -238,7 +238,7 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:8006")
+FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:8000")
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",

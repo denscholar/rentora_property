@@ -50,7 +50,7 @@ urlpatterns = [
         name="public-property-verification-document-delete",
     ),
     path(
-        "public<uuid:uuid>/submit-for-review/",
+        "public/<uuid:uuid>/submit-for-review/",
         SubmitPropertyVerificationForReviewAPIView.as_view(),
         name="submit-property-verification-for-review",
     ),
