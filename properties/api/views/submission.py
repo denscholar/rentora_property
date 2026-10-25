@@ -149,6 +149,7 @@ class PropertySubmissionListCreateAPIView(APIView):
         # ---------------------------------------------------------
         # BUILD QUERYSET
         # ---------------------------------------------------------
+
         submissions = get_user_submissions(
             user=request.user,
             status=requested_status or None,

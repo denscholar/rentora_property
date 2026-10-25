@@ -18,7 +18,7 @@ class Command(BaseCommand):
         users = [
             {
                 "email": "admin@sheltame.com.ng",
-                "phone_number": "2348000000001",
+                "phone_number": "+2348000000001",
                 "first_name": "SheltaMe",
                 "last_name": "Admin",
                 "role": CustomUser.Role.ADMIN,
@@ -30,7 +30,7 @@ class Command(BaseCommand):
             },
             {
                 "email": "tenant@sheltame.com.ng",
-                "phone_number": "2348000000002",
+                "phone_number": "+2348000000002",
                 "first_name": "SheltaMe",
                 "last_name": "Tenant",
                 "role": CustomUser.Role.TENANT,
@@ -38,7 +38,7 @@ class Command(BaseCommand):
             },
             {
                 "email": "agent@sheltame.com.ng",
-                "phone_number": "2348000000003",
+                "phone_number": "+2348000000003",
                 "first_name": "SheltaMe",
                 "last_name": "Agent",
                 "role": CustomUser.Role.AGENT,
@@ -46,7 +46,7 @@ class Command(BaseCommand):
             },
             {
                 "email": "landlord@sheltame.com.ng",
-                "phone_number": "2348000000004",
+                "phone_number": "+2348000000004",
                 "first_name": "SheltaMe",
                 "last_name": "Landlord",
                 "role": CustomUser.Role.LANDLORD,

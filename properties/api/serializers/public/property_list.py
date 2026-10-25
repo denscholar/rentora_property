@@ -83,5 +83,5 @@ class PublicPropertyListSerializer(serializers.ModelSerializer):
     def get_verification(self, obj):
         return {
             "is_verified": True,
-            "label": "SheltaMe Verified",
+            "label": "Verified",
         }
